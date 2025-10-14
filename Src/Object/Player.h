@@ -332,7 +332,7 @@ private:
 	int effectHealPleyId_;
 
 	//ƒ|ƒCƒ“ƒ^
-	const std::vector<std::shared_ptr<AllyBase>>* enemy_;
+	const std::vector<std::shared_ptr<AllyBase>>* ally_;
 
 	//ŠÛ‰e•`‰æ
 	void DrawShadow(void);

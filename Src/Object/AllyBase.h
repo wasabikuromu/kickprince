@@ -176,6 +176,7 @@ protected:
 	
 	GameScene* scene_;
 
+	const std::vector<std::shared_ptr<AllyBase>>* ally_;
 	const std::vector<std::shared_ptr<EnemyBase>>* enemy_;
 
 	//アニメーション

@@ -19,7 +19,6 @@
 #include "../Object/Enemy/EnemyDog.h"
 #include "../Object/Enemy/EnemyMimic.h"
 #include "../Object/Planet.h"
-#include "MiniMap.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)
@@ -62,9 +61,6 @@ void GameScene::Init(void)
 	//スカイドーム
 	skyDome_ = std::make_unique<SkyDome>(player_->GetTransform());
 	skyDome_->Init();
-
-	map_ = std::make_unique<MiniMap>(30000.0f, 300);
-	map_->Init();
 
 	//画像
 	imgGameUi1_ = resMng_.Load(ResourceManager::SRC::GAMEUI_1).handleId_;
@@ -151,8 +147,6 @@ void GameScene::Draw(void)
 	{
 		enemy->DrawBossHpBar();
 	}
-	DrawMiniMap();
-	
 	DrawRotaGraph(UI_GEAR, UI_GEAR, IMG_OPEGEAR_UI_SIZE, 0.0, imgOpeGear_, true);
 
 	//入力チェック or 時間経過でフェード開始
@@ -246,33 +240,6 @@ void GameScene::Release(void)
 	SoundManager::GetInstance().Stop(SoundManager::SRC::GAME_BGM);
 }
 
-void GameScene::DrawMiniMap(void)
-{
-	if (!map_) return;
-
-	//プレイヤーの座標
-	MapVector2 playerPos;
-	playerPos.x = player_->GetTransform().pos.x;
-	playerPos.z = player_->GetTransform().pos.z;
-	//Y軸回転角を使用(ラジアン or 度数)
-	float playerAngle = player_->GetTransform().rot.y;
-
-	float cameraAngleRad = 0.0f;
-	if (camera_) {
-		cameraAngleRad = camera_->GetAngles().y;  // ここ！
-	}
-
-	//敵の座標リストを作成
-	std::vector<std::shared_ptr<AllyBase>> aliveEnemies;
-	for (const auto& enemy : Allys_)
-	{
-		if (enemy->IsAlive())
-		{
-			aliveEnemies.push_back(enemy);
-		}
-	}
-}
-
 void GameScene::AddItem(std::shared_ptr<Item> item)
 {
 	items_.push_back(item);
@@ -352,7 +319,7 @@ void GameScene::BossCreate(void)
 {
 	std::shared_ptr<EnemyBase> boss = std::make_shared<EnemyBoss>();
 	boss->SetGameScene(this);
-	boss->SetPos(VGet(0, 0, 3500));
+	boss->SetPos(VGet(0, 200, 3500));
 	boss->SetPlayer(player_);
 	boss->Init();
 
@@ -364,7 +331,9 @@ bool GameScene::PauseMenu(void)
 	InputManager& ins = InputManager::GetInstance();
 
 	//TABキーでポーズのON/OFF切り替え（Menu中のみ）
-	if (ins.IsTrgDown(KEY_INPUT_TAB) && pauseState_ == PauseState::Menu)
+	if (ins.IsTrgDown(KEY_INPUT_TAB)|| 
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::MENU)
+		&& pauseState_ == PauseState::Menu)
 	{
 		isPaused_ = !isPaused_;
 		pauseSelectIndex_ = 0;
@@ -376,13 +345,16 @@ bool GameScene::PauseMenu(void)
 
 	if (pauseState_ == PauseState::Menu)
 	{
-		if (ins.IsTrgDown(KEY_INPUT_DOWN))
+		if (ins.IsTrgDown(KEY_INPUT_DOWN)||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
 			pauseSelectIndex_ = (pauseSelectIndex_ + PAUSE_MENU_DOWN) % PAUSE_MENU_ITEM_COUNT;
 
-		if (ins.IsTrgDown(KEY_INPUT_UP))
+		if (ins.IsTrgDown(KEY_INPUT_UP)||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP))
 			pauseSelectIndex_ = (pauseSelectIndex_ + PAUSE_MENU_UP) % PAUSE_MENU_ITEM_COUNT;
 
-		if (ins.IsTrgDown(KEY_INPUT_RETURN))
+		if (ins.IsTrgDown(KEY_INPUT_RETURN)||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{
 			switch (pauseSelectIndex_)
 			{
@@ -398,7 +370,8 @@ bool GameScene::PauseMenu(void)
 	}
 	else
 	{
-		if (ins.IsTrgDown(KEY_INPUT_RETURN))
+		if (ins.IsTrgDown(KEY_INPUT_RETURN)||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 			pauseState_ = PauseState::Menu;
 	}
 

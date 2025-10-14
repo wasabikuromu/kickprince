@@ -44,10 +44,16 @@ public:
 		DOWN,
 		D_LEFT,
 		D_RIGHT,
+		MENU,
+		BACK,
 		D_TOP,
 		D_DOWN,
+		LB,
+		RB,
 		R_TRIGGER,
 		L_TRIGGER,
+		R_STICK_PUSH,
+		L_STICK_PUSH,
 		MAX
 	};
 

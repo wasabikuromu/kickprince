@@ -9,7 +9,6 @@ class EnemyBase;
 class SkyDome;
 class Player;
 class Item;
-class MiniMap;
 class Camera;
 
 class GameScene : public SceneBase
@@ -110,7 +109,6 @@ private:
 	std::unique_ptr<SkyDome> skyDome_;	// スカイドーム
 	std::shared_ptr<Player> player_;	// プレイヤー
 	std::vector<std::shared_ptr<Item>> items_;		//アイテム
-	std::unique_ptr<MiniMap> map_;		//ミニマップ
 	std::shared_ptr<Camera> camera_;	//カメラ
 
 	int enemyModelId_;

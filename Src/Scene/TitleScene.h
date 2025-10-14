@@ -139,7 +139,7 @@ private:
 	Transform charactor_;
 
 	// 敵キャラクター
-	Transform enemy_;
+	Transform ally_;
 
 	// アニメーション
 	std::unique_ptr<AnimationController> animationControllerPlayer_;

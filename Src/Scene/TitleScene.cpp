@@ -55,7 +55,7 @@ void TitleScene::Init(void)
 	// 音楽
 	SoundManager::GetInstance().Play(SoundManager::SRC::TITLE_BGM, Sound::TIMES::LOOP);
 	charactor_.SetModel(resMng_.Load(ResourceManager::SRC::PLAYER).handleId_);
-	enemy_.SetModel(resMng_.Load(ResourceManager::SRC::DOG).handleId_);
+	ally_.SetModel(resMng_.Load(ResourceManager::SRC::DOG).handleId_);
 	SetUseASyncLoadFlag(false);
 	float size;
 
@@ -71,10 +71,10 @@ void TitleScene::NewFunction()
 	charactor_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f);
 	charactor_.Update();
 
-	enemy_.pos = { ENEMY_POS_X, CHARACTER_POS_Y, CHARACTER_POS_Z };
-	enemy_.scl = { ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE };
-	enemy_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f);
-	enemy_.Update();
+	ally_.pos = { ENEMY_POS_X, CHARACTER_POS_Y, CHARACTER_POS_Z };
+	ally_.scl = { ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE };
+	ally_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f);
+	ally_.Update();
 
 	// 右向きスタート（1:右向き、-1:左向き）
 	enemyDirection_ = 1;
@@ -87,7 +87,7 @@ void TitleScene::NewFunction()
 
 	// 敵のアニメーション
 	std::string path1 = Application::PATH_MODEL + "Enemy/Yellow/";
-	animationControllerEnemy_ = std::make_unique<AnimationController>(enemy_.modelId);
+	animationControllerEnemy_ = std::make_unique<AnimationController>(ally_.modelId);
 	animationControllerEnemy_->Add(0, path1 + "Yellow.mv1", ANIMATION_TIME, ENEMY_ANIM_NUM);
 	animationControllerEnemy_->Play(0);
 }
@@ -180,19 +180,19 @@ void TitleScene::Update(void)
 
 	charactor_.pos.x += PLAYER_SPEED * enemyDirection_;
 
-	float diffX = charactor_.pos.x - enemy_.pos.x;
+	float diffX = charactor_.pos.x - ally_.pos.x;
 	if (enemyDirection_ == 1) {
 		if (diffX > SAFE_DISTANCE) {
-			enemy_.pos.x += ENEMY_SPEED;
-			if (enemy_.pos.x > charactor_.pos.x - SAFE_DISTANCE)
-				enemy_.pos.x = charactor_.pos.x - SAFE_DISTANCE;
+			ally_.pos.x += ENEMY_SPEED;
+			if (ally_.pos.x > charactor_.pos.x - SAFE_DISTANCE)
+				ally_.pos.x = charactor_.pos.x - SAFE_DISTANCE;
 		}
 	}
 	else {
 		if (diffX < -SAFE_DISTANCE) {
-			enemy_.pos.x -= ENEMY_SPEED;
-			if (enemy_.pos.x < charactor_.pos.x + SAFE_DISTANCE)
-				enemy_.pos.x = charactor_.pos.x + SAFE_DISTANCE;
+			ally_.pos.x -= ENEMY_SPEED;
+			if (ally_.pos.x < charactor_.pos.x + SAFE_DISTANCE)
+				ally_.pos.x = charactor_.pos.x + SAFE_DISTANCE;
 		}
 	}
 
@@ -204,11 +204,11 @@ void TitleScene::Update(void)
 	}
 
 	float yRotDeg = (enemyDirection_ == 1) ? -INVERSION : INVERSION;
-	enemy_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(yRotDeg), 0.0f);
+	ally_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(yRotDeg), 0.0f);
 	charactor_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(yRotDeg), 0.0f);
 
 	if (!endLoadFlame_) {
-		enemy_.Update();
+		ally_.Update();
 		charactor_.Update();
 
 		animationControllerPlayer_->Update();
@@ -275,7 +275,7 @@ void TitleScene::Draw(void)
 	// モデル描画
 	if (!endLoadFlame_) {
 		MV1DrawModel(charactor_.modelId);
-		MV1DrawModel(enemy_.modelId);
+		MV1DrawModel(ally_.modelId);
 	}
 
 	if (isConfirmingExit_) {

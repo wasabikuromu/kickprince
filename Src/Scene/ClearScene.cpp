@@ -69,15 +69,15 @@ void ClearScene::Init(void)
 	isPressKeyAnimEnd_ = false;
 
 	// 敵
-	enemy_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::MUSH));
-	enemy_.pos = ENEMY_INIT_POS;
-	enemy_.scl = ENEMY_INIT_SCL;
-	enemy_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(ENEMY_INIT_ROT_Y_DEG), 0.0f);
-	enemy_.Update();
+	ally_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::MUSH));
+	ally_.pos = ENEMY_INIT_POS;
+	ally_.scl = ENEMY_INIT_SCL;
+	ally_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(ENEMY_INIT_ROT_Y_DEG), 0.0f);
+	ally_.Update();
 
 	// 敵のアニメーション
 	std::string path1 = Application::PATH_MODEL + "Enemy/mushroom/";
-	animationControllerEnemy_ = std::make_unique<AnimationController>(enemy_.modelId);
+	animationControllerEnemy_ = std::make_unique<AnimationController>(ally_.modelId);
 	animationControllerEnemy_->Add(0, path1 + "mushroom.mv1", -ENEMY_INIT_ROT_Y_DEG, 1);
 	animationControllerEnemy_->Play(0);
 	isAnimEnd_ = false;
@@ -125,7 +125,7 @@ void ClearScene::Update(void)
 	if (isPressKeyAnimStart_ && !isPressKeyAnimEnd_) {
 		// Y座標を補間（滑らかに近づける）
 		pressKeyY_ -= PRESS_KEY_SLIDE_SPEED;  // スライドスピード
-		enemy_.pos.y += ENEMY_FLOAT_SPEED_Y;
+		ally_.pos.y += ENEMY_FLOAT_SPEED_Y;
 		if (pressKeyY_ <= targetPressKeyY_) {
 			pressKeyY_ = targetPressKeyY_;
 		}
@@ -142,7 +142,7 @@ void ClearScene::Update(void)
 		}
 	}
 
-	enemy_.Update();
+	ally_.Update();
 	animationControllerEnemy_->Update();
 }
 
@@ -170,7 +170,7 @@ void ClearScene::Draw(void)
 	}
 
 	// 敵モデル
-	MV1DrawModel(enemy_.modelId);
+	MV1DrawModel(ally_.modelId);
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, pressKeyAlpha_);
 	DrawGraph(0, pressKeyY_, imgPressKey_, true);

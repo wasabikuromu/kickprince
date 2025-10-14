@@ -17,7 +17,7 @@
 Player::Player(void)
 {
 	animationController_ = nullptr;
-	enemy_ = nullptr;
+	ally_ = nullptr;
 	
 	state_ = STATE::NONE;
 
@@ -241,7 +241,7 @@ void Player::ClearCollider(void)
 
 void Player::SetEnemy(const std::vector<std::shared_ptr<AllyBase>>* enemys)
 {
-	enemy_ = enemys;
+	ally_ = enemys;
 }
 
 VECTOR Player::GetPos() const
@@ -271,7 +271,7 @@ float Player::GetCollisionRadius(void)
 
 const std::vector<std::shared_ptr<AllyBase>>& Player::GetEnemyCollision(void) const
 {
-	return *enemy_;
+	return *ally_;
 }
 
 void Player::InitAnimation(void)
@@ -525,7 +525,8 @@ void Player::ProcessMove(void)
 		{
 			//移動量
 			speed_ = SPEED_MOVE;
-			if (ins_.IsNew(KEY_INPUT_LSHIFT))
+			if (ins_.IsNew(KEY_INPUT_LSHIFT)||
+				ins_.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RB))
 			{
 				speed_ = SPEED_RUN;
 			}
@@ -539,7 +540,8 @@ void Player::ProcessMove(void)
 			SetGoalRotate(rotRad);
 
 			//アニメーション
-			if (ins_.IsNew(KEY_INPUT_LSHIFT))
+			if (ins_.IsNew(KEY_INPUT_LSHIFT) ||
+				ins_.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RB))
 			{
 				animationController_->Play((int)ANIM_TYPE::RUN);
 			}
@@ -692,7 +694,7 @@ void Player::CollisionCapsule(void)
 
 void Player::CollisionAttack(void)
 {
-	if (isAttack_ || enemy_)
+	if (isAttack_ || ally_)
 	{
 		//エネミーとの衝突判定
 		
@@ -703,18 +705,18 @@ void Player::CollisionAttack(void)
 		//攻撃の開始位置と終了位置
 		VECTOR attackPos = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD));
 
-		for (const auto& enemy : *enemy_)
+		for (const auto& ally : *ally_)
 		{
-			if (!enemy || !enemy->IsAlive()) continue;
+			if (!ally || !ally->IsAlive()) continue;
 
 			//敵の当たり判定とサイズ
-			VECTOR enemyPos = enemy->GetCollisionPos();
-			float enemyRadius = enemy->GetCollisionRadius();
+			VECTOR allyPos = ally->GetCollisionPos();
+			float allyRadius = ally->GetCollisionRadius();
 
 			//球体同士の当たり判定
-			if (AsoUtility::IsHitSpheres(attackPos,attackRadius,enemyPos,enemyRadius))
+			if (AsoUtility::IsHitSpheres(attackPos,attackRadius,allyPos,allyRadius))
 			{
-				enemy->Damage(normalAttack_);
+				ally->Damage(normalAttack_);
 				//1体のみヒット
 				break;
 			}

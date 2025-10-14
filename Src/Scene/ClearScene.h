@@ -84,7 +84,7 @@ private:
 	bool isPressKeyAnimEnd_;	// アニメーション完了フラグ
 
 	// 敵キャラクター
-	Transform enemy_;
+	Transform ally_;
 
 	// 敵のアニメーション
 	std::unique_ptr<AnimationController> animationControllerEnemy_;

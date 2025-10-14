@@ -547,20 +547,42 @@ void AllyBase::CheckHitAttackHit(void)
 		player_->Damage(attackPow_);
 	}
 
-	for (const auto& enemy : *enemy_)
+	//for (const auto& enemy : *ally_)
+	//{
+	//	///if (!enemy || !enemy->IsAlive()) continue;
+
+	//	//“G‚Ì“–‚½‚è”»’è‚ÆƒTƒCƒY
+	//	VECTOR enemyPos = enemy->GetCollisionPos();
+	//	float enemyRadius = enemy->GetCollisionRadius();
+
+	//	//‹…‘Ì“¯Žm‚Ì“–‚½‚è”»’è
+	//	if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
+	//	{
+	//		enemy->Damage(1);
+	//		//1‘Ì‚Ì‚Ýƒqƒbƒg
+	//		break;
+	//	}
+	//}
+
+	if (isAttack_ || enemy_)
 	{
-		///if (!enemy || !enemy->IsAlive()) continue;
+		//ƒGƒlƒ~[‚Æ‚ÌÕ“Ë”»’è
 
-		//“G‚Ì“–‚½‚è”»’è‚ÆƒTƒCƒY
-		VECTOR enemyPos = enemy->GetCollisionPos();
-		float enemyRadius = enemy->GetCollisionRadius();
-
-		//‹…‘Ì“¯Žm‚Ì“–‚½‚è”»’è
-		if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
+		for (const auto& enemy : *enemy_)
 		{
-			enemy->Damage(1);
-			//1‘Ì‚Ì‚Ýƒqƒbƒg
-			break;
+			if (!enemy || !enemy->IsAlive()) continue;
+
+			//“G‚Ì“–‚½‚è”»’è‚ÆƒTƒCƒY
+			VECTOR enemyPos = enemy->GetCollisionPos();
+			float enemyRadius = enemy->GetCollisionRadius();
+
+			//‹…‘Ì“¯Žm‚Ì“–‚½‚è”»’è
+			if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
+			{
+				player_->Damage(attackPow_);
+				//1‘Ì‚Ì‚Ýƒqƒbƒg
+				break;
+			}
 		}
 	}
 }

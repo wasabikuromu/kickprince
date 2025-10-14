@@ -12,17 +12,6 @@
 #include "../Object/SkyDome.h" 
 #include "OverScene.h"
 
-// 4x4行列 × 4成分ベクトルの掛け算
-OverScene::VECTOR4 OverScene::MulMatVec(const MATRIX& m, const VECTOR4& v)
-{
-	VECTOR4 r;
-	r.x = m.m[0][0] * v.x + m.m[1][0] * v.y + m.m[2][0] * v.z + m.m[3][0] * v.w;
-	r.y = m.m[0][1] * v.x + m.m[1][1] * v.y + m.m[2][1] * v.z + m.m[3][1] * v.w;
-	r.z = m.m[0][2] * v.x + m.m[1][2] * v.y + m.m[2][2] * v.z + m.m[3][2] * v.w;
-	r.w = m.m[0][3] * v.x + m.m[1][3] * v.y + m.m[2][3] * v.z + m.m[3][3] * v.w;
-	return r;
-}
-
 // 3D座標をスクリーン座標に変換
 bool OverScene::WorldToScreen(const VECTOR& worldPos, VECTOR& screenPos)
 {
@@ -119,11 +108,14 @@ void OverScene::Update(void)
 
 	if (isMenuActive_)
 	{
-		if (ins.IsTrgDown(KEY_INPUT_UP) || ins.IsTrgDown(KEY_INPUT_DOWN)) {
+		if (ins.IsTrgDown(KEY_INPUT_UP) || ins.IsTrgDown(KEY_INPUT_DOWN)||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP)||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN)) {
 			selectedIndex_ = 1 - selectedIndex_;
 		}
 
-		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
+		if (ins.IsTrgDown(KEY_INPUT_RETURN)||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
 			if (selectedIndex_ == 0) {
 				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 			}
