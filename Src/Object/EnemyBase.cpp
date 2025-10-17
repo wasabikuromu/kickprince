@@ -496,7 +496,7 @@ void EnemyBase::SetPlayer(std::shared_ptr<Player> player)
 	player_ = player;
 }
 
-void EnemyBase::SetAlly(std::shared_ptr<AllyBase> ally)
+void EnemyBase::SetAlly(const std::vector<std::shared_ptr<AllyBase>>* ally)
 {
 	ally_ = ally;
 }

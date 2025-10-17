@@ -3,12 +3,13 @@
 #include<map>
 #include <functional>
 #include <vector>
+#include "AllyBase.h"
 #include "ActorBase.h"
 
 class AnimationController;
 class GameScene;
 class Player;
-class AllyBase;
+//class AllyBase;
 
 class EnemyBase : public ActorBase
 {
@@ -121,7 +122,7 @@ public:
 	void DrawDebug(void);	//デバッグ用
 
 	void SetPlayer(std::shared_ptr<Player> player);
-	void SetAlly(std::shared_ptr<AllyBase> ally);
+	void SetAlly(const std::vector<std::shared_ptr<AllyBase>>* ally);
 
 protected:
 	bool is1damage;
