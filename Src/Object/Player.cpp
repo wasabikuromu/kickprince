@@ -163,7 +163,9 @@ void Player::Draw(void)
 {
 	MV1DrawModel(transform_.modelId);	//モデルの描画
 	DrawShadow();						//丸影描画
-	//DrawDebug();						//デバッグ用描画
+	DrawDebug();						//デバッグ用描画
+	DrawGuideLine();					//ガイド線描画
+	DrawChargeGauge();					//ゲージ描画
 
 #pragma region ステータス
 	DrawFormatString(NAME_X,NAME_Y,black,"PLAYER");
@@ -468,6 +470,74 @@ void Player::DrawDebug(void)
 #endif
 }
 
+void Player::DrawGuideLine(void)
+{
+	//const int DIVISION = 100;           // 線の分割数（多いほど滑らか）
+	//const float TIME_STEP = 0.05f;      // 時間刻み
+	//const float GRAVITY = 9.8f * 5.0f;  // ゲーム内重力に合わせて
+
+	//// プレイヤーの前方と上方向を使って開始点と初速度を作成
+	//VECTOR forward = transform_.quaRot.GetForward();
+	//VECTOR up = VGet(0.0f, 1.0f, 0.0f);
+
+	//// --- 調整パラメータ ---
+	//float launchSpeed = 80.0f;     // 初速（遠くまで飛ばす）
+	//float upwardBias = 0.7f;       // 上向き成分
+	//float startForwardOffset = 30.0f; // プレイヤー前方にずらす距離
+	//float groundY = 0.0f;          // 地面高さ（必要なら変更）
+
+	//// 開始位置（プレイヤーの少し前）
+	//VECTOR startPos = VAdd(transform_.pos, VScale(forward, startForwardOffset));
+
+	//// 初速度ベクトル（前方＋上方向）
+	//VECTOR velocity = VAdd(VScale(forward, launchSpeed), VScale(up, launchSpeed * upwardBias));
+
+	//// 経路を描画
+	//VECTOR prevPos = startPos;
+
+	//bool reachedGround = false;
+
+	//for (int i = 1; i <= DIVISION; i++)
+	//{
+	//	float t = i * TIME_STEP;
+
+	//	VECTOR nextPos;
+	//	nextPos.x = startPos.x + velocity.x * t;
+	//	nextPos.y = startPos.y + velocity.y * t - 0.5f * GRAVITY * t * t;
+	//	nextPos.z = startPos.z + velocity.z * t;
+
+	//	// 地面より下に行ったら補間して終了
+	//	if (nextPos.y <= groundY)
+	//	{
+	//		float ratio = (prevPos.y - groundY) / (prevPos.y - nextPos.y);
+	//		VECTOR hitPos = VAdd(prevPos, VScale(VSub(nextPos, prevPos), ratio));
+	//		DrawLine3D(prevPos, hitPos, GetColor(255, 255, 0));
+	//		DrawSphere3D(hitPos, 5.0f, 8, GetColor(255, 0, 0), GetColor(255, 0, 0), TRUE);
+	//		reachedGround = true;
+	//		break;
+	//	}
+
+	//	DrawLine3D(prevPos, nextPos, GetColor(255, 255, 0));
+	//	prevPos = nextPos;
+	//}
+
+	//// 念のため「途中で止まったかどうか」を確認する可視マーカー
+	//if (!reachedGround)
+	//{
+	//	DrawSphere3D(prevPos, 5.0f, 8, GetColor(0, 255, 0), GetColor(255, 0, 0), TRUE);
+	//}
+}
+
+void Player::DrawChargeGauge(void)
+{
+	int x = 100, y = 600, width = 300, height = 20;
+	int filled = (int)(width * (chargeTime_ / maxChargeTime_));
+
+	DrawBox(x, y, x + width, y + height, GetColor(100, 100, 100), TRUE); // 背景
+	DrawBox(x, y, x + filled, y + height, GetColor(0, 255, 0), TRUE);    // チャージ量
+	DrawBox(x, y, x + width, y + height, GetColor(255, 255, 255), FALSE); // 枠線
+}
+
 void Player::ProcessMove(void)
 {
 	//方向量をゼロ
@@ -692,7 +762,7 @@ void Player::CollisionCapsule(void)
 	}
 }
 
-void Player::CollisionAttack(void)
+void Player::CollisionAttack(float chargeRate)
 {
 	if (isAttack_ || ally_)
 	{
@@ -716,7 +786,7 @@ void Player::CollisionAttack(void)
 			//球体同士の当たり判定
 			if (AsoUtility::IsHitSpheres(attackPos,attackRadius,allyPos,allyRadius))
 			{
-				ally->Damage(normalAttack_);
+				ally->Damage(normalAttack_, chargeRate);
 				//1体のみヒット
 				break;
 			}
@@ -747,23 +817,70 @@ void Player::CalcGravityPow(void)
 
 void Player::ProcessAttack(void)
 {
-	bool isHit = CheckHitKey(KEY_INPUT_E) ||
+	bool isPress = CheckHitKey(KEY_INPUT_E) ||
 		ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);
+	bool isHold = CheckHitKey(KEY_INPUT_E) ||
+		ins_.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);
+	bool isRelease = CheckHitKey(KEY_INPUT_E) == 0 &&
+		ins_.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);
 
-	// 攻撃していない時にEキー押した瞬間だけ攻撃開始
-	if (!isAttack_ && isHit)
+	// --- チャージ開始 ---
+	if (!isCharging_ && isPress)
 	{
-		animationController_->Play((int)ANIM_TYPE::KICK, false);
-		isAttack_ = true;
-		
-		// 攻撃判定
-		CollisionAttack();
+		isCharging_ = true;
+		isChargeIncreasing_ = true; // 追加：増加中フラグ
+		chargeTime_ = 0.0f;
+		animationController_->Play((int)ANIM_TYPE::IDLE, true);
+	}
 
-		// 攻撃音
+	// --- チャージ中 ---
+	if (isCharging_)
+	{
+		float dt = scnMng_.GetDeltaTime();
+
+		// 増減方向に応じて加算 or 減算
+		if (isChargeIncreasing_)
+		{
+			chargeTime_ += dt;
+			if (chargeTime_ >= maxChargeTime_)
+			{
+				chargeTime_ = maxChargeTime_;
+				isChargeIncreasing_ = false; // 減少に切り替え
+			}
+		}
+		else
+		{
+			chargeTime_ -= dt;
+			if (chargeTime_ <= 0.0f)
+			{
+				chargeTime_ = 0.0f;
+				isChargeIncreasing_ = true; // 増加に切り替え
+			}
+		}
+
+		// ガイド線表示
+		DrawGuideLine();
+
+		// ゲージ描画
+		DrawChargeGauge();
+	}
+
+	// --- チャージ解除（キーを離した瞬間に攻撃発動） ---
+	if (isCharging_ && isRelease)
+	{
+		isCharging_ = false;
+		animationController_->Play((int)ANIM_TYPE::KICK, false);
+
+		// チャージ率を0～1に正規化
+		float chargeRate = chargeTime_ / maxChargeTime_;
+
+		// 攻撃判定と威力設定
+		CollisionAttack(chargeRate);
+
 		SoundManager::GetInstance().Play(SoundManager::SRC::ATK_SE1, Sound::TIMES::FORCE_ONCE);
 	}
 
-	// アニメーションが終わったら攻撃解除
+	// アニメーションが終わったらリセット
 	if (animationController_->IsEnd())
 	{
 		isAttack_ = false;

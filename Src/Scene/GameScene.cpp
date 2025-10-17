@@ -273,8 +273,8 @@ void GameScene::AllyCreate(void)
 	};
 
 	std::vector<EnemySpawnData> spawnList = {
-		{ AllyBase::TYPE::RED,   -spacing }, // ¶
-		{ AllyBase::TYPE::BLUE,   0.0f     }, // ’†‰›
+		//{ AllyBase::TYPE::RED,   -spacing }, // ¶
+		//{ AllyBase::TYPE::BLUE,   0.0f     }, // ’†‰›
 		{ AllyBase::TYPE::BLACK,  spacing  }  // ‰E
 	};
 
@@ -321,6 +321,7 @@ void GameScene::BossCreate(void)
 	boss->SetGameScene(this);
 	boss->SetPos(VGet(0, 200, 3500));
 	boss->SetPlayer(player_);
+	boss->SetAlly(ally_);
 	boss->Init();
 
 	enemys_.emplace_back(std::move(boss));

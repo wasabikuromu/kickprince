@@ -5,8 +5,6 @@
 #include <vector>
 #include "ActorBase.h"
 
-//担当　田中良明
-
 class AnimationController;
 class GameScene;
 class Player;
@@ -123,6 +121,8 @@ public:
 	void DrawDebug(void);	//デバッグ用
 
 	void SetPlayer(std::shared_ptr<Player> player);
+	void SetAlly(std::shared_ptr<AllyBase> ally);
+
 protected:
 	bool is1damage;
 	bool is2damage;
@@ -206,7 +206,7 @@ protected:
 	//攻撃関係
 	void AttackCollisionPos(void);	//攻撃用関数
 	void EnemyToPlayer(void);		//敵がプレイヤー攻撃
-	void CheckHitAttackHit(void);	//攻撃が当たったか確認する
+	void CollisionAttack(void);	//攻撃が当たったか確認する
 
 	// 状態遷移
 	void ChangeState(STATE state);

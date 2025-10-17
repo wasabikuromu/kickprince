@@ -217,6 +217,12 @@ private:
 	void UpdatePlay(void);				//stateがplayの状態のupdate
 	void UpdateDown(float deltaTime);	//ダウン中の処理
 
+	//kickのゲージ管理
+	bool isCharging_ = false;     // チャージ中かどうか
+	float chargeTime_ = 0.0f;     // チャージ時間（秒）
+	const float maxChargeTime_ = 2.0f;  // 最大チャージ時間（例：2秒）
+	bool isChargeIncreasing_ = true;
+
 	//衝突
 	std::unique_ptr<Capsule> capsule_;
 	std::vector <std::weak_ptr<Collider>> colliders_;	//衝突判定に用いられるコライダ
@@ -231,7 +237,7 @@ private:
 	void CollisionCapsule(void);
 
 	//攻撃判定
-	void CollisionAttack(void);
+	void CollisionAttack(float chargeRate);
 
 	//プレイヤーが持つ判定
 	VECTOR collisionPos_;			//プレイヤーの当たり判定移動後座標
@@ -339,6 +345,12 @@ private:
 
 	//デバッグ処理
 	void DrawDebug(void);
+
+	//ガイド線
+	void DrawGuideLine(void);
+
+	//ゲージ描画
+	void DrawChargeGauge(void);
 
 	//インスタンス
 	InputManager& ins_ = InputManager::GetInstance();

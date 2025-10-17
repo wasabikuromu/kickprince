@@ -147,7 +147,7 @@ public:
 	bool IsAlive(void);			//生存判定
 	void SetAlive(bool alive);	//生存判定
 
-	void Damage(int damage);	//ダメージを受ける
+	void Damage(int damage,float chargeRate);	//ダメージを受ける
 
 	TYPE GetEnemyType(void) const;
 	TYPE enemyType_;	//敵のタイプ
@@ -166,6 +166,7 @@ public:
 
 protected:
 
+	VECTOR defaultPos_ = VGet(0, 0, 0);  // 初期位置
 	VECTOR velocity_ = VGet(0, 0, 0);  // 吹っ飛び中の速度
 	bool isBlow_ = false;            // 吹っ飛び中フラグ
 
@@ -244,7 +245,7 @@ protected:
 	//攻撃関係
 	void AttackCollisionPos(void);	//攻撃用関数
 	void EnemyToPlayer(void);		//敵がプレイヤー攻撃
-	void CheckHitAttackHit(void);	//攻撃が当たったか確認する
+	void CollisionAttack(void);	//攻撃が当たったか確認する
 
 	//状態遷移
 	void ChangeState(STATE state);

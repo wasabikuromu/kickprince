@@ -10,6 +10,7 @@
 #include "Common/AnimationController.h"
 #include "ActorBase.h"
 #include "Player.h"
+#include "AllyBase.h"
 #include "EnemyBase.h"
 
 EnemyBase::EnemyBase() 
@@ -131,7 +132,7 @@ void EnemyBase::UpdateAttack(void)
 	 //アニメーション終了で次の状態に遷移
 	if (animationController_->IsEnd() || state_ != STATE::ATTACK) {
 		isAttack_ = false;
-		CheckHitAttackHit();
+		CollisionAttack();
 		ChangeState(STATE::IDLE);
 	}
 }
@@ -414,7 +415,7 @@ void EnemyBase::EnemyToPlayer(void)
 	}
 }
 
-void EnemyBase::CheckHitAttackHit(void)
+void EnemyBase::CollisionAttack(void)
 {
 	//プレイヤーの当たり判定とサイズ
 	playerCenter_ = player_->GetCollisionPos();
@@ -425,22 +426,22 @@ void EnemyBase::CheckHitAttackHit(void)
 		player_->Damage(attackPow_);
 	}
 
-	//for (const auto& ally : *ally_)
-	//{
-	//	if (!ally || !ally->IsAlive()) continue;
+	for (const auto& ally : *ally_)
+	{
+		if (!ally || !ally->IsAlive()) continue;
 
-	//	//敵の当たり判定とサイズ
-	//	VECTOR allyPos = ally->GetCollisionPos();
-	//	float allyRadius = ally->GetCollisionRadius();
+		//敵の当たり判定とサイズ
+		VECTOR allyPos = ally->GetCollisionPos();
+		float allyRadius = ally->GetCollisionRadius();
 
-	//	//球体同士の当たり判定
-	//	if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, allyPos, allyRadius))
-	//	{
-	//		ally_->Damage(attackPow_);
-	//		//1体のみヒット
-	//		break;
-	//	}
-	//}
+		//球体同士の当たり判定
+		if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, allyPos, allyRadius))
+		{
+			//ally_->Damage(attackPow_);
+			//1体のみヒット
+			break;
+		}
+	}
 }
 
 void EnemyBase::SetGameScene(GameScene* scene)
@@ -493,6 +494,11 @@ void EnemyBase::ChangeStateDeath(void)
 void EnemyBase::SetPlayer(std::shared_ptr<Player> player)
 {
 	player_ = player;
+}
+
+void EnemyBase::SetAlly(std::shared_ptr<AllyBase> ally)
+{
+	ally_ = ally;
 }
 
 void EnemyBase::DrawDebug(void)
