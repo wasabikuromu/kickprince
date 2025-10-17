@@ -3,13 +3,12 @@
 #include<map>
 #include <functional>
 #include <vector>
-#include "AllyBase.h"
 #include "ActorBase.h"
 
 class AnimationController;
 class GameScene;
 class Player;
-//class AllyBase;
+class AllyBase;
 
 class EnemyBase : public ActorBase
 {
