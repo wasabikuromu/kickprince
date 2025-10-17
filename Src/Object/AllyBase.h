@@ -55,13 +55,13 @@ public:
 	static constexpr float VIEW_ANGLE = 15.0f;	// 視野角
 
 	//敵の共通用球体座標
-	static constexpr float COLLOSION_RADIUS = 100.0f;
-	static constexpr VECTOR COLLISION_POS = { 0.0f, 60.0f, 0.0f };
+	static constexpr float COLLOSION_RADIUS = 300.0f;
+	static constexpr VECTOR COLLISION_POS = { 0.0f, 150.0f, 0.0f };
 	
 	//攻撃の位置オフセット
 	static constexpr float ATTACK_FORWARD_OFFSET = 55.0f;	// 前方向
 	static constexpr float ATTACK_HEIGHT_OFFSET = 100.0f;	// 高さ
-	static constexpr float ATTACK_RADIUS_SIZE = 35.0f;	// 攻撃範囲
+	static constexpr float ATTACK_RADIUS_SIZE = 255.0f;	// 攻撃範囲
 
 	//ドロップアイテムのサイズと距離しきい値
 	static constexpr float DROP_SCALE_SMALL = 0.1f;
@@ -148,7 +148,6 @@ public:
 	void SetAlive(bool alive);	//生存判定
 
 	void Damage(int damage);	//ダメージを受ける
-
 
 	TYPE GetEnemyType(void) const;
 	TYPE enemyType_;	//敵のタイプ

@@ -424,6 +424,23 @@ void EnemyBase::CheckHitAttackHit(void)
 	{
 		player_->Damage(attackPow_);
 	}
+
+	//for (const auto& ally : *ally_)
+	//{
+	//	if (!ally || !ally->IsAlive()) continue;
+
+	//	//“G‚Ì“–‚½‚è”»’è‚ÆƒTƒCƒY
+	//	VECTOR allyPos = ally->GetCollisionPos();
+	//	float allyRadius = ally->GetCollisionRadius();
+
+	//	//‹…‘Ì“¯Žm‚Ì“–‚½‚è”»’è
+	//	if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, allyPos, allyRadius))
+	//	{
+	//		ally_->Damage(attackPow_);
+	//		//1‘Ì‚Ì‚Ýƒqƒbƒg
+	//		break;
+	//	}
+	//}
 }
 
 void EnemyBase::SetGameScene(GameScene* scene)

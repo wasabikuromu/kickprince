@@ -88,8 +88,6 @@ void AllyBase::Update(void)
 
 	//アニメーション再生
 	animationController_->Update();
-
-
 }
 
 #pragma region StateごとのUpdate
@@ -547,23 +545,6 @@ void AllyBase::CheckHitAttackHit(void)
 		player_->Damage(attackPow_);
 	}
 
-	//for (const auto& enemy : *ally_)
-	//{
-	//	///if (!enemy || !enemy->IsAlive()) continue;
-
-	//	//敵の当たり判定とサイズ
-	//	VECTOR enemyPos = enemy->GetCollisionPos();
-	//	float enemyRadius = enemy->GetCollisionRadius();
-
-	//	//球体同士の当たり判定
-	//	if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
-	//	{
-	//		enemy->Damage(1);
-	//		//1体のみヒット
-	//		break;
-	//	}
-	//}
-
 	if (isAttack_ || enemy_)
 	{
 		//エネミーとの衝突判定
@@ -577,9 +558,10 @@ void AllyBase::CheckHitAttackHit(void)
 			float enemyRadius = enemy->GetCollisionRadius();
 
 			//球体同士の当たり判定
-			if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
+			//if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
+			if (AsoUtility::IsHitSpheres(collisionPos_, collisionRadius_, enemyPos, enemyRadius))
 			{
-				player_->Damage(attackPow_);
+				enemy->Damage(attackPow_);
 				//1体のみヒット
 				break;
 			}

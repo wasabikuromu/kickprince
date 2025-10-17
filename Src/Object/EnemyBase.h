@@ -10,6 +10,7 @@
 class AnimationController;
 class GameScene;
 class Player;
+class AllyBase;
 
 class EnemyBase : public ActorBase
 {
@@ -140,6 +141,9 @@ protected:
 	int dCount;
 
 	std::shared_ptr<Player> player_;
+
+	//ポインタ
+	const std::vector<std::shared_ptr<AllyBase>>* ally_;
 	GameScene* scene_;
 
 	
@@ -179,6 +183,9 @@ protected:
 	VECTOR p_Diff_;			//プレイヤーの位置差分
 	float p_Dis_;			//プレイヤーまでの距離
 	float p_RadiusSum_;		//プレイヤーとの衝突半径の合計
+
+	VECTOR allyCenter_;	//プレイヤーの球体の座標を取得
+	float allyRadius_;	//プレイヤーの球体の半径を取得
 
 	VECTOR treeCenter_;		//木の球体の座標を取得
 	float treeRadius_;		//木の球体の半径を取得
