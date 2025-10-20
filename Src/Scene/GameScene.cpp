@@ -321,7 +321,7 @@ void GameScene::BossCreate(void)
 	boss->SetGameScene(this);
 	boss->SetPos(VGet(0, 200, 3500));
 	boss->SetPlayer(player_);
-	boss->SetAlly(ally_);
+	boss->SetAlly(&Allys_);
 	boss->Init();
 
 	enemys_.emplace_back(std::move(boss));

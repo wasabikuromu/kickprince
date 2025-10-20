@@ -162,6 +162,7 @@ public:
 	void DrawDebugSearchRange(void);
 
 	void SetPlayer(std::shared_ptr<Player> player);
+	void SetEnemy(const std::vector<std::shared_ptr<EnemyBase>>* enemys);
 	std::vector <std::weak_ptr<Collider>> colliders_;	//衝突判定に用いられるコライダ
 
 protected:
@@ -176,7 +177,6 @@ protected:
 	
 	GameScene* scene_;
 
-	const std::vector<std::shared_ptr<AllyBase>>* ally_;
 	const std::vector<std::shared_ptr<EnemyBase>>* enemy_;
 
 	//アニメーション

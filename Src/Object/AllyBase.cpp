@@ -18,6 +18,7 @@
 AllyBase::AllyBase() 
 	: 
 	scene_(nullptr),
+	enemy_(nullptr),
 	movePow_(AsoUtility::VECTOR_ZERO),
 	isBlowedEnd_(false)   // 初期値
 {
@@ -72,6 +73,8 @@ void AllyBase::Init(void)
 	//丸影画像
 	imgShadow_ = resMng_.Load(
 		ResourceManager::SRC::SHADOW).handleId_;
+
+	ChangeState(STATE::PLAY);
 }
 
 void AllyBase::Update(void)
@@ -117,13 +120,15 @@ void AllyBase::UpdatePlay(void)
 	}
 
 	//重力による移動量
-	CalcGravityPow();
+	//CalcGravityPow();
 
 	//衝突判定
 	Collision();
 
 	//攻撃範囲に入ったかを見る
 	AttackCollisionPos();
+
+	CollisionAttack();
 }
 
 void AllyBase::UpdateAttack(void)
@@ -145,7 +150,7 @@ void AllyBase::UpdateAttack(void)
 	 //アニメーション終了で次の状態に遷移
 	if (animationController_->IsEnd() || state_ != STATE::ATTACK) {
 		isAttack_ = false;
-		CollisionAttack();
+		//CollisionAttack();
 		ChangeState(STATE::IDLE);
 	}
 }
@@ -232,32 +237,6 @@ AllyBase::TYPE AllyBase::GetEnemyType(void) const
 
 void AllyBase::Damage(int damage,float chargeRate)
 {
-	//hp_ -= damage;
-	//SoundManager::GetInstance().Play(SoundManager::SRC::E_DAMAGE_SE, Sound::TIMES::FORCE_ONCE);
-	//isAttack_ = false;
-
-	//if (hp_ <= 0 && isAlive_)
-	//{
-	//	isBlow_ = true;
-
-	//	// --- 吹っ飛び方向をZ方向に固定 ---
-	//	// +Z方向（奥）に飛ばす
-	//	VECTOR dir = VGet(0.0f, 0.0f, 1.0f);
-	//	// -Z方向（手前）に飛ばす場合は下の1行に変更
-	//	// VECTOR dir = VGet(0.0f, 0.0f, -1.0f);
-
-	//	// 前方向の速度（水平スピード）
-	//	VECTOR forwardVel = VScale(dir, 40.0f);
-
-	//	// 上方向の初速（高さ）
-	//	VECTOR upVel = VGet(0.0f, 60.0f, 0.0f);
-
-	//	// 合成して最終速度を設定
-	//	velocity_ = VAdd(forwardVel, upVel);
-
-	//	ChangeState(STATE::BLOW);
-	//}
-
 	hp_ -= damage;
 	SoundManager::GetInstance().Play(SoundManager::SRC::E_DAMAGE_SE, Sound::TIMES::FORCE_ONCE);
 	isAttack_ = false;
@@ -532,8 +511,10 @@ void AllyBase::AttackCollisionPos(void)
 	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
 	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;  // 攻撃の高さ調整
 
+
+	CollisionAttack();
 	//プレイヤーを見る
-	EnemyToPlayer();
+	//EnemyToPlayer();
 }
 
 void AllyBase::EnemyToPlayer(void)
@@ -557,36 +538,24 @@ void AllyBase::EnemyToPlayer(void)
 
 void AllyBase::CollisionAttack(void)
 {
-	//プレイヤーの当たり判定とサイズ
-	//playerCenter_ = player_->GetCollisionPos();
-	//playerRadius_ = player_->GetCollisionRadius();
+	//エネミーとの衝突判定
+	for (const auto& enemy : *enemy_)
+	{
+		if (!enemy || !enemy->IsAlive()) continue;
 
-	//if(AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_,playerCenter_, playerRadius_))
-	//{
-	//	player_->Damage(attackPow_);
-	//}
+		//敵の当たり判定とサイズ
+		VECTOR enemyPos = enemy->GetCollisionPos();
+		float enemyRadius = enemy->GetCollisionRadius();
 
-	/*if (enemy_)
-	{*/
-		//エネミーとの衝突判定
-		for (const auto& enemy : *enemy_)
+		//球体同士の当たり判定
+		//if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
+		if (AsoUtility::IsHitSpheres(collisionPos_, collisionRadius_, enemyPos, enemyRadius))
 		{
-			//if (!enemy || !enemy->IsAlive()) continue;
-
-			//敵の当たり判定とサイズ
-			VECTOR enemyPos = enemy->GetCollisionPos();
-			float enemyRadius = enemy->GetCollisionRadius();
-
-			//球体同士の当たり判定
-			//if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
-			if (AsoUtility::IsHitSpheres(collisionPos_, collisionRadius_, enemyPos, enemyRadius))
-			{
-				enemy->Damage(attackPow_);
-				//1体のみヒット
-				break;
-			}
+			enemy->Damage(attackPow_);
+			//1体のみヒット
+			break;
 		}
-
+	}
 }
 
 void AllyBase::SetGameScene(GameScene* scene)
@@ -634,6 +603,11 @@ void AllyBase::ChangeStateBlow(void)
 void AllyBase::SetPlayer(std::shared_ptr<Player> player)
 {
 	player_ = player;
+}
+
+void AllyBase::SetEnemy(const std::vector<std::shared_ptr<EnemyBase>>* enemys)
+{
+	enemy_ = enemys;
 }
 
 void AllyBase::DrawDebug(void)
