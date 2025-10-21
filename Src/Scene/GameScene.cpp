@@ -43,11 +43,11 @@ void GameScene::Init(void)
 	GravityManager::GetInstance().SetPlayer(player_);
 	player_->Init();
 
+	//敵
+	BossCreate();
 	//味方のモデル
 	AllyCreate();
 
-	//敵
-	BossCreate();
 
 	player_->SetEnemy(&Allys_);
 
@@ -110,19 +110,23 @@ void GameScene::Update(void)
 	//通常時のゲーム進行（ポーズされてないときだけ）
 	//-------------------------
 
+	if (ins.IsTrgDown(KEY_INPUT_R)) {
+		mainCamera->ChangeMode(Camera::MODE::SIDE_VIEW);
+	}
+	
 	uiDisplayFrame_++;
 
 	skyDome_->Update();
 	stage_->Update();
 	player_->Update();
 
-	for (auto ally : Allys_) 
-	{
+	for (auto& ally : Allys_) {
+		if (!ally) continue;
 		ally->Update();
 	}
 
-	for (auto enemy : enemys_)
-	{
+	for (auto& enemy : enemys_) {
+		if (!enemy) continue;
 		enemy->Update();
 	}
 }
@@ -309,6 +313,7 @@ void GameScene::AllyCreate(void)
 		enemy->SetGameScene(this);
 		enemy->SetPos(spawnPos);
 		enemy->SetPlayer(player_);
+		enemy->SetEnemy(&enemys_);
 		enemy->Init();
 
 		Allys_.emplace_back(std::move(enemy));

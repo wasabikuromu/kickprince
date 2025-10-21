@@ -511,7 +511,6 @@ void AllyBase::AttackCollisionPos(void)
 	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
 	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;  // 攻撃の高さ調整
 
-
 	CollisionAttack();
 	//プレイヤーを見る
 	//EnemyToPlayer();
@@ -623,15 +622,15 @@ void AllyBase::DrawDebug(void)
 	//-------------------------------------------------------
 	//キャラ座標
 	v = transform_.pos;
-	DrawFormatString(20, 120, white, "キャラ座標 ： (%0.2f, %0.2f, %0.2f)", v.x, v.y, v.z);
+	DrawFormatString(20, 320, black, "キャラ座標 ： (%0.2f, %0.2f, %0.2f)", v.x, v.y, v.z);
 
 	s = collisionPos_;
-	DrawSphere3D(s, collisionRadius_, 8, black, black, false);
-	DrawFormatString(20, 180, white, "スフィア座標 ： (%0.2f, %0.2f, %0.2f)", s.x, s.y, s.z);
-	DrawFormatString(20, 210, white, "エネミーの移動速度 ： %0.2f", speed_);
+	DrawSphere3D(s, collisionRadius_, 16, black, black, false);
+	DrawFormatString(20, 180, black, "スフィア座標 ： (%0.2f, %0.2f, %0.2f)", s.x, s.y, s.z);
+	DrawFormatString(20, 210, black, "エネミーの移動速度 ： %0.2f", speed_);
 
-	a = attackCollisionPos_;
-	DrawSphere3D(a, attackCollisionRadius_, 8, yellow, yellow, false);
+	/*a = attackCollisionPos_;
+	DrawSphere3D(a, attackCollisionRadius_, 8, yellow, yellow, false);*/
 
 #endif //DEBUG
 }

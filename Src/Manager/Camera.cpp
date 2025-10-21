@@ -50,6 +50,8 @@ void Camera::SetBeforeDraw(void)
 		case Camera::MODE::FOLLOW:
 			SetBeforeDrawFollow(); // pos_, targetPos_, cameraUp_ を更新
 			break;
+		case Camera::MODE::SIDE_VIEW:
+			SetBeforeDrawSideView();
 		}
 	}
 
@@ -123,6 +125,8 @@ void Camera::ChangeMode(MODE mode)
 	case Camera::MODE::FIXED_POINT:
 		break;
 	case Camera::MODE::FOLLOW:
+		break;
+	case Camera::MODE::SIDE_VIEW:
 		break;
 	}
 
@@ -262,3 +266,21 @@ void Camera::SetBeforeDrawFollow(void)
 void Camera::SetBeforeDrawSelfShot(void)
 {
 }
+
+void Camera::SetBeforeDrawSideView(void)
+{
+	// 完全固定カメラ（追従なし・真横）
+	// 例：右側から Y 水平で真横に見る
+	// Z は固定、X は横方向、Y は高さ
+
+	const float sideX = 3000.0f; 
+	const float camY = 550.0f;
+	const float camZ = 860.0f;
+
+	pos_ = VGet(sideX, camY, camZ); // カメラの位置
+	targetPos_ = VGet(0.0f, camY, camZ);  // 注視点（同じ高さで真横に向ける）
+
+	// 上方向はY軸
+	cameraUp_ = VGet(0.0f, 1.0f, 0.0f);
+}
+

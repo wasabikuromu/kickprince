@@ -36,6 +36,7 @@ public:
 		NONE,
 		FIXED_POINT,
 		FOLLOW,
+		SIDE_VIEW,
 		SELF_SHOT
 	};
 
@@ -112,6 +113,7 @@ private:
 	void SetBeforeDrawFixedPoint(void);
 	void SetBeforeDrawFollow(void);
 	void SetBeforeDrawSelfShot(void);
+	void SetBeforeDrawSideView(void);
 
 };
 

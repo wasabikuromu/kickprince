@@ -515,7 +515,7 @@ void EnemyBase::DrawDebug(void)
 
 	s = collisionPos_;
 	DrawSphere3D(s, collisionRadius_, 8, black, black, false);
-	DrawFormatString(20, 180, white, "スフィア座標 ： (%0.2f, %0.2f, %0.2f)",s.x, s.y, s.z);
+	DrawFormatString(20, 280, white, "enemyスフィア座標 ： (%0.2f, %0.2f, %0.2f)",s.x, s.y, s.z);
 	DrawFormatString(20, 210, white, "エネミーの移動速度 ： %0.2f", speed_);
 	
 	a = attackCollisionPos_;
