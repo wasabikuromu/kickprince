@@ -93,8 +93,6 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
-	void DrawMiniMap(void);
-
 	void AddItem(std::shared_ptr<Item> item);
 	const std::vector<std::shared_ptr<AllyBase>>& GetEnemies() const;	//enemy‚Ìî•ñ(pos)‚ğŒ©‚é
 private:

@@ -10,6 +10,7 @@
 #include "../Utility/AsoUtility.h"
 #include "Common/AnimationController.h"
 #include "Common/Capsule.h"
+#include "Common/Collider.h"
 #include "ActorBase.h"
 #include "../Object/EnemyBase.h"
 #include "Player.h"
@@ -58,6 +59,10 @@ void AllyBase::Init(void)
 
 	damageCnt_ = 0;
 
+	//丸影画像
+	imgShadow_ = resMng_.Load(
+		ResourceManager::SRC::SHADOW).handleId_;
+
 	//カプセルコライダ
 	capsule_ = std::make_unique<Capsule>(transform_);
 	capsule_->SetLocalPosTop(CAPSULE_TOP);
@@ -70,10 +75,7 @@ void AllyBase::Init(void)
 	//衝突判定用の球体中心の調整座標
 	collisionLocalPos_ = { 0.0f, capsule_->GetCenter().y, 0.0f };
 
-	//丸影画像
-	imgShadow_ = resMng_.Load(
-		ResourceManager::SRC::SHADOW).handleId_;
-
+	//初期状態
 	ChangeState(STATE::PLAY);
 }
 
@@ -119,16 +121,16 @@ void AllyBase::UpdatePlay(void)
 		return;
 	}
 
-	//重力による移動量
-	//CalcGravityPow();
+	CollisionAttack();
 
 	//衝突判定
 	Collision();
 
+	//重力による移動量
+	//CalcGravityPow();
+
 	//攻撃範囲に入ったかを見る
 	AttackCollisionPos();
-
-	CollisionAttack();
 }
 
 void AllyBase::UpdateAttack(void)

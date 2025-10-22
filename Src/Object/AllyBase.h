@@ -163,10 +163,9 @@ public:
 
 	void SetPlayer(std::shared_ptr<Player> player);
 	void SetEnemy(const std::vector<std::shared_ptr<EnemyBase>>* enemys);
-	std::vector <std::weak_ptr<Collider>> colliders_;	//衝突判定に用いられるコライダ
+	
 
 protected:
-
 	VECTOR defaultPos_ = VGet(0, 0, 0);  // 初期位置
 	VECTOR velocity_ = VGet(0, 0, 0);  // 吹っ飛び中の速度
 	bool isBlow_ = false;            // 吹っ飛び中フラグ
@@ -182,6 +181,8 @@ protected:
 	//アニメーション
 	std::unique_ptr<AnimationController> animationController_;
 	
+	//状態管理
+	STATE state_;
 	std::map<STATE, std::function<void(void)>> stateChanges_;//状態管理(状態遷移時初期処理)
 	std::function<void(void)> stateUpdate_;					 //状態管理(更新ステップ)
 	
@@ -203,7 +204,7 @@ protected:
 	bool isAttack_P = false;	//攻撃判定
 	bool isAttack_T = false;	//攻撃判定
 
-	STATE state_;	//状態管理
+	
 	ANIM_TYPE animtype_; //アニメーションのタイプ確認用
 
 	float collisionRadius_;		//衝突判定用の球体半径
@@ -225,13 +226,16 @@ protected:
 
 	//衝突
 	std::unique_ptr<Capsule> capsule_;
-
-	//丸影
-	int imgShadow_;
+	std::vector <std::weak_ptr<Collider>> colliders_;	//衝突判定に用いられるコライダ
 
 	//衝突チェック
 	VECTOR gravHitPosDown_;
 	VECTOR gravHitPosUp_;
+
+	//衝突判定
+	void Collision(void);
+	void CollisionGravity(void);
+	void CollisionCapsule(void);
 
 	//更新系
 	void UpdateNone(void){};		//更新ステップ
@@ -255,10 +259,12 @@ protected:
 	void ChangeStateAttack(void);
 	void ChangeStateBlow(void);
 
-	void Collision(void);	//衝突判定
-	void CollisionGravity(void);
-	void CollisionCapsule(void);
+
 	void CalcGravityPow(void);		//移動量の計算
 
 	void DrawShadow(void);	//影
+
+	//丸影
+	int imgShadow_;
+
 };

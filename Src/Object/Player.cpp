@@ -326,11 +326,11 @@ void Player::UpdatePlay(void)
 	//攻撃処理
 	ProcessAttack();
 
-	//重力による移動量
-	CalcGravityPow();
-
 	//衝突判定
 	Collision();
+
+	//重力による移動量
+	CalcGravityPow();
 
 	//現在座標を起点に移動後座標を決める
 	movedPos_ = VAdd(transform_.pos, movePow_);
@@ -472,60 +472,6 @@ void Player::DrawDebug(void)
 
 void Player::DrawGuideLine(void)
 {
-	//const int DIVISION = 100;           // 線の分割数（多いほど滑らか）
-	//const float TIME_STEP = 0.05f;      // 時間刻み
-	//const float GRAVITY = 9.8f * 5.0f;  // ゲーム内重力に合わせて
-
-	//// プレイヤーの前方と上方向を使って開始点と初速度を作成
-	//VECTOR forward = transform_.quaRot.GetForward();
-	//VECTOR up = VGet(0.0f, 1.0f, 0.0f);
-
-	//// --- 調整パラメータ ---
-	//float launchSpeed = 80.0f;     // 初速（遠くまで飛ばす）
-	//float upwardBias = 0.7f;       // 上向き成分
-	//float startForwardOffset = 30.0f; // プレイヤー前方にずらす距離
-	//float groundY = 0.0f;          // 地面高さ（必要なら変更）
-
-	//// 開始位置（プレイヤーの少し前）
-	//VECTOR startPos = VAdd(transform_.pos, VScale(forward, startForwardOffset));
-
-	//// 初速度ベクトル（前方＋上方向）
-	//VECTOR velocity = VAdd(VScale(forward, launchSpeed), VScale(up, launchSpeed * upwardBias));
-
-	//// 経路を描画
-	//VECTOR prevPos = startPos;
-
-	//bool reachedGround = false;
-
-	//for (int i = 1; i <= DIVISION; i++)
-	//{
-	//	float t = i * TIME_STEP;
-
-	//	VECTOR nextPos;
-	//	nextPos.x = startPos.x + velocity.x * t;
-	//	nextPos.y = startPos.y + velocity.y * t - 0.5f * GRAVITY * t * t;
-	//	nextPos.z = startPos.z + velocity.z * t;
-
-	//	// 地面より下に行ったら補間して終了
-	//	if (nextPos.y <= groundY)
-	//	{
-	//		float ratio = (prevPos.y - groundY) / (prevPos.y - nextPos.y);
-	//		VECTOR hitPos = VAdd(prevPos, VScale(VSub(nextPos, prevPos), ratio));
-	//		DrawLine3D(prevPos, hitPos, GetColor(255, 255, 0));
-	//		DrawSphere3D(hitPos, 5.0f, 8, GetColor(255, 0, 0), GetColor(255, 0, 0), TRUE);
-	//		reachedGround = true;
-	//		break;
-	//	}
-
-	//	DrawLine3D(prevPos, nextPos, GetColor(255, 255, 0));
-	//	prevPos = nextPos;
-	//}
-
-	//// 念のため「途中で止まったかどうか」を確認する可視マーカー
-	//if (!reachedGround)
-	//{
-	//	DrawSphere3D(prevPos, 5.0f, 8, GetColor(0, 255, 0), GetColor(255, 0, 0), TRUE);
-	//}
 }
 
 void Player::DrawChargeGauge(void)
@@ -804,7 +750,9 @@ void Player::CalcGravityPow(void)
 
 	//重力
 	//重力を作る
+	// メンバ変数 jumpPow_ に重力計算を行う(加速度)
 	VECTOR gravity = VScale(dirGravity, gravityPow);
+	jumpPow_ = VAdd(jumpPow_, gravity);
 
 	//内積
 	float dot = VDot(dirGravity, jumpPow_);

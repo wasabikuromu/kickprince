@@ -5,6 +5,7 @@
 #include "../Object/Planet.h"
 #include "../Object/Player.h"
 #include "../Object/AllyBase.h"
+#include "../Object/EnemyBase.h"
 #include "GravityManager.h"
 
 GravityManager* GravityManager::instance_ = nullptr;
@@ -12,7 +13,7 @@ GravityManager* GravityManager::instance_ = nullptr;
 GravityManager::GravityManager(void)
 {
 	player_ = nullptr;
-	enemyBase_ = nullptr;
+	allyBase_ = nullptr;
 	preDirGravity_ = AsoUtility::DIR_D;
 	dirGravity_ = AsoUtility::DIR_D;
 	dirUpGravity_ = AsoUtility::DIR_U;
@@ -123,7 +124,12 @@ void GravityManager::SetPlayer(std::shared_ptr<Player> player)
 	player_ = player;
 }
 
-void GravityManager::SetEnemyBase(std::shared_ptr<AllyBase> enemy)
+void GravityManager::SetAllyBase(std::shared_ptr<AllyBase> ally)
+{
+	allyBase_ = ally;
+}
+
+void GravityManager::SetEnemyBase(std::shared_ptr<EnemyBase> enemy)
 {
 	enemyBase_ = enemy;
 }
@@ -197,7 +203,7 @@ VECTOR GravityManager::CalcDirGravity(void) const
 		return ret;
 	}
 
-	if (activePlanet_.lock() == nullptr || enemyBase_ == nullptr)
+	if (activePlanet_.lock() == nullptr || allyBase_ == nullptr)
 	{
 		return ret;
 	}

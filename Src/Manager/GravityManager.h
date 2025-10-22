@@ -6,6 +6,7 @@ class SceneManager;
 class Planet;
 class Player;
 class AllyBase;
+class EnemyBase;
 
 class GravityManager
 {
@@ -45,13 +46,17 @@ public:
 	// 現在プレイしている惑星
 	std::weak_ptr<Planet> GetActivePlanet(void) const;
 
-	// 現在プレイしている惑星を変更する
+	//現在プレイしている惑星を変更する
 	void ChangeActivePlanet(std::weak_ptr<Planet> planet);
 
-	// 操作プレイヤーをセット
+	//操作プレイヤーをセット
 	void SetPlayer(std::shared_ptr<Player> player);
-	//エネミー
-	void SetEnemyBase(std::shared_ptr<AllyBase> enemy);
+
+	//味方
+	void SetAllyBase(std::shared_ptr<AllyBase> ally);
+
+	//敵
+	void SetEnemyBase(std::shared_ptr<EnemyBase> enemy);
 
 	const Transform& GetTransform(void) const;
 	
@@ -82,7 +87,11 @@ protected:
 	// プレイヤー
 	std::shared_ptr<Player> player_;
 
-	std::shared_ptr<AllyBase>enemyBase_;
+	//味方
+	std::shared_ptr<AllyBase> allyBase_;
+
+	//敵
+	std::shared_ptr<EnemyBase> enemyBase_;
 
 	// 現在プレイしている惑星
 	std::weak_ptr<Planet> activePlanet_;

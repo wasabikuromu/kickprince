@@ -45,9 +45,9 @@ void GameScene::Init(void)
 
 	//敵
 	BossCreate();
+
 	//味方のモデル
 	AllyCreate();
-
 
 	player_->SetEnemy(&Allys_);
 
@@ -110,8 +110,17 @@ void GameScene::Update(void)
 	//通常時のゲーム進行（ポーズされてないときだけ）
 	//-------------------------
 
-	if (ins.IsTrgDown(KEY_INPUT_R)) {
-		mainCamera->ChangeMode(Camera::MODE::SIDE_VIEW);
+	static bool isSideViewActive = false;
+
+	if (ins.IsTrgDown(KEY_INPUT_R))
+	{
+		isSideViewActive = !isSideViewActive; // トグル切り替え
+		if (mainCamera)
+		{
+			mainCamera->ChangeMode(
+				isSideViewActive ? Camera::MODE::SIDE_VIEW : Camera::MODE::FOLLOW
+			);
+		}
 	}
 	
 	uiDisplayFrame_++;
@@ -277,8 +286,8 @@ void GameScene::AllyCreate(void)
 	};
 
 	std::vector<EnemySpawnData> spawnList = {
-		//{ AllyBase::TYPE::RED,   -spacing }, // 左
-		//{ AllyBase::TYPE::BLUE,   0.0f     }, // 中央
+		{ AllyBase::TYPE::RED,   -spacing }, // 左
+		{ AllyBase::TYPE::BLUE,   0.0f     }, // 中央
 		{ AllyBase::TYPE::BLACK,  spacing  }  // 右
 	};
 
