@@ -21,7 +21,8 @@ AllyBase::AllyBase()
 	scene_(nullptr),
 	enemy_(nullptr),
 	movePow_(AsoUtility::VECTOR_ZERO),
-	isBlowedEnd_(false)   // 初期値
+	isBlowedEnd_(false),   // 初期値
+	initFall_(false)
 {
 	animationController_ = nullptr;
 
@@ -137,6 +138,24 @@ void AllyBase::UpdateAttack(void)
 {
 	animationController_->Play((int)ANIM_TYPE::ATTACK, false);
 
+	if (!initFall_)
+	{
+		//攻撃開始時点で落下速度初期化
+		initFall_ = true;
+	}
+
+	//ゆっくり落下処理
+	const float gravity = 0.3f;          // 通常よりかなり小さい重力（例: 通常1.0fくらい）
+	velocity_.y -= gravity;              // 下方向に加速
+	transform_.pos.y += velocity_.y;     // 位置に反映
+
+	//地面との接地判定
+	if (transform_.pos.y < defaultPos_.y)
+	{
+		transform_.pos.y = defaultPos_.y;
+		velocity_.y = 0.0f;
+	}
+
 	//攻撃タイミング
 	if (!isAttack_ && isAttack_P)
 	{
@@ -235,6 +254,11 @@ void AllyBase::SetAlive(bool alive)
 AllyBase::TYPE AllyBase::GetEnemyType(void) const
 {
 	return enemyType_;
+}
+
+bool AllyBase::IsBlow(void) const
+{
+	return isBlow_ || state_ == STATE::BLOW;
 }
 
 void AllyBase::Damage(int damage,float chargeRate)
@@ -371,6 +395,27 @@ void AllyBase::CollisionCapsule(void)
 		}
 		//検出した地面ポリゴン情報の後始末
 		MV1CollResultPolyDimTerminate(hits);
+	}
+}
+
+void AllyBase::TriggerAttackWhileBlow(void)
+{
+	if (state_ == STATE::BLOW)
+	{
+		// 攻撃状態へ
+		ChangeState(STATE::ATTACK);
+
+		// 吹っ飛び中の上昇を打ち切る
+		if (velocity_.y > 0.0f)
+		{
+			velocity_.y = 0.0f; // 上方向の力を完全にカット
+		}
+
+		ChangeState(STATE::ATTACK);
+
+		// 攻撃モーションやSEなど
+		//SoundManager::GetInstance().Play(SoundManager::SRC::E_ATTACK_SE, Sound::TIMES::FORCE_ONCE);
+		animationController_->Play((int)ANIM_TYPE::ATTACK, false);
 	}
 }
 

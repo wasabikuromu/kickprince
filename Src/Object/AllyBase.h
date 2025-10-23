@@ -147,7 +147,13 @@ public:
 	bool IsAlive(void);			//生存判定
 	void SetAlive(bool alive);	//生存判定
 
+	// 吹っ飛び中かどうかを返す
+	bool IsBlow(void) const;
+
 	void Damage(int damage,float chargeRate);	//ダメージを受ける
+
+	//吹っ飛び中攻撃
+	void TriggerAttackWhileBlow(void);
 
 	TYPE GetEnemyType(void) const;
 	TYPE enemyType_;	//敵のタイプ
@@ -198,6 +204,8 @@ protected:
 	int attackPow_; //攻撃力
 
 	VECTOR jumpPow_;
+
+	bool initFall_; //攻撃落下初期化フラグ
 
 	bool isAlive_;	//生存判定
 	bool isAttack_ = false;		//攻撃判定

@@ -112,7 +112,8 @@ void GameScene::Update(void)
 
 	static bool isSideViewActive = false;
 
-	if (ins.IsTrgDown(KEY_INPUT_R))
+	if (ins.IsTrgDown(KEY_INPUT_R)||
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::LB))
 	{
 		isSideViewActive = !isSideViewActive; // ÉgÉOÉãêÿÇËë÷Ç¶
 		if (mainCamera)

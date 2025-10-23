@@ -143,6 +143,20 @@ void Player::Update(void)
 
 	//ƒ_ƒEƒ“ˆ—
 	UpdateDown(1.0f);
+
+	// ‚Á”ò‚Ñ–¡•û‚Ö‚ÌUŒ‚–½—ß
+	if (CheckHitKey(KEY_INPUT_SPACE) ||
+		ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::LEFT))
+	{
+		for (auto& ally : *ally_)
+		{
+			if (ally && ally->IsBlow()) // © ‚Á”ò‚Ñ’†‚Ì–¡•û‚¾‚¯
+			{
+				ally->TriggerAttackWhileBlow();
+				break; // 1‘Ì‚¾‚¯”­“®
+			}
+		}
+	}
 }
 
 void Player::UpdateDown(float deltaTime)
