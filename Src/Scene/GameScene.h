@@ -15,6 +15,12 @@ class GameScene : public SceneBase
 {
 public:
 
+	enum class MODE {
+		FOLLOW,       // プレイヤー追尾
+		ALLY_FOLLOW,  // 味方追尾
+		SIDE_VIEW     // 固定サイドビュー
+	};
+
 	static constexpr int ENCOUNT = 300;		//エンカウンタ
 	static constexpr int ENEMY_MAX = 200;	//最大出現数
 	static constexpr int ENE_ENC = 30;		//最大許容量
@@ -115,6 +121,9 @@ private:
 
 	bool uiFadeStart_ = false;
 	int uiFadeFrame_ = 0;
+
+	//-1なら追尾していない状態
+	int followAllyIndex_ = -1; 
 
 	// 設定開く
 	int imgOpeGear_;

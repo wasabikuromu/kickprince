@@ -52,6 +52,10 @@ void Camera::SetBeforeDraw(void)
 			break;
 		case Camera::MODE::SIDE_VIEW:
 			SetBeforeDrawSideView();
+			break;
+		case Camera::MODE::ALLY_FOLLOW:
+			SetBeforeDrawFollow();
+			break;
 		}
 	}
 
@@ -110,14 +114,14 @@ float Camera::GetHorizontalAngleRad(void) const
 	return angles_.y;
 }
 
-void Camera::ChangeMode(MODE mode)
+void Camera::ChangeMode(MODE newMode)
 {
 
 	// カメラの初期設定
 	SetDefault();
 
 	// カメラモードの変更
-	mode_ = mode;
+	mode_ = newMode;
 
 	// 変更時の初期化処理
 	switch (mode_)
@@ -130,6 +134,11 @@ void Camera::ChangeMode(MODE mode)
 		break;
 	}
 
+}
+
+Camera::MODE Camera::GetMode() const
+{
+	return mode_;
 }
 
 void Camera::SetDefault(void)

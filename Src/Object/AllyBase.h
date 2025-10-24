@@ -162,6 +162,8 @@ public:
 	VECTOR GetCollisionPos(void)const;	//衝突用の中心座標の取得
 	float GetCollisionRadius(void);		//衝突用の球体半径の取得
 
+	//const Transform* GetTransform() const { return &transform_; }
+
 	void SetGameScene(GameScene* scene);
 
 	void DrawDebug(void);	//デバッグ用

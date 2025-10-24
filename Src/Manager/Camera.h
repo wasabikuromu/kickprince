@@ -37,7 +37,8 @@ public:
 		FIXED_POINT,
 		FOLLOW,
 		SIDE_VIEW,
-		SELF_SHOT
+		SELF_SHOT,
+		ALLY_FOLLOW
 	};
 
 	Camera(void);
@@ -67,6 +68,8 @@ public:
 
 	// カメラモードの変更
 	void ChangeMode(MODE mode);
+
+	MODE GetMode() const;
 
 	// 追従対象の設定
 	void SetFollow(const Transform* follow);
@@ -99,6 +102,9 @@ private:
 
 	// カメラの上方向
 	VECTOR cameraUp_;
+
+	// 現在のモード
+	//MODE mode_ = MODE::FOLLOW;
 
 	// カメラを初期位置に戻す
 	void SetDefault(void);

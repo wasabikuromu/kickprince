@@ -101,29 +101,156 @@ void GameScene::Init(void)
 
 void GameScene::Update(void)
 {
+	//cnt++;
+	//InputManager& ins = InputManager::GetInstance();
+
+	//if (PauseMenu()) return; //ポーズ中ならここで止める
+
+	////-------------------------
+	////通常時のゲーム進行（ポーズされてないときだけ）
+	////-------------------------
+
+	//static bool isSideViewActive = false;
+	//static bool isAllyFollowActive = false; // ★Ally追尾中かどうか
+
+	//// カメラ切り替え（Rキー or LB）
+	//if (ins.IsTrgDown(KEY_INPUT_R) ||
+	//	ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_RIGHT))
+	//{
+	//	// ---- サイドビュー切り替え ----
+	//	isSideViewActive = !isSideViewActive;
+	//	if (mainCamera)
+	//	{
+	//		mainCamera->ChangeMode(
+	//			isSideViewActive ? Camera::MODE::SIDE_VIEW : Camera::MODE::FOLLOW
+	//		);
+	//		mainCamera->SetFollow(&player_->GetTransform()); // ←サイドビュー解除後はプレイヤー追尾に戻す
+	//	}
+	//}
+
+	//// ---- Ally追尾切り替え（例：Tキー or RB）----
+	//if (ins.IsTrgDown(KEY_INPUT_T) ||
+	//	ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_LEFT))
+	//{
+	//	isAllyFollowActive = !isAllyFollowActive;
+
+	//	if (mainCamera)
+	//	{
+	//		if (isAllyFollowActive)
+	//		{
+	//			//Ally追尾開始（Player操作不可）
+	//			mainCamera->SetFollow(&Allys_[0]->GetTransform());
+	//			mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
+	//			player_->SetControlEnabled(false);
+	//		}
+	//		else
+	//		{
+	//			//Player追尾に戻す（Player操作可能）
+	//			mainCamera->SetFollow(&player_->GetTransform());
+	//			mainCamera->ChangeMode(Camera::MODE::FOLLOW);
+	//			player_->SetControlEnabled(true);
+	//		}
+	//	}
+	//}
+
+	////カメラモードによる操作制限
+	//if (mainCamera->GetMode() == Camera::MODE::ALLY_FOLLOW)
+	//{
+	//	player_->SetControlEnabled(false);
+	//}
+	//else
+	//{
+	//	player_->SetControlEnabled(true);
+	//}
+
+	//
+	//uiDisplayFrame_++;
+
+	//skyDome_->Update();
+	//stage_->Update();
+	//player_->Update();
+
+	//for (auto& ally : Allys_) {
+	//	if (!ally) continue;
+	//	ally->Update();
+	//}
+
+	//for (auto& enemy : enemys_) {
+	//	if (!enemy) continue;
+	//	enemy->Update();
+	//}
+
 	cnt++;
 	InputManager& ins = InputManager::GetInstance();
 
-	if (PauseMenu()) return; //ポーズ中ならここで止める
+	if (PauseMenu()) return;
 
 	//-------------------------
-	//通常時のゲーム進行（ポーズされてないときだけ）
+	// カメラモード管理
 	//-------------------------
 
-	static bool isSideViewActive = false;
+	static Camera::MODE cameraMode = Camera::MODE::FOLLOW;
 
-	if (ins.IsTrgDown(KEY_INPUT_R)||
-		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::LB))
+	// ---- 右入力で順送り ----
+	if (ins.IsTrgDown(KEY_INPUT_R) ||
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_RIGHT))
 	{
-		isSideViewActive = !isSideViewActive; // トグル切り替え
-		if (mainCamera)
+		switch (cameraMode)
 		{
-			mainCamera->ChangeMode(
-				isSideViewActive ? Camera::MODE::SIDE_VIEW : Camera::MODE::FOLLOW
-			);
+		case Camera::MODE::FOLLOW:
+			cameraMode = Camera::MODE::SIDE_VIEW;
+			mainCamera->ChangeMode(Camera::MODE::SIDE_VIEW);
+			player_->SetControlEnabled(false);
+			break;
+
+		case Camera::MODE::SIDE_VIEW:
+			cameraMode = Camera::MODE::ALLY_FOLLOW;
+			mainCamera->SetFollow(&Allys_[0]->GetTransform());
+			mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
+			player_->SetControlEnabled(false);
+			break;
+
+		case Camera::MODE::ALLY_FOLLOW:
+			cameraMode = Camera::MODE::FOLLOW;
+			mainCamera->SetFollow(&player_->GetTransform());
+			mainCamera->ChangeMode(Camera::MODE::FOLLOW);
+			player_->SetControlEnabled(true);
+			break;
 		}
 	}
-	
+
+	// ---- 左入力で逆送り ----
+	if (ins.IsTrgDown(KEY_INPUT_T) ||
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_LEFT))
+	{
+		switch (cameraMode)
+		{
+		case Camera::MODE::FOLLOW:
+			cameraMode = Camera::MODE::ALLY_FOLLOW;
+			mainCamera->SetFollow(&Allys_[0]->GetTransform());
+			mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
+			player_->SetControlEnabled(false);
+			break;
+
+		case Camera::MODE::ALLY_FOLLOW:
+			cameraMode = Camera::MODE::SIDE_VIEW;
+			mainCamera->ChangeMode(Camera::MODE::SIDE_VIEW);
+			player_->SetControlEnabled(false);
+			break;
+
+		case Camera::MODE::SIDE_VIEW:
+			cameraMode = Camera::MODE::FOLLOW;
+			mainCamera->SetFollow(&player_->GetTransform());
+			mainCamera->ChangeMode(Camera::MODE::FOLLOW);
+			player_->SetControlEnabled(true);
+			break;
+		}
+	}
+
+	//-------------------------
+	// 通常の更新処理
+	//-------------------------
+
 	uiDisplayFrame_++;
 
 	skyDome_->Update();

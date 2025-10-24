@@ -136,7 +136,7 @@ void AllyBase::UpdatePlay(void)
 
 void AllyBase::UpdateAttack(void)
 {
-	animationController_->Play((int)ANIM_TYPE::ATTACK, false);
+	//animationController_->Play((int)ANIM_TYPE::ATTACK, false);
 
 	if (!initFall_)
 	{
@@ -178,6 +178,8 @@ void AllyBase::UpdateAttack(void)
 
 void AllyBase::UpdateBlow(void)
 {    
+	auto& ins = InputManager::GetInstance();
+
 	// 吹っ飛びアニメ（飛んでる間ずっと再生）
 	animationController_->Play((int)ANIM_TYPE::SKY, true);
 
@@ -187,13 +189,19 @@ void AllyBase::UpdateBlow(void)
 	// 移動
 	transform_.pos = VAdd(transform_.pos, velocity_);
 
-	// 落下して地面に着いたら
-	if (transform_.pos.y < defaultPos_.y && velocity_.y < 0)   // ← 下降中かつ地面に着いた時だけ
+	// 攻撃ボタンが押されたら攻撃に移行
+	if (CheckHitKey(KEY_INPUT_SPACE)||
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::LEFT))
+	{
+		TriggerAttackWhileBlow();
+		return; // 状態切り替え後にこれ以上処理しない
+	}
+
+	if (transform_.pos.y < defaultPos_.y && velocity_.y < 0)
 	{
 		transform_.pos.y = defaultPos_.y;
 		velocity_ = AsoUtility::VECTOR_ZERO;
 		isBlow_ = false;
-
 		isBlowedEnd_ = true;
 		ChangeState(STATE::IDLE);
 	}
@@ -402,18 +410,16 @@ void AllyBase::TriggerAttackWhileBlow(void)
 {
 	if (state_ == STATE::BLOW)
 	{
-		// 攻撃状態へ
-		ChangeState(STATE::ATTACK);
-
-		// 吹っ飛び中の上昇を打ち切る
+		//吹っ飛び中の上昇を打ち切る
 		if (velocity_.y > 0.0f)
 		{
 			velocity_.y = 0.0f; // 上方向の力を完全にカット
 		}
 
+		//攻撃状態へ
 		ChangeState(STATE::ATTACK);
 
-		// 攻撃モーションやSEなど
+		//攻撃モーションやSEなど
 		//SoundManager::GetInstance().Play(SoundManager::SRC::E_ATTACK_SE, Sound::TIMES::FORCE_ONCE);
 		animationController_->Play((int)ANIM_TYPE::ATTACK, false);
 	}
@@ -618,6 +624,7 @@ void AllyBase::ChangeState(STATE state)
 
 	//各状態遷移の初期処理
 	stateChanges_[state_]();
+
 }
 
 void AllyBase::ChangeStateNone(void)
@@ -637,6 +644,9 @@ void AllyBase::ChangeStatePlay(void)
 void AllyBase::ChangeStateAttack(void)
 {
 	stateUpdate_ = std::bind(&AllyBase::UpdateAttack, this);
+	animationController_->Play((int)ANIM_TYPE::ATTACK, false);
+	initFall_ = false;
+	isAttack_ = false;
 }
 
 void AllyBase::ChangeStateBlow(void)

@@ -191,6 +191,12 @@ public:
 	//衝突用の球体半径の取得
 	float GetCollisionRadius(void);
 
+	//const Transform* GetTransform() const { return &transform_; }
+
+	//操作可能？
+	void SetControlEnabled(bool enabled);  // ← 追加
+	bool IsControlEnabled() const;         // ← 追加
+
 	//エネミーの衝突用座標
 	const std::vector<std::shared_ptr<AllyBase>>& GetEnemyCollision(void) const;
 	
@@ -280,6 +286,9 @@ private:
 	bool canMove_;					//移動が可能かどうか
 	float stepRotTime_;				//回転補間の進行を管理するタイマー(残り時間)
 	void CalcGravityPow(void);		//移動量の計算
+
+	//操作可能？
+	bool controlEnabled_ = true;
 
 	//回転
 	Quaternion playerRotY_;

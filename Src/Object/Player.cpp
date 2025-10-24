@@ -133,30 +133,21 @@ void Player::Init(void)
 
 void Player::Update(void)
 {
-	//更新ステップ
-	stateUpdate_();
-
-	transform_.Update();
-
-	//アニメーション再生
-	animationController_->Update();
-
-	//ダウン処理
-	UpdateDown(1.0f);
-
-	// 吹っ飛び味方への攻撃命令
-	if (CheckHitKey(KEY_INPUT_SPACE) ||
-		ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::LEFT))
+	//操作禁止中なら、入力に関わる処理をスキップ
+	if (!controlEnabled_)
 	{
-		for (auto& ally : *ally_)
-		{
-			if (ally && ally->IsBlow()) // ← 吹っ飛び中の味方だけ
-			{
-				ally->TriggerAttackWhileBlow();
-				break; // 1体だけ発動
-			}
-		}
+		//入力を受け付けず、位置・アニメーション・ダウン処理だけ行う
+		transform_.Update();
+		animationController_->Update();
+		UpdateDown(1.0f);
+		return;
 	}
+
+	//通常時の更新
+	stateUpdate_();
+	transform_.Update();
+	animationController_->Update();
+	UpdateDown(1.0f);
 }
 
 void Player::UpdateDown(float deltaTime)
@@ -283,6 +274,16 @@ VECTOR Player::GetCollisionPos(void) const
 float Player::GetCollisionRadius(void)
 {
 	return collisionRadius_;
+}
+
+void Player::SetControlEnabled(bool enabled)
+{
+	controlEnabled_ = enabled;
+}
+
+bool Player::IsControlEnabled() const
+{
+	return controlEnabled_;
 }
 
 const std::vector<std::shared_ptr<AllyBase>>& Player::GetEnemyCollision(void) const
