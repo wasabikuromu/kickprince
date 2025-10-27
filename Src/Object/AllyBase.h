@@ -162,8 +162,6 @@ public:
 	VECTOR GetCollisionPos(void)const;	//衝突用の中心座標の取得
 	float GetCollisionRadius(void);		//衝突用の球体半径の取得
 
-	//const Transform* GetTransform() const { return &transform_; }
-
 	void SetGameScene(GameScene* scene);
 
 	void DrawDebug(void);	//デバッグ用
@@ -172,11 +170,12 @@ public:
 	void SetPlayer(std::shared_ptr<Player> player);
 	void SetEnemy(const std::vector<std::shared_ptr<EnemyBase>>* enemys);
 	
-
 protected:
-	VECTOR defaultPos_ = VGet(0, 0, 0);  // 初期位置
-	VECTOR velocity_ = VGet(0, 0, 0);  // 吹っ飛び中の速度
-	bool isBlow_ = false;            // 吹っ飛び中フラグ
+	VECTOR defaultPos_ = VGet(0, 0, 0);  //初期位置
+	VECTOR velocity_ = VGet(0, 0, 0);  //吹っ飛び中の速度
+	bool isBlow_ = false;            //吹っ飛び中フラグ
+
+	bool isKicked_ = false;    //追加：蹴られ中フラグ
 
 	int damageCnt_;
 

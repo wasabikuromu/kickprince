@@ -21,6 +21,8 @@
 #include "../Object/Planet.h"
 #include "GameScene.h"
 
+static Camera::MODE cameraMode = Camera::MODE::FOLLOW;
+
 GameScene::GameScene(void)
 {
 	player_ = nullptr;
@@ -310,6 +312,17 @@ void GameScene::AddItem(std::shared_ptr<Item> item)
 const std::vector<std::shared_ptr<AllyBase>>& GameScene::GetEnemies() const
 {
 	return Allys_;
+}
+
+void GameScene::OnAllyKicked(AllyBase* kickedAlly)
+{
+	if (!kickedAlly || !mainCamera) return;
+
+	mainCamera->SetFollow(&kickedAlly->GetTransform());
+	mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
+	cameraMode = Camera::MODE::ALLY_FOLLOW;
+
+	player_->SetControlEnabled(false);
 }
 
 void GameScene::AllyCreate(void)

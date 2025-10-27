@@ -289,6 +289,12 @@ void AllyBase::Damage(int damage,float chargeRate)
 
 		velocity_ = VAdd(forwardVel, upVel);
 		ChangeState(STATE::BLOW);
+
+		// ƒJƒƒ‰‚ð‚±‚Ì–¡•û‚ÉØ‚è‘Ö‚¦‚é
+		if (scene_)
+		{
+			scene_->OnAllyKicked(this);
+		}
 	}
 }
 

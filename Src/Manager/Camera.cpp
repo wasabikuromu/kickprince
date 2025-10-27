@@ -8,8 +8,6 @@
 #include "../Object/Common/Transform.h"
 #include "Camera.h"
 
-//ûü–ì
-
 Camera::Camera(void)
 {
 	angles_ = VECTOR();
