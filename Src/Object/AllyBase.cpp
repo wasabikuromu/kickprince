@@ -94,6 +94,20 @@ void AllyBase::Update(void)
 
 	//アニメーション再生
 	animationController_->Update();
+
+	//カメラ復帰
+	if (shouldReturnCamera_)
+	{
+		returnCameraTimer_ -= 1.0f / 60.0f; // 毎フレーム60FPS基準
+		if (returnCameraTimer_ <= 0.0f)
+		{
+			shouldReturnCamera_ = false;
+			if (scene_)
+			{
+				scene_->ReturnToPlayerCamera();
+			}
+		}
+	}
 }
 
 #pragma region StateごとのUpdate
@@ -173,6 +187,10 @@ void AllyBase::UpdateAttack(void)
 		isAttack_ = false;
 		//CollisionAttack();
 		ChangeState(STATE::IDLE);
+
+		//数秒後にカメラ復帰予約
+		shouldReturnCamera_ = true;
+		returnCameraTimer_ = 2.0f;
 	}
 }
 
@@ -204,6 +222,10 @@ void AllyBase::UpdateBlow(void)
 		isBlow_ = false;
 		isBlowedEnd_ = true;
 		ChangeState(STATE::IDLE);
+
+		//着地から数秒後にカメラ復帰
+		shouldReturnCamera_ = true;
+		returnCameraTimer_ = 2.0f;
 	}
 }
 #pragma endregion

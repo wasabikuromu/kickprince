@@ -103,6 +103,7 @@ public:
 	const std::vector<std::shared_ptr<AllyBase>>& GetEnemies() const;	//enemy‚Ìî•ñ(pos)‚ğŒ©‚é
 
 	void OnAllyKicked(AllyBase* kickedAlly);
+	void ReturnToPlayerCamera(void);
 
 private:
 	int cnt;

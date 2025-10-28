@@ -325,6 +325,15 @@ void GameScene::OnAllyKicked(AllyBase* kickedAlly)
 	player_->SetControlEnabled(false);
 }
 
+void GameScene::ReturnToPlayerCamera(void)
+{
+	//プレイヤー追尾に戻す
+	cameraMode = Camera::MODE::FOLLOW;
+	mainCamera->SetFollow(&player_->GetTransform());
+	mainCamera->ChangeMode(Camera::MODE::FOLLOW);
+	player_->SetControlEnabled(true);
+}
+
 void GameScene::AllyCreate(void)
 {
 	Allys_.clear(); // 念のためクリア

@@ -201,6 +201,9 @@ protected:
 	VECTOR collisionPos_;		//Ô‚¢‹…‘Ì‚ÌˆÚ“®ŒãÀ•W
 	VECTOR attackCollisionPos_; //‡‚Ì‹…‘Ì‚ÌˆÚ“®ŒãÀ•W
 
+	float returnCameraTimer_ = 0.0f;
+	bool shouldReturnCamera_ = false;
+
 	int hp_;	// ‘Ì—Í
 	int attackPow_; //UŒ‚—Í
 
