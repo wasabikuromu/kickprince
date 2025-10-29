@@ -122,11 +122,6 @@ void AllyBase::UpdateIdle(void)
 		return; // ずっと待機
 	}
 
-	// 通常の敵だけ攻撃判定を見る
-	if (animationController_->IsEnd() || state_ != STATE::IDLE)
-	{
-		AttackCollisionPos();
-	}
 }
 
 void AllyBase::UpdatePlay(void)
@@ -145,7 +140,7 @@ void AllyBase::UpdatePlay(void)
 	//CalcGravityPow();
 
 	//攻撃範囲に入ったかを見る
-	AttackCollisionPos();
+	//AttackCollisionPos();
 }
 
 void AllyBase::UpdateAttack(void)
@@ -324,7 +319,6 @@ void AllyBase::DrawDamage()
 {
 
 }
-
 
 #pragma region コリジョン
 
@@ -583,7 +577,35 @@ float AllyBase::GetCollisionRadius(void)
 }
 #pragma endregion
 
-void AllyBase::AttackCollisionPos(void)
+//void AllyBase::AttackCollisionPos(void)
+//{
+//	
+//
+//	CollisionAttack();
+//	//プレイヤーを見る
+//	//EnemyToPlayer();
+//}
+
+//void AllyBase::EnemyToPlayer(void)
+//{
+//	//プレイヤーの当たり判定とサイズ
+//	playerCenter_ = player_->GetCollisionPos();
+//	playerRadius_ = player_->GetCollisionRadius();
+//
+//	if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
+//			&& player_->pstate_ != Player::PlayerState::DOWN)
+//	{
+//		isAttack_P = true;
+//		ChangeState(STATE::ATTACK);
+//	}
+//	else if (!AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
+//		|| player_->pstate_ == Player::PlayerState::DOWN)
+//	{
+//		ChangeState(STATE::PLAY);
+//	}
+//}
+
+void AllyBase::CollisionAttack(void)
 {
 	//プレイヤーとの衝突判定
 	//攻撃の方向（エネミー）
@@ -592,32 +614,6 @@ void AllyBase::AttackCollisionPos(void)
 	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
 	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;  // 攻撃の高さ調整
 
-	CollisionAttack();
-	//プレイヤーを見る
-	//EnemyToPlayer();
-}
-
-void AllyBase::EnemyToPlayer(void)
-{
-	//プレイヤーの当たり判定とサイズ
-	playerCenter_ = player_->GetCollisionPos();
-	playerRadius_ = player_->GetCollisionRadius();
-
-	if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
-			&& player_->pstate_ != Player::PlayerState::DOWN)
-	{
-		isAttack_P = true;
-		ChangeState(STATE::ATTACK);
-	}
-	else if (!AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
-		|| player_->pstate_ == Player::PlayerState::DOWN)
-	{
-		ChangeState(STATE::PLAY);
-	}
-}
-
-void AllyBase::CollisionAttack(void)
-{
 	//エネミーとの衝突判定
 	for (const auto& enemy : *enemy_)
 	{

@@ -259,9 +259,9 @@ protected:
 	void DrawDamage();	//ダメージ画像の描画
 
 	//攻撃関係
-	void AttackCollisionPos(void);	//攻撃用関数
-	void EnemyToPlayer(void);		//敵がプレイヤー攻撃
-	void CollisionAttack(void);	//攻撃が当たったか確認する
+	//void AttackCollisionPos(void);	//攻撃用関数
+	//void EnemyToPlayer(void);		//敵がプレイヤー攻撃
+	virtual void CollisionAttack(void);	//攻撃が当たったか確認する
 
 	//状態遷移
 	void ChangeState(STATE state);
