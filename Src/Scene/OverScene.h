@@ -91,7 +91,7 @@ private:
 	static constexpr int revealSpeed_ = 4;
 
 	// キャラクター
-	Transform charactor_;
+	Transform player_;
 
 	// アニメーション
 	std::unique_ptr<AnimationController> animationController_;

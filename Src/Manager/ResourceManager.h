@@ -46,7 +46,7 @@ public:
 		ROTA_ATTACK_ICON,
 		//3Dƒ‚ƒfƒ‹
 		ALLY_RED,
-		ALLY_BULE,
+		ALLY_BLUE,
 		ALLY_BLACK,
 		SPEECH_BALLOON,
 		PLAYER,

@@ -7,7 +7,7 @@ class AllyBule : public AllyBase
 public:
 
 	static constexpr  float SPEED = 7.0f;
-	static constexpr  int HP = 100;
+	static constexpr  int HP = 1;
 
 	//攻撃の位置オフセット
 	static constexpr float ATTACK_FORWARD_OFFSET = 55.0f;	//前方向

@@ -243,8 +243,8 @@ void AllyBase::Draw(void)
 
 	DrawShadow();
 
-	//デッバグ
-	DrawDebug();
+	//デバッグ
+	//DrawDebug();
 
 	//視野範囲の描画
 	//DrawDebugSearchRange();

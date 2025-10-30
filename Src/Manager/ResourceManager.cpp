@@ -38,7 +38,7 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::TITLE, std::move(res));
 
 	// É^ÉCÉgÉãîwåi
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "BackTitle.png");
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title/BackTitle.png");
 	resourcesMap_.emplace(SRC::BACK_TITLE, std::move(res));
 
 	// ÉQÅ[ÉÄâÊñ ÇÃUI
@@ -176,7 +176,7 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::ALLY_RED, std::move(res));
 
 	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Ally/BuleAlly.mv1");
-	resourcesMap_.emplace(SRC::ALLY_BULE, std::move(res));
+	resourcesMap_.emplace(SRC::ALLY_BLUE, std::move(res));
 
 	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Ally/BlackAlly.mv1");
 	resourcesMap_.emplace(SRC::ALLY_BLACK, std::move(res));

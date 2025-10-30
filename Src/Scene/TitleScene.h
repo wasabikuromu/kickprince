@@ -24,9 +24,10 @@ public:
 	static constexpr float PLAYER_SIZE = 0.01f;
 	static constexpr float ENEMY_SIZE = 1.3f;
 
-	static constexpr float ANIMATION_TIME = 20.0f;
+	static constexpr float ANIMATION_TIME = 25.0f;
 
 	static constexpr int PLAYER_ANIM_NUM = 2;
+	static constexpr int AllY_ANIM_NUM = 1;			//味方達のアニメーションナンバー
 	static constexpr int ENEMY_ANIM_NUM = 1;
 
 	static constexpr float PLAYER_SPEED = 5.0f;
@@ -105,7 +106,6 @@ private:
 
 	// 画像
 	int imgTitle_;
-	int img3D_;
 	int imgBackTitle_;
 	int imgUDCursor_;
 	int imgConfirmEnd_;
@@ -135,14 +135,18 @@ private:
 	int confirmAnimFrame_ = 0;				// 表示アニメーション用フレーム
 	const int CONFIRM_ANIM_DURATION = 20;	// アニメーション時間
 
-	// キャラクター
-	Transform charactor_;
-
-	// 敵キャラクター
-	Transform ally_;
-
-	// アニメーション
+	//アニメーション
+	Transform player_;	//プレイヤー
+	Transform redAlly_; //赤味方
+	Transform blueAlly_; //青味方
+	Transform blackAlly_; //黒味方
+	Transform enemy_;	//敵
+	
+	//アニメーションコントローラー
 	std::unique_ptr<AnimationController> animationControllerPlayer_;
+	std::unique_ptr<AnimationController> animationControllerRedAlly_;
+	std::unique_ptr<AnimationController> animationControllerBlueAlly_;
+	std::unique_ptr<AnimationController> animationControllerBlackAlly_;
 	std::unique_ptr<AnimationController> animationControllerEnemy_;
 
 	bool endLoadFlame_;

@@ -79,15 +79,15 @@ void OverScene::Init(void)
 	SoundManager::GetInstance().Play(SoundManager::SRC::GAMEOVER_BGM, Sound::TIMES::ONCE);
 
 	// キャラ
-	charactor_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER));
-	charactor_.pos = { PLAYER_POS };
-	charactor_.scl = { PLAYER_SIZE };
-	charactor_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f);
-	charactor_.Update();
+	player_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER));
+	player_.pos = { PLAYER_POS };
+	player_.scl = { PLAYER_SIZE };
+	player_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f);
+	player_.Update();
 
 	// アニメーションの設定
 	std::string path = Application::PATH_MODEL + "Player/";
-	animationController_ = std::make_unique<AnimationController>(charactor_.modelId);
+	animationController_ = std::make_unique<AnimationController>(player_.modelId);
 	animationController_->Add(0, path + "Sword And Shield Death.mv1", ANIM_SPEED);
 	animationController_->Play(0);
 
@@ -152,11 +152,11 @@ void OverScene::Draw(void)
 	DrawGraph(Application::SCREEN_SIZE_X/ VALUE_TWO - GAMEOVER_IMG_X_OFFSET, GAMEOVER_IMG_Y,imgGameOver_,true);
 
 	// プレイヤーモデル描画
-	MV1DrawModel(charactor_.modelId);
+	MV1DrawModel(player_.modelId);
 
 	// 光の描画（プレイヤー周辺）
 	VECTOR screenPos;
-	if (WorldToScreen(charactor_.pos, screenPos))
+	if (WorldToScreen(player_.pos, screenPos))
 	{
 		int alpha = LIGHT_ALPHA;
 		SetDrawBlendMode(DX_BLENDMODE_ADD, alpha);
@@ -211,10 +211,10 @@ void OverScene::Draw(void)
 
 void OverScene::Release(void)
 {
-	if (charactor_.modelId != -1)
+	if (player_.modelId != -1)
 	{
-		MV1DeleteModel(charactor_.modelId);
-		charactor_.modelId = -1;
+		MV1DeleteModel(player_.modelId);
+		player_.modelId = -1;
 	}
 	SoundManager::GetInstance().Stop(SoundManager::SRC::GAMEOVER_BGM);
 }

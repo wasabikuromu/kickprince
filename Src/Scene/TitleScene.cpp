@@ -42,7 +42,6 @@ void TitleScene::Init(void)
 	imgYesSel_ = resMng_.Load(ResourceManager::SRC::SELECT_YES).handleId_;		//選択中はい画像
 	imgNoSel_ = resMng_.Load(ResourceManager::SRC::SELECT_NO).handleId_;		//選択中いいえ画像
 
-	img3D_ = LoadGraph("Data/Image/Title/3D.png");
 	imgP1_[0] = LoadGraph("Data/Image/Title/1player1.png");
 	imgP1_[1] = LoadGraph("Data/Image/Title/1player2.png");
 	imgP2_[0] = LoadGraph("Data/Image/Title/2player1.png");
@@ -54,8 +53,11 @@ void TitleScene::Init(void)
 
 	// 音楽
 	SoundManager::GetInstance().Play(SoundManager::SRC::TITLE_BGM, Sound::TIMES::LOOP);
-	charactor_.SetModel(resMng_.Load(ResourceManager::SRC::PLAYER).handleId_);
-	ally_.SetModel(resMng_.Load(ResourceManager::SRC::DOG).handleId_);
+	player_.SetModel(resMng_.Load(ResourceManager::SRC::PLAYER).handleId_);
+	redAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_RED).handleId_);
+	blueAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_BLUE).handleId_);
+	blackAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_BLACK).handleId_);
+	enemy_.SetModel(resMng_.Load(ResourceManager::SRC::BOSS).handleId_);
 	SetUseASyncLoadFlag(false);
 	float size;
 
@@ -65,31 +67,75 @@ void TitleScene::Init(void)
 
 void TitleScene::NewFunction()
 {
-	// 初期位置は左端付近にプレイヤー、その左側に敵
-	charactor_.pos = { PLAYER_POS_X, CHARACTER_POS_Y, CHARACTER_POS_Z };
-	charactor_.scl = { PLAYER_SIZE, PLAYER_SIZE, PLAYER_SIZE };
-	charactor_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f);
-	charactor_.Update();
+	//味方達
+	//-------------------------------------------------------------------------
+	redAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_RED).handleId_);
+	blueAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_BLUE).handleId_);
+	blackAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_BLACK).handleId_);
 
-	ally_.pos = { ENEMY_POS_X, CHARACTER_POS_Y, CHARACTER_POS_Z };
-	ally_.scl = { ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE };
-	ally_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f);
-	ally_.Update();
+	redAlly_.pos = { -375.0f,-250.0f,0.0f };
+	blueAlly_.pos = { -325.0f,-210.0f,0.0f };
+	blackAlly_.pos = { -275.0f,-170.0f,0.0f };
 
-	// 右向きスタート（1:右向き、-1:左向き）
-	enemyDirection_ = 1;
+	redAlly_.scl = { 0.85f,0.85f,0.85f };
+	blueAlly_.scl = { 0.85f,0.85f,0.85f };
+	blackAlly_.scl = { 0.85f,0.85f,0.85f };
 
-	// プレイヤーのアニメーション
-	std::string path = Application::PATH_MODEL + "NPlayer/";
-	animationControllerPlayer_ = std::make_unique<AnimationController>(charactor_.modelId);
-	animationControllerPlayer_->Add(0, path + "Player.mv1", ANIMATION_TIME, PLAYER_ANIM_NUM);
-	animationControllerPlayer_->Play(0);
+	redAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-75.0f), 0.0f);
+	blueAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-75.0f), 0.0f);
+	blackAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-75.0f), 0.0f);
 
-	// 敵のアニメーション
-	std::string path1 = Application::PATH_MODEL + "Enemy/Yellow/";
-	animationControllerEnemy_ = std::make_unique<AnimationController>(ally_.modelId);
-	animationControllerEnemy_->Add(0, path1 + "Yellow.mv1", ANIMATION_TIME, ENEMY_ANIM_NUM);
-	animationControllerEnemy_->Play(0);
+	redAlly_.Update();
+	blueAlly_.Update();
+	blackAlly_.Update();
+	//-------------------------------------------------------------------------
+
+	//アニメーション
+	//-------------------------------------------------------------------------
+	animationControllerRedAlly_ = std::make_unique<AnimationController>(redAlly_.modelId);
+	animationControllerBlueAlly_ = std::make_unique<AnimationController>(blueAlly_.modelId);
+	animationControllerBlackAlly_ = std::make_unique<AnimationController>(blackAlly_.modelId);
+
+	animationControllerRedAlly_->Add(0, Application::PATH_MODEL + "Ally/RedAlly.mv1", ANIMATION_TIME, AllY_ANIM_NUM);
+	animationControllerBlueAlly_->Add(0, Application::PATH_MODEL + "Ally/BuleAlly.mv1", ANIMATION_TIME, AllY_ANIM_NUM);
+	animationControllerBlackAlly_->Add(0, Application::PATH_MODEL + "Ally/BlackAlly.mv1", ANIMATION_TIME, AllY_ANIM_NUM);
+
+	animationControllerRedAlly_->Play(0, true);
+	animationControllerBlueAlly_->Play(0, true);
+	animationControllerBlackAlly_->Play(0, true);
+	//-------------------------------------------------------------------------
+
+	//プレイヤー
+	//-------------------------------------------------------------------------
+	player_.SetModel(resMng_.Load(ResourceManager::SRC::PLAYER).handleId_);
+	player_.pos = { -425.0f, -270.0f,1.0f };
+	player_.scl = { 0.018f, 0.018f, 0.018f };
+	player_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-75.0f), 0.0f);
+	player_.Update();
+	//-------------------------------------------------------------------------
+
+	//アニメーション
+	//-------------------------------------------------------------------------
+	animationControllerPlayer_ = std::make_unique<AnimationController>(player_.modelId);
+	animationControllerPlayer_->Add(0, Application::PATH_MODEL + "NPlayer/PPlayer.mv1", 30.0f, 1);
+	animationControllerPlayer_->Play(0, true);
+	//-------------------------------------------------------------------------
+
+	//敵
+	//-------------------------------------------------------------------------
+	enemy_.SetModel(resMng_.Load(ResourceManager::SRC::BOSS).handleId_);
+	enemy_.pos = { 400.0f, -230.0f, 0.0f };
+	enemy_.scl = { 0.25f, 0.25f, 0.25f };
+	enemy_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(60.0f), 0.0f);
+	enemy_.Update();
+	//-------------------------------------------------------------------------
+
+	//アニメーション
+	//-------------------------------------------------------------------------
+	animationControllerEnemy_ = std::make_unique<AnimationController>(enemy_.modelId);
+	animationControllerEnemy_->Add(0, Application::PATH_MODEL + "Enemy/Boss/Boss.mv1", ANIMATION_TIME, 2);
+	animationControllerEnemy_->Play(0, true);
+	//-------------------------------------------------------------------------
 }
 
 void TitleScene::Update(void)
@@ -131,7 +177,7 @@ void TitleScene::Update(void)
 		return;
 	}
 
-	// === 点滅更新 ===
+	//点滅更新
 	blinkFrameCount_++;
 	if (blinkFrameCount_ > ONE_SECOND_FRAME) {
 		blinkFrameCount_ = 0;
@@ -176,42 +222,18 @@ void TitleScene::Update(void)
 		NewFunction();
 	}
 
-	// === キャラクターの移動・向き制御 ===
-
-	charactor_.pos.x += PLAYER_SPEED * enemyDirection_;
-
-	float diffX = charactor_.pos.x - ally_.pos.x;
-	if (enemyDirection_ == 1) {
-		if (diffX > SAFE_DISTANCE) {
-			ally_.pos.x += ENEMY_SPEED;
-			if (ally_.pos.x > charactor_.pos.x - SAFE_DISTANCE)
-				ally_.pos.x = charactor_.pos.x - SAFE_DISTANCE;
-		}
-	}
-	else {
-		if (diffX < -SAFE_DISTANCE) {
-			ally_.pos.x -= ENEMY_SPEED;
-			if (ally_.pos.x < charactor_.pos.x + SAFE_DISTANCE)
-				ally_.pos.x = charactor_.pos.x + SAFE_DISTANCE;
-		}
-	}
-
-	if (charactor_.pos.x > RIGHT_BOUND) {
-		enemyDirection_ = -1;
-	}
-	else if (charactor_.pos.x < LEFT_BOUND) {
-		enemyDirection_ = 1;
-	}
-
-	float yRotDeg = (enemyDirection_ == 1) ? -INVERSION : INVERSION;
-	ally_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(yRotDeg), 0.0f);
-	charactor_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(yRotDeg), 0.0f);
-
+	//キャラクターの移動
 	if (!endLoadFlame_) {
-		ally_.Update();
-		charactor_.Update();
+		player_.Update();
+		redAlly_.Update();
+		blueAlly_.Update();
+		blackAlly_.Update();
+		enemy_.Update();
 
 		animationControllerPlayer_->Update();
+		animationControllerRedAlly_->Update();
+		animationControllerBlueAlly_->Update();
+		animationControllerBlackAlly_->Update();
 		animationControllerEnemy_->Update();
 	}
 }
@@ -223,10 +245,10 @@ void TitleScene::Draw(void)
 	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, black, true);
 
 	// タイトルロゴ表示
+	DrawGraph(0, 0, imgBackTitle_, true);
 	int titleW, titleH;
 	GetGraphSize(imgTitle_, &titleW, &titleH);
 	DrawRotaGraph((Application::SCREEN_SIZE_X / 2), IMG_TITLE_HEIGHT, IMG_TITLE_SIZE, 0, imgTitle_, true);
-	DrawRotaGraph(IMG_3D_WIDTH, cnt_3D - IMG_3D_HEIGHT, IMG_3D_SIZE, 0, img3D_, true);
 
 	#pragma region		ボタン設定
 
@@ -274,8 +296,11 @@ void TitleScene::Draw(void)
 
 	// モデル描画
 	if (!endLoadFlame_) {
-		MV1DrawModel(charactor_.modelId);
-		MV1DrawModel(ally_.modelId);
+		MV1DrawModel(player_.modelId);	
+		MV1DrawModel(redAlly_.modelId);
+		MV1DrawModel(blueAlly_.modelId);
+		MV1DrawModel(blackAlly_.modelId);
+		MV1DrawModel(enemy_.modelId);
 	}
 
 	if (isConfirmingExit_) {
@@ -311,10 +336,10 @@ void TitleScene::Draw(void)
 
 void TitleScene::Release(void)
 {
-	if (charactor_.modelId != -1)
+	if (player_.modelId != -1)
 	{
-		MV1DeleteModel(charactor_.modelId);
-		charactor_.modelId = -1;
+		MV1DeleteModel(player_.modelId);
+		player_.modelId = -1;
 	}
 
 	SoundManager::GetInstance().Stop(SoundManager::SRC::TITLE_BGM);
