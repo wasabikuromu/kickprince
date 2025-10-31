@@ -61,7 +61,7 @@ public:
 	//攻撃の位置オフセット
 	static constexpr float ATTACK_FORWARD_OFFSET = 55.0f;	// 前方向
 	static constexpr float ATTACK_HEIGHT_OFFSET = 100.0f;	// 高さ
-	static constexpr float ATTACK_RADIUS_SIZE = 255.0f;	// 攻撃範囲
+	//static constexpr float ATTACK_RADIUS_SIZE = 50.0f;	// 攻撃範囲
 
 	//ドロップアイテムのサイズと距離しきい値
 	static constexpr float DROP_SCALE_SMALL = 0.1f;
@@ -164,8 +164,7 @@ public:
 
 	void SetGameScene(GameScene* scene);
 
-	void DrawDebug(void);	//デバッグ用
-	void DrawDebugSearchRange(void);
+	void DrawDebug(void);	//デバッグ
 
 	void SetPlayer(std::shared_ptr<Player> player);
 	void SetEnemy(const std::vector<std::shared_ptr<EnemyBase>>* enemys);
@@ -259,8 +258,6 @@ protected:
 	void DrawDamage();	//ダメージ画像の描画
 
 	//攻撃関係
-	//void AttackCollisionPos(void);	//攻撃用関数
-	//void EnemyToPlayer(void);		//敵がプレイヤー攻撃
 	virtual void CollisionAttack(void);	//攻撃が当たったか確認する
 
 	//状態遷移

@@ -73,17 +73,17 @@ void TitleScene::NewFunction()
 	blueAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_BLUE).handleId_);
 	blackAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_BLACK).handleId_);
 
-	redAlly_.pos = { -375.0f,-250.0f,0.0f };
-	blueAlly_.pos = { -325.0f,-210.0f,0.0f };
-	blackAlly_.pos = { -275.0f,-170.0f,0.0f };
+	redAlly_.pos = { -350.0f,-350.0f,100.0f };
+	blueAlly_.pos = { -350.0f,-250.0f,300.0f };
+	blackAlly_.pos = { -350.0f,-25.0f,400.0f };
 
-	redAlly_.scl = { 0.85f,0.85f,0.85f };
-	blueAlly_.scl = { 0.85f,0.85f,0.85f };
-	blackAlly_.scl = { 0.85f,0.85f,0.85f };
+	redAlly_.scl = { 1.0f,1.0f,1.0f };
+	blueAlly_.scl = { 1.0f,1.0f,1.0f };
+	blackAlly_.scl = { 1.0f,1.0f,1.0f };
 
-	redAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-75.0f), 0.0f);
-	blueAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-75.0f), 0.0f);
-	blackAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-75.0f), 0.0f);
+	redAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-80.0f), 0.0f);
+	blueAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-80.0f), 0.0f);
+	blackAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-80.0f), 0.0f);
 
 	redAlly_.Update();
 	blueAlly_.Update();
@@ -96,9 +96,9 @@ void TitleScene::NewFunction()
 	animationControllerBlueAlly_ = std::make_unique<AnimationController>(blueAlly_.modelId);
 	animationControllerBlackAlly_ = std::make_unique<AnimationController>(blackAlly_.modelId);
 
-	animationControllerRedAlly_->Add(0, Application::PATH_MODEL + "Ally/RedAlly.mv1", ANIMATION_TIME, AllY_ANIM_NUM);
-	animationControllerBlueAlly_->Add(0, Application::PATH_MODEL + "Ally/BuleAlly.mv1", ANIMATION_TIME, AllY_ANIM_NUM);
-	animationControllerBlackAlly_->Add(0, Application::PATH_MODEL + "Ally/BlackAlly.mv1", ANIMATION_TIME, AllY_ANIM_NUM);
+	animationControllerRedAlly_->Add(0, Application::PATH_MODEL + "Ally/RedAlly.mv1", ANIMATION_TIME, 4);
+	animationControllerBlueAlly_->Add(0, Application::PATH_MODEL + "Ally/BuleAlly.mv1", ANIMATION_TIME, 4);
+	animationControllerBlackAlly_->Add(0, Application::PATH_MODEL + "Ally/BlackAlly.mv1", ANIMATION_TIME, 4);
 
 	animationControllerRedAlly_->Play(0, true);
 	animationControllerBlueAlly_->Play(0, true);
@@ -108,9 +108,9 @@ void TitleScene::NewFunction()
 	//ÉvÉåÉCÉÑÅ[
 	//-------------------------------------------------------------------------
 	player_.SetModel(resMng_.Load(ResourceManager::SRC::PLAYER).handleId_);
-	player_.pos = { -425.0f, -270.0f,1.0f };
-	player_.scl = { 0.018f, 0.018f, 0.018f };
-	player_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-75.0f), 0.0f);
+	player_.pos = { -400.0f, -75.0f,0.0f };
+	player_.scl = { 0.015f, 0.015f, 0.015f };
+	player_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-80.0f), 0.0f);
 	player_.Update();
 	//-------------------------------------------------------------------------
 
@@ -125,8 +125,8 @@ void TitleScene::NewFunction()
 	//-------------------------------------------------------------------------
 	enemy_.SetModel(resMng_.Load(ResourceManager::SRC::BOSS).handleId_);
 	enemy_.pos = { 400.0f, -230.0f, 0.0f };
-	enemy_.scl = { 0.25f, 0.25f, 0.25f };
-	enemy_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(60.0f), 0.0f);
+	enemy_.scl = { 0.35f, 0.35f, 0.35f };
+	enemy_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(80.0f), 0.0f);
 	enemy_.Update();
 	//-------------------------------------------------------------------------
 

@@ -95,6 +95,8 @@ void AllyBase::Update(void)
 	//アニメーション再生
 	animationController_->Update();
 
+	CollisionAttack();
+
 	//カメラ復帰
 	if (shouldReturnCamera_)
 	{
@@ -244,10 +246,7 @@ void AllyBase::Draw(void)
 	DrawShadow();
 
 	//デバッグ
-	//DrawDebug();
-
-	//視野範囲の描画
-	//DrawDebugSearchRange();
+	DrawDebug();
 }
 
 void AllyBase::Release(void)
@@ -577,34 +576,6 @@ float AllyBase::GetCollisionRadius(void)
 }
 #pragma endregion
 
-//void AllyBase::AttackCollisionPos(void)
-//{
-//	
-//
-//	CollisionAttack();
-//	//プレイヤーを見る
-//	//EnemyToPlayer();
-//}
-
-//void AllyBase::EnemyToPlayer(void)
-//{
-//	//プレイヤーの当たり判定とサイズ
-//	playerCenter_ = player_->GetCollisionPos();
-//	playerRadius_ = player_->GetCollisionRadius();
-//
-//	if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
-//			&& player_->pstate_ != Player::PlayerState::DOWN)
-//	{
-//		isAttack_P = true;
-//		ChangeState(STATE::ATTACK);
-//	}
-//	else if (!AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
-//		|| player_->pstate_ == Player::PlayerState::DOWN)
-//	{
-//		ChangeState(STATE::PLAY);
-//	}
-//}
-
 void AllyBase::CollisionAttack(void)
 {
 	//プレイヤーとの衝突判定
@@ -710,43 +681,8 @@ void AllyBase::DrawDebug(void)
 	DrawFormatString(20, 180, black, "スフィア座標 ： (%0.2f, %0.2f, %0.2f)", s.x, s.y, s.z);
 	DrawFormatString(20, 210, black, "エネミーの移動速度 ： %0.2f", speed_);
 
-	/*a = attackCollisionPos_;
-	DrawSphere3D(a, attackCollisionRadius_, 8, yellow, yellow, false);*/
+	a = attackCollisionPos_;
+	DrawSphere3D(a, attackCollisionRadius_, 8, purpl, purpl, false);
 
 #endif //DEBUG
-}
-
-void AllyBase::DrawDebugSearchRange(void)
-{
-	VECTOR centerPos = transform_.pos;
-
-	//プレイヤーの座標
-	VECTOR playerPos = player_->GetTransform().pos; // プレイヤーオブジェクトの参照を持っている想定
-
-	//プレイヤーと敵の距離（XZ平面）
-	float dx = playerPos.x - centerPos.x;
-	float dz = playerPos.z - centerPos.z;
-	float distance = sqrtf(dx * dx + dz * dz);
-
-	//範囲内か判定
-	bool inRange = (distance <= VIEW_RANGE);
-
-	float angleStep = AsoUtility::FULL_ROTATION_RAD / VALUE_SIXTY;
-
-	for (int i = VALUE_ZERO; i < VALUE_SIXTY; ++i)
-	{
-		float angle1 = angleStep * i;
-		float angle2 = angleStep * (i + VALUE_ONE);
-
-		VECTOR p1 = {
-			centerPos.x + VIEW_RANGE * sinf(angle1),
-			centerPos.y,
-			centerPos.z + VIEW_RANGE * cosf(angle1)
-		};
-		VECTOR p2 = {
-			centerPos.x + VIEW_RANGE * sinf(angle2),
-			centerPos.y,
-			centerPos.z + VIEW_RANGE * cosf(angle2)
-		};
-	}
 }
