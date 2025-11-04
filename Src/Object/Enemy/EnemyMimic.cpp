@@ -72,6 +72,8 @@ void AllyBlack::UpdateAttack(void)
 		velocity_.y = 0.0f;
 	}
 
+
+
 	//攻撃タイミング
 	if (!isAttack_ && isAttack_P)
 	{
@@ -99,7 +101,7 @@ void AllyBlack::UpdateAttack(void)
 void AllyBlack::CollisionAttack(void)
 {
 	//プレイヤーとの衝突判定
-//攻撃の方向（エネミー）
+	//攻撃の方向（エネミー）
 	VECTOR forward = transform_.quaRot.GetForward();
 	//攻撃の開始位置と終了位置
 	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
@@ -115,8 +117,7 @@ void AllyBlack::CollisionAttack(void)
 		float enemyRadius = enemy->GetCollisionRadius();
 
 		//球体同士の当たり判定
-		//if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
-		if (AsoUtility::IsHitSpheres(collisionPos_, collisionRadius_, enemyPos, enemyRadius))
+		if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))                        
 		{
 			enemy->Damage(attackPow_);
 			//1体のみヒット

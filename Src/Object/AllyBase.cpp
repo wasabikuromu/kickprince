@@ -595,8 +595,7 @@ void AllyBase::CollisionAttack(void)
 		float enemyRadius = enemy->GetCollisionRadius();
 
 		//‹…‘Ì“¯Žm‚Ì“–‚½‚è”»’è
-		//if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
-		if (AsoUtility::IsHitSpheres(collisionPos_, collisionRadius_, enemyPos, enemyRadius))
+		if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
 		{
 			enemy->Damage(attackPow_);
 			//1‘Ì‚Ì‚Ýƒqƒbƒg

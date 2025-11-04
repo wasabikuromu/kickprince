@@ -147,6 +147,7 @@ public:
 		NORMAL,
 		DOWN,
 	};
+
 	PlayerState pstate_ = PlayerState::NORMAL;
 
 	//アニメーション種別
