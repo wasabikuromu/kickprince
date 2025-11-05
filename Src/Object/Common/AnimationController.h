@@ -42,6 +42,9 @@ public :
 	// 再生終了
 	bool IsEnd(void) const;
 
+	//play中のアニメーションを返す
+	const Animation& GetPlayAnim(void) const { return playAnim_; }
+
 private :
 
 	// モデルのハンドルID

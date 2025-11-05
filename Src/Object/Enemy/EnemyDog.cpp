@@ -73,21 +73,8 @@ void AllyBule::UpdateAttack(void)
 		velocity_.y = 0.0f;
 	}
 
-	//攻撃タイミング
-	if (!isAttack_ && isAttack_P)
-	{
-		isAttack_ = true; //多重ヒット防止用フラグ
-		isAttack_P = false;
-	}
-	else if (!isAttack_ && isAttack_T)
-	{
-		isAttack_ = true;
-		isAttack_T = false;
-	}
-
 	//アニメーション終了で次の状態に遷移
 	if (animationController_->IsEnd() || state_ != STATE::ATTACK) {
-		isAttack_ = false;
 		//CollisionAttack();
 		ChangeState(STATE::IDLE);
 
@@ -100,12 +87,15 @@ void AllyBule::UpdateAttack(void)
 void AllyBule::CollisionAttack(void)
 {
 	//プレイヤーとの衝突判定
-//攻撃の方向（エネミー）
+	//攻撃の方向（エネミー）
 	VECTOR forward = transform_.quaRot.GetForward();
 	//攻撃の開始位置と終了位置
 	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
 	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;  // 攻撃の高さ調整
 
+	//アニメーションのステップ数を取得
+	const auto& anim = animationController_->GetPlayAnim();
+	
 	//エネミーとの衝突判定
 	for (const auto& enemy : *enemy_)
 	{
@@ -114,14 +104,18 @@ void AllyBule::CollisionAttack(void)
 		//敵の当たり判定とサイズ
 		VECTOR enemyPos = enemy->GetCollisionPos();
 		float enemyRadius = enemy->GetCollisionRadius();
-
-		//球体同士の当たり判定
-		if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
-		{
-			enemy->Damage(attackPow_);
-			//1体のみヒット
-			break;
+		if (state_ == STATE::ATTACK ||
+			anim.step > 15.0f && isAttack_ == true) {
+			//球体同士の当たり判定
+			if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
+			{
+				enemy->Damage(attackPow_);
+				isAttack_ = false;
+				//1体のみヒット
+				break;
+			}
 		}
 	}
 }
+
 

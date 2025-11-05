@@ -212,8 +212,10 @@ protected:
 
 	bool isAlive_;	//生存判定
 	bool isAttack_ = false;		//攻撃判定
-	bool isAttack_P = false;	//攻撃判定
-	bool isAttack_T = false;	//攻撃判定
+
+	bool hasGivenDamage_ = false;   //攻撃中にもうダメージを与えたか
+	float attackHitTiming_ = 0.0f;  //攻撃モーションのどのタイミングで当たるか（例：0.4秒）
+	float attackElapsed_ = 0.0f;    //攻撃開始からの経過時間
 
 	
 	ANIM_TYPE animtype_; //アニメーションのタイプ確認用
@@ -254,6 +256,8 @@ protected:
 	virtual void UpdatePlay(void);	//移動時の更新処理
 	virtual void UpdateAttack(void);//アタック時の更新処理
 	virtual void UpdateBlow(void);	//飛ぶとき
+
+	virtual void StartAttack(void);     // 攻撃開始時（共通）
 
 	void DrawDamage();	//ダメージ画像の描画
 

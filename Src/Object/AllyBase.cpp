@@ -140,55 +140,10 @@ void AllyBase::UpdatePlay(void)
 
 	//重力による移動量
 	//CalcGravityPow();
-
-	//攻撃範囲に入ったかを見る
-	//AttackCollisionPos();
 }
 
 void AllyBase::UpdateAttack(void)
 {
-	//animationController_->Play((int)ANIM_TYPE::ATTACK, false);
-
-	if (!initFall_)
-	{
-		//攻撃開始時点で落下速度初期化
-		initFall_ = true;
-	}
-
-	//ゆっくり落下処理
-	const float gravity = 0.3f;          // 通常よりかなり小さい重力（例: 通常1.0fくらい）
-	velocity_.y -= gravity;              // 下方向に加速
-	transform_.pos.y += velocity_.y;     // 位置に反映
-
-	//地面との接地判定
-	if (transform_.pos.y < defaultPos_.y)
-	{
-		transform_.pos.y = defaultPos_.y;
-		velocity_.y = 0.0f;
-	}
-
-	//攻撃タイミング
-	if (!isAttack_ && isAttack_P)
-	{
-		isAttack_ = true; //多重ヒット防止用フラグ
-		isAttack_P = false;
-	}
-	else if (!isAttack_ && isAttack_T)
-	{
-		isAttack_ = true;
-		isAttack_T = false;
-	}
-
-	 //アニメーション終了で次の状態に遷移
-	if (animationController_->IsEnd() || state_ != STATE::ATTACK) {
-		isAttack_ = false;
-		//CollisionAttack();
-		ChangeState(STATE::IDLE);
-
-		//数秒後にカメラ復帰予約
-		shouldReturnCamera_ = true;
-		returnCameraTimer_ = 2.0f;
-	}
 }
 
 void AllyBase::UpdateBlow(void)
@@ -225,6 +180,14 @@ void AllyBase::UpdateBlow(void)
 		returnCameraTimer_ = 2.0f;
 	}
 }
+
+void AllyBase::StartAttack(void)
+{
+	animationController_->Play((int)ANIM_TYPE::ATTACK, false);
+	attackElapsed_ = 0.0f;
+	hasGivenDamage_ = false;
+}
+
 #pragma endregion
 
 void AllyBase::Draw(void)
@@ -443,6 +406,7 @@ void AllyBase::TriggerAttackWhileBlow(void)
 		//攻撃モーションやSEなど
 		//SoundManager::GetInstance().Play(SoundManager::SRC::E_ATTACK_SE, Sound::TIMES::FORCE_ONCE);
 		animationController_->Play((int)ANIM_TYPE::ATTACK, false);
+		isAttack_ = true;
 	}
 }
 
@@ -578,30 +542,6 @@ float AllyBase::GetCollisionRadius(void)
 
 void AllyBase::CollisionAttack(void)
 {
-	//プレイヤーとの衝突判定
-	//攻撃の方向（エネミー）
-	VECTOR forward = transform_.quaRot.GetForward();
-	//攻撃の開始位置と終了位置
-	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
-	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;  // 攻撃の高さ調整
-
-	//エネミーとの衝突判定
-	for (const auto& enemy : *enemy_)
-	{
-		if (!enemy || !enemy->IsAlive()) continue;
-
-		//敵の当たり判定とサイズ
-		VECTOR enemyPos = enemy->GetCollisionPos();
-		float enemyRadius = enemy->GetCollisionRadius();
-
-		//球体同士の当たり判定
-		if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
-		{
-			enemy->Damage(attackPow_);
-			//1体のみヒット
-			break;
-		}
-	}
 }
 
 void AllyBase::SetGameScene(GameScene* scene)

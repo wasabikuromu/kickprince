@@ -26,5 +26,4 @@ protected:
 
 	void UpdateAttack(void) override;
 	void CollisionAttack(void) override;
-
 };
