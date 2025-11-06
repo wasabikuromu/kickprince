@@ -37,28 +37,25 @@ public:
 
 private:
 
-	// シングルトン参照
+	//シングルトン参照
 	ResourceManager& resMng_;
 
 	Player& player_;
 
-	// ステージアクティブになっている惑星の情報
+	//ステージアクティブになっている惑星の情報
 	NAME activeName_;
 	std::weak_ptr<Planet> activePlanet_;
 
-	// 惑星
+	//惑星
 	std::map<NAME, std::shared_ptr<Planet>> planets_;
 
-	// 空のPlanet
+	//空のPlanet
 	std::shared_ptr<Planet> nullPlanet = nullptr;
 
 	float step_;
 
-	// 最初の惑星
+	//最初の惑星
 	void MakeMainStage(void);
-
-	// ゴールスター
-	void MakeGoalStar(void);
 
 	// メインステージ
 	void MainStage(void);

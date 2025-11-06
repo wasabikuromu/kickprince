@@ -29,7 +29,6 @@ Stage::~Stage(void)
 void Stage::Init(void)
 {
 	MakeMainStage();
-	MakeGoalStar();
 
 	step_ = -1.0f;
 }
@@ -37,8 +36,8 @@ void Stage::Init(void)
 void Stage::Update(void)
 {
 
-	// 重力範囲が重なっていた場合、惑星がコロコロ切り替わらないように
-	// 一定時間ステージが変わらないようにする
+	//重力範囲が重なっていた場合、惑星がコロコロ切り替わらないように
+	//一定時間ステージが変わらないようにする
 	bool isPossibleChange = true;
 	if (step_ > 0.0f)
 	{
@@ -147,9 +146,7 @@ void Stage::MakeMainStage(void)
 
 }
 
-void Stage::MakeGoalStar(void)
-{
-}
+
 
 void Stage::MainStage(void)
 {	
