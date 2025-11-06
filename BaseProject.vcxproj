@@ -24,9 +24,9 @@
     <ClCompile Include="Src\Scene\DemoScene.cpp" />
     <ClCompile Include="Src\Manager\Sound.cpp" />
     <ClCompile Include="Src\Manager\SoundManager.cpp" />
-    <ClCompile Include="Src\Object\Enemy\EnemyDog.cpp" />
-    <ClCompile Include="Src\Object\Enemy\EnemyCactus.cpp" />
-    <ClCompile Include="Src\Object\Enemy\EnemyMimic.cpp" />
+    <ClCompile Include="Src\Object\Ally\AllyBlue.cpp" />
+    <ClCompile Include="Src\Object\Ally\AllyRed.cpp" />
+    <ClCompile Include="Src\Object\Ally\AllyBlack.cpp" />
     <ClCompile Include="Src\Object\AllyBase.cpp" />
     <ClCompile Include="Src\Object\ActorBase.cpp" />
     <ClCompile Include="Src\Application.cpp" />
@@ -62,9 +62,9 @@
     <ClInclude Include="Src\Scene\DemoScene.h" />
     <ClInclude Include="Src\Manager\Sound.h" />
     <ClInclude Include="Src\Manager\SoundManager.h" />
-    <ClInclude Include="Src\Object\Enemy\EnemyDog.h" />
-    <ClInclude Include="Src\Object\Enemy\EnemyCactus.h" />
-    <ClInclude Include="Src\Object\Enemy\EnemyMimic.h" />
+    <ClInclude Include="Src\Object\Ally\AllyBlue.h" />
+    <ClInclude Include="Src\Object\Ally\AllyRed.h" />
+    <ClInclude Include="Src\Object\Ally\AllyBlack.h" />
     <ClInclude Include="Src\Object\AllyBase.h" />
     <ClInclude Include="Src\Object\ActorBase.h" />
     <ClInclude Include="Src\Application.h" />

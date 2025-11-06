@@ -147,13 +147,13 @@
     <ClCompile Include="Src\Scene\ClearScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Enemy\EnemyMimic.cpp">
+    <ClCompile Include="Src\Object\Ally\AllyBlack.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Enemy\EnemyCactus.cpp">
+    <ClCompile Include="Src\Object\Ally\AllyRed.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Enemy\EnemyDog.cpp">
+    <ClCompile Include="Src\Object\Ally\AllyBlue.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Manager\Sound.cpp">
@@ -251,10 +251,10 @@
     <ClInclude Include="Src\Scene\TitleScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Enemy\EnemyCactus.h">
+    <ClInclude Include="Src\Object\Ally\AllyRed.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Enemy\EnemyMimic.h">
+    <ClInclude Include="Src\Object\Ally\AllyBlack.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Scene\ClearScene.h">
@@ -263,7 +263,7 @@
     <ClInclude Include="Src\Scene\OverScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Enemy\EnemyDog.h">
+    <ClInclude Include="Src\Object\Ally\AllyBlue.h">
       <Filter>ヘッダー ファイル\Object\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Src\Manager\Sound.h">

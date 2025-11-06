@@ -15,9 +15,9 @@
 #include "../Object/AllyBase.h"
 #include "../Object/EnemyBase.h"
 #include "../Object/Enemy/EnemyBoss.h"
-#include "../Object/Enemy/EnemyCactus.h"
-#include "../Object/Enemy/EnemyDog.h"
-#include "../Object/Enemy/EnemyMimic.h"
+#include "../Object/Ally/AllyRed.h"
+#include "../Object/Ally/AllyBlue.h"
+#include "../Object/Ally/AllyBlack.h"
 #include "../Object/Planet.h"
 #include "GameScene.h"
 

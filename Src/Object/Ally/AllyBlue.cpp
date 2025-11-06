@@ -1,4 +1,4 @@
-#include "EnemyDog.h"
+#include "AllyBlue.h"
 #include "../../Application.h"
 #include "../Common/AnimationController.h"
 #include "../../Manager/ResourceManager.h"
@@ -86,35 +86,40 @@ void AllyBule::UpdateAttack(void)
 
 void AllyBule::CollisionAttack(void)
 {
-	//プレイヤーとの衝突判定
-	//攻撃の方向（エネミー）
-	VECTOR forward = transform_.quaRot.GetForward();
-	//攻撃の開始位置と終了位置
-	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
-	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;  // 攻撃の高さ調整
+	if (state_ != STATE::ATTACK) return;
 
 	//アニメーションのステップ数を取得
 	const auto& anim = animationController_->GetPlayAnim();
+
+	//攻撃範囲設定
+	VECTOR forward = transform_.quaRot.GetForward();
+	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
+	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;
 	
 	//エネミーとの衝突判定
-	for (const auto& enemy : *enemy_)
+	//攻撃可能フレーム範囲内 かつ isAttack_ が true のときのみ処理
+	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_)
 	{
-		if (!enemy || !enemy->IsAlive()) continue;
+		for (const auto& enemy : *enemy_)
+		{
+			if (!enemy || !enemy->IsAlive()) continue;
 
-		//敵の当たり判定とサイズ
-		VECTOR enemyPos = enemy->GetCollisionPos();
-		float enemyRadius = enemy->GetCollisionRadius();
-		if (state_ == STATE::ATTACK ||
-			anim.step > 15.0f && isAttack_ == true) {
-			//球体同士の当たり判定
+			VECTOR enemyPos = enemy->GetCollisionPos();
+			float enemyRadius = enemy->GetCollisionRadius();
+
 			if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
 			{
 				enemy->Damage(attackPow_);
-				isAttack_ = false;
-				//1体のみヒット
+				isAttack_ = false;  // 1回だけにする
 				break;
 			}
 		}
+	}
+
+	// 攻撃が終わったら次回用にリセット
+	if (anim.step > ATTACK_END) 
+	{
+		isAttack_ = true;
 	}
 }
 

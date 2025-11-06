@@ -13,6 +13,10 @@ public:
 	static constexpr float ATTACK_HEIGHT_OFFSET = 100.0f;	// 高さ
 	static constexpr float ATTACK_RADIUS_SIZE = 70.0f;		// 攻撃範囲
 
+	//攻撃判定フレーム
+	const float ATTACK_START = 30.0f;
+	const float ATTACK_END = 35.0f;
+
 	AllyRed();
 
 	//アニメーションロード用
