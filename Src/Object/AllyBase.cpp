@@ -118,12 +118,11 @@ void AllyBase::UpdateIdle(void)
 {
 	animationController_->Play((int)ANIM_TYPE::IDLE, true);
 
-	// 吹っ飛び済みなら攻撃処理に戻さない
+	//吹っ飛び済みなら攻撃処理に戻さない
 	if (isBlowedEnd_)
 	{
-		return; // ずっと待機
+		return; //ずっと待機
 	}
-
 }
 
 void AllyBase::UpdatePlay(void)
@@ -522,6 +521,11 @@ void AllyBase::DrawShadow(void)
 
 	//Ｚバッファを無効にする
 	SetUseZBuffer3D(FALSE);
+}
+
+void AllyBase::DrawShots(void)
+{
+
 }
 
 void AllyBase::SetCollisionPos(const VECTOR collision)

@@ -133,12 +133,12 @@ void GameScene::Update(void)
 			player_->SetControlEnabled(false);
 			break;
 
-		case Camera::MODE::ALLY_FOLLOW:
-			cameraMode = Camera::MODE::FOLLOW;
-			mainCamera->SetFollow(&player_->GetTransform());
-			mainCamera->ChangeMode(Camera::MODE::FOLLOW);
-			player_->SetControlEnabled(true);
-			break;
+		//case Camera::MODE::ALLY_FOLLOW:
+		//	cameraMode = Camera::MODE::FOLLOW;
+		//	mainCamera->SetFollow(&player_->GetTransform());
+		//	mainCamera->ChangeMode(Camera::MODE::FOLLOW);
+		//	player_->SetControlEnabled(true);
+		//	break;
 		}
 	}
 
@@ -155,11 +155,11 @@ void GameScene::Update(void)
 			player_->SetControlEnabled(false);
 			break;
 
-		case Camera::MODE::ALLY_FOLLOW:
-			cameraMode = Camera::MODE::SIDE_VIEW;
-			mainCamera->ChangeMode(Camera::MODE::SIDE_VIEW);
-			player_->SetControlEnabled(false);
-			break;
+		//case Camera::MODE::ALLY_FOLLOW:
+		//	cameraMode = Camera::MODE::SIDE_VIEW;
+		//	mainCamera->ChangeMode(Camera::MODE::SIDE_VIEW);
+		//	player_->SetControlEnabled(false);
+		//	break;
 
 		case Camera::MODE::SIDE_VIEW:
 			cameraMode = Camera::MODE::FOLLOW;
@@ -198,6 +198,7 @@ void GameScene::Draw(void)
 	for (auto ally : Allys_)
 	{
 		ally->Draw();
+		ally->DrawShots(); // ƒVƒ‡ƒbƒg‚¾‚¯•Ê•`‰æŠÖ”‚ğŒÄ‚Ô
 	}
 
 	for (auto enemy : enemys_)

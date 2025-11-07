@@ -141,6 +141,9 @@ public:
 	virtual void DrawBossHpBar(void){};	//ボスのHPバー
 	virtual void Release(void);			//解放処理(最後の１回のみ実行)
 
+	//球の生成
+	virtual void DrawShots(void);
+
 	void SetPos(VECTOR pos);	//座標の設定
 	STATE GetState(void);		//状態獲得
 

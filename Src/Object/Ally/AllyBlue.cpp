@@ -5,6 +5,7 @@
 #include "../../Utility/AsoUtility.h"
 
 
+
 AllyBule::AllyBule() :AllyBase()
 {
 }
@@ -53,34 +54,84 @@ void AllyBule::SetParam(void)
 	ChangeState(STATE::IDLE);
 }
 
-void AllyBule::UpdateAttack(void)
+void AllyBule::UpdateIdle(void)
 {
+	//攻撃後の落下処理
+	if (initFall_)
+	{
+		const float gravity = 0.3f;
+		velocity_.y -= gravity;
+		transform_.pos.y += velocity_.y;
+
+		// 地面まで落下
+		if (transform_.pos.y <= defaultPos_.y)
+		{
+			transform_.pos.y = defaultPos_.y;
+			velocity_.y = 0.0f;
+			initFall_ = false; // 落下完了
+		}
+	}
+
+	// Idle中のアニメーション（再生中に落下がないときは普通に待機）
 	if (!initFall_)
 	{
-		//攻撃開始時点で落下速度初期化
-		initFall_ = true;
+		animationController_->Play((int)ANIM_TYPE::IDLE);
 	}
+}
 
-	//ゆっくり落下処理
-	const float gravity = 0.3f;          // 通常よりかなり小さい重力（例: 通常1.0fくらい）
-	velocity_.y -= gravity;              // 下方向に加速
-	transform_.pos.y += velocity_.y;     // 位置に反映
+void AllyBule::UpdateAttack(void)
+{
+	const auto& anim = animationController_->GetPlayAnim();
 
-	//地面との接地判定
-	if (transform_.pos.y < defaultPos_.y)
+	//攻撃中は空中で静止
+	velocity_.y = 0.0f;
+
+	//アニメーション途中でショット発射
+	if (isAttack_ && anim.step >= ATTACK_FIRE_FRAME && anim.step < ATTACK_FIRE_FRAME + 1)
 	{
-		transform_.pos.y = defaultPos_.y;
-		velocity_.y = 0.0f;
+		VECTOR forward = transform_.quaRot.GetForward();
+		VECTOR spawnPos = transform_.pos;
+		spawnPos.y += ATTACK_HEIGHT_OFFSET;
+
+		auto shot = std::make_unique<Shot>(spawnPos, forward, Shot::DEFAULT_SPEED, attackPow_);
+
+		//一番近い敵を狙う
+		shot->SetTarget(*enemy_);
+		shots_.push_back(std::move(shot));
+
+		isAttack_ = false;
+	}
+	
+	//ショット更新
+	for (auto& s : shots_)
+		s->Update();
+
+	//敵との当たり判定
+	for (auto& s : shots_)
+	{
+		for (const auto& enemy : *enemy_)
+		{
+			if (s->CheckCollision(enemy.get()))
+				break;
+		}
 	}
 
-	//アニメーション終了で次の状態に遷移
-	if (animationController_->IsEnd() || state_ != STATE::ATTACK) {
-		//CollisionAttack();
-		ChangeState(STATE::IDLE);
+	//死亡ショット削除
+	shots_.erase(
+		std::remove_if(shots_.begin(), shots_.end(),
+			[](auto& s) { return s->IsDead(); }),
+		shots_.end()
+	);
 
-		//数秒後にカメラ復帰予約
+	//攻撃アニメーション終了時
+	if (animationController_->IsEnd() || state_ != STATE::ATTACK)
+	{
+		initFall_ = true;					// ← ここで落下開始！
+		velocity_.y = 0.0f;					// 落下初速度
+		ChangeState(STATE::IDLE);			// Idleに戻して落下処理へ
 		shouldReturnCamera_ = true;
 		returnCameraTimer_ = 2.0f;
+		isAttack_ = true;
 	}
 }
 
@@ -121,6 +172,12 @@ void AllyBule::CollisionAttack(void)
 	{
 		isAttack_ = true;
 	}
+}
+
+void AllyBule::DrawShots(void)
+{
+    for (auto& s : shots_)
+        s->Draw();
 }
 
 
