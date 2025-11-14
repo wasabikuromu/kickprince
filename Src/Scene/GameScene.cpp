@@ -118,55 +118,62 @@ void GameScene::Update(void)
 	if (ins.IsTrgDown(KEY_INPUT_R) ||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_RIGHT))
 	{
-		switch (cameraMode)
+		if (!isKicking_)  // 通常時
 		{
-		case Camera::MODE::FOLLOW:
-			cameraMode = Camera::MODE::SIDE_VIEW;
-			mainCamera->ChangeMode(Camera::MODE::SIDE_VIEW);
-			player_->SetControlEnabled(false);
-			break;
+			switch (cameraMode)
+			{
+			case Camera::MODE::FOLLOW:
+				cameraMode = Camera::MODE::SIDE_VIEW;
+				mainCamera->ChangeMode(Camera::MODE::SIDE_VIEW);
+				player_->SetControlEnabled(false);
+				break;
 
-		case Camera::MODE::SIDE_VIEW:
-			cameraMode = Camera::MODE::ALLY_FOLLOW;
-			mainCamera->SetFollow(&Allys_[0]->GetTransform());
-			mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
-			player_->SetControlEnabled(false);
-			break;
+			case Camera::MODE::SIDE_VIEW:
+				cameraMode = Camera::MODE::FOLLOW;
+				mainCamera->SetFollow(&player_->GetTransform());
+				mainCamera->ChangeMode(Camera::MODE::FOLLOW);
+				player_->SetControlEnabled(true);
+				break;
+			}
+		}
+		else  // 味方が飛んでいる間
+		{
+			switch (cameraMode)
+			{
+			case Camera::MODE::ALLY_FOLLOW:
+				cameraMode = Camera::MODE::SIDE_VIEW;
+				mainCamera->ChangeMode(Camera::MODE::SIDE_VIEW);
+				break;
 
-		//case Camera::MODE::ALLY_FOLLOW:
-		//	cameraMode = Camera::MODE::FOLLOW;
-		//	mainCamera->SetFollow(&player_->GetTransform());
-		//	mainCamera->ChangeMode(Camera::MODE::FOLLOW);
-		//	player_->SetControlEnabled(true);
-		//	break;
+			case Camera::MODE::SIDE_VIEW:
+				cameraMode = Camera::MODE::ALLY_FOLLOW;
+				if (currentKickedAlly_)
+					mainCamera->SetFollow(&currentKickedAlly_->GetTransform());
+				mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
+				break;
+			}
 		}
 	}
 
-	// ---- 左入力で逆送り ----
-	if (ins.IsTrgDown(KEY_INPUT_T) ||
-		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_LEFT))
+	if (isKicking_ && currentKickedAlly_)
 	{
-		switch (cameraMode)
+		//味方の状態をチェック
+		if (!currentKickedAlly_->IsFlying())
 		{
-		case Camera::MODE::FOLLOW:
-			cameraMode = Camera::MODE::ALLY_FOLLOW;
-			mainCamera->SetFollow(&Allys_[0]->GetTransform());
-			mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
-			player_->SetControlEnabled(false);
-			break;
+			allyLandTimer_ += deltaTime;
 
-		//case Camera::MODE::ALLY_FOLLOW:
-		//	cameraMode = Camera::MODE::SIDE_VIEW;
-		//	mainCamera->ChangeMode(Camera::MODE::SIDE_VIEW);
-		//	player_->SetControlEnabled(false);
-		//	break;
+			if (allyLandTimer_ > 1.0f)   // 1秒休憩してカメラ戻す
+			{
+				allyLandTimer_ = 0.0f;
+				isKicking_ = false;
+				currentKickedAlly_ = nullptr;
 
-		case Camera::MODE::SIDE_VIEW:
-			cameraMode = Camera::MODE::FOLLOW;
-			mainCamera->SetFollow(&player_->GetTransform());
-			mainCamera->ChangeMode(Camera::MODE::FOLLOW);
-			player_->SetControlEnabled(true);
-			break;
+				cameraMode = Camera::MODE::FOLLOW;
+				mainCamera->SetFollow(&player_->GetTransform());
+				mainCamera->ChangeMode(Camera::MODE::FOLLOW);
+
+				player_->SetControlEnabled(true);
+			}
 		}
 	}
 
@@ -319,9 +326,12 @@ void GameScene::OnAllyKicked(AllyBase* kickedAlly)
 {
 	if (!kickedAlly || !mainCamera) return;
 
-	mainCamera->SetFollow(&kickedAlly->GetTransform());
-	mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
+	isKicking_ = true;
+	currentKickedAlly_ = hitAlly;
+
 	cameraMode = Camera::MODE::ALLY_FOLLOW;
+	mainCamera->SetFollow(&hitAlly->GetTransform());
+	mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
 
 	player_->SetControlEnabled(false);
 }
@@ -463,4 +473,25 @@ bool GameScene::PauseMenu(void)
 	}
 
 	return true;
+}
+
+bool GameScene::IsAnyAllyFlying(void) const
+{
+	for (auto& a : Allys_)
+	{
+		if (a->IsBlow())
+			return true;
+	}
+	return false;
+}
+
+//今飛んでいる味方を返す（必要なら）
+AllyBase* GameScene::GetFlyingAlly(void) const
+{
+	for (auto& a : Allys_)
+	{
+		if (a->IsBlow())
+			return a.get();
+	}
+	return nullptr;
 }
