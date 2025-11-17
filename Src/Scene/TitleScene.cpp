@@ -36,6 +36,8 @@ void TitleScene::Init(void)
 	// 画像読み込み
 	imgTitle_ = resMng_.Load(ResourceManager::SRC::TITLE).handleId_;			//タイトル名前画像
 	imgBackTitle_ = resMng_.Load(ResourceManager::SRC::BACK_TITLE).handleId_;	//タイトル背景
+	imgGameStart_ = resMng_.Load(ResourceManager::SRC::GAME_START).handleId_;	//ゲームスタート
+	imgGameEnd_ = resMng_.Load(ResourceManager::SRC::GAME_END).handleId_;		//ゲームを終了
 	imgConfirmEnd_ = resMng_.Load(ResourceManager::SRC::CONFIRM_END).handleId_;	//本当に終了しますか？画像
 	imgYes_ = resMng_.Load(ResourceManager::SRC::YES).handleId_;				//はい画像
 	imgNo_ = resMng_.Load(ResourceManager::SRC::NO).handleId_;					//いいえ画像
@@ -248,7 +250,7 @@ void TitleScene::Draw(void)
 	DrawGraph(0, 0, imgBackTitle_, true);
 	int titleW, titleH;
 	GetGraphSize(imgTitle_, &titleW, &titleH);
-	DrawRotaGraph((Application::SCREEN_SIZE_X / 2), IMG_TITLE_HEIGHT, IMG_TITLE_SIZE, 0, imgTitle_, true);
+	DrawRotaGraph(IMG_TITLE_WIDTH, IMG_TITLE_HEIGHT, IMG_TITLE_SIZE, 0, imgTitle_, true);
 
 	#pragma region		ボタン設定
 

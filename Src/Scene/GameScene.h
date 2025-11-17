@@ -140,8 +140,9 @@ private:
 	std::vector<std::shared_ptr<EnemyBase>> enemys_;
 	int enCounter;//敵の出現頻度
 
-	bool isKicking_ = false;           // プレイヤーが味方を蹴っている状態
-	AllyBase* currentKickedAlly_ = nullptr; // 飛んでいる味方のポインタ
+	float allyLandTimer_ = 0.0f;
+	bool isKicking_ = false;           //プレイヤーが味方を蹴っている状態
+	AllyBase* currentKickedAlly_ = nullptr; //飛んでいる味方のポインタ
 
 	int isB_;
 

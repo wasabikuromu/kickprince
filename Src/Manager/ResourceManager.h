@@ -15,6 +15,8 @@ public:
 		//‰æ‘œ(UI)
 		TITLE,
 		BACK_TITLE,
+		GAME_START,
+		GAME_END,
 		PUSH,
 		CURSOR,
 		PLAY,

@@ -30,7 +30,6 @@ GameScene::GameScene(void)
 	stage_ = nullptr;
 	imgGameUi1_ = -1;
 	imgOpeGear_ = -1;
-	//item_ = nullptr;
 }
 
 GameScene::~GameScene(void)
@@ -85,7 +84,7 @@ void GameScene::Init(void)
 	//カメラのポーズ解除
 	camera_ = SceneManager::GetInstance().GetCamera().lock();
 	if (camera_) {
-		camera_->SetPaused(false); // ← ここが重要！
+		camera_->SetPaused(false); //ここが重要！
 
 		//ミニマップ用カメラ
 		camera_->SetFollow(&player_->GetTransform());
@@ -98,6 +97,10 @@ void GameScene::Init(void)
 	mainCamera->SetFollow(&player_->GetTransform());
 	mainCamera->ChangeMode(Camera::MODE::FOLLOW);
 
+	allyLandTimer_ = 0.0f;
+	isKicking_ = false;
+	currentKickedAlly_ = nullptr;
+
 	isB_ = BOSS_WAIT;
 }
 
@@ -106,19 +109,18 @@ void GameScene::Update(void)
 	cnt++;
 	InputManager& ins = InputManager::GetInstance();
 
+	//簡易deltaTime(60FPS想定）
+	const float deltaTime = 1.0f / 60.0f;
+
 	if (PauseMenu()) return;
 
-	//-------------------------
 	// カメラモード管理
-	//-------------------------
 
-	static Camera::MODE cameraMode = Camera::MODE::FOLLOW;
-
-	// ---- 右入力で順送り ----
+	//右入力で順送り
 	if (ins.IsTrgDown(KEY_INPUT_R) ||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_RIGHT))
 	{
-		if (!isKicking_)  // 通常時
+		if (!isKicking_)  //通常時
 		{
 			switch (cameraMode)
 			{
@@ -136,7 +138,7 @@ void GameScene::Update(void)
 				break;
 			}
 		}
-		else  // 味方が飛んでいる間
+		else  //味方が飛んでいる間
 		{
 			switch (cameraMode)
 			{
@@ -158,11 +160,11 @@ void GameScene::Update(void)
 	if (isKicking_ && currentKickedAlly_)
 	{
 		//味方の状態をチェック
-		if (!currentKickedAlly_->IsFlying())
+		if (!currentKickedAlly_->IsBlow())
 		{
 			allyLandTimer_ += deltaTime;
 
-			if (allyLandTimer_ > 1.0f)   // 1秒休憩してカメラ戻す
+			if (allyLandTimer_ > 1.0f)
 			{
 				allyLandTimer_ = 0.0f;
 				isKicking_ = false;
@@ -177,10 +179,7 @@ void GameScene::Update(void)
 		}
 	}
 
-	//-------------------------
-	// 通常の更新処理
-	//-------------------------
-
+	//通常の更新処理
 	uiDisplayFrame_++;
 
 	skyDome_->Update();
@@ -205,7 +204,7 @@ void GameScene::Draw(void)
 	for (auto ally : Allys_)
 	{
 		ally->Draw();
-		ally->DrawShots(); // ショットだけ別描画関数を呼ぶ
+		ally->DrawShots(); //ショットだけ別描画関数を呼ぶ
 	}
 
 	for (auto enemy : enemys_)
@@ -219,6 +218,7 @@ void GameScene::Draw(void)
 	{
 		enemy->DrawBossHpBar();
 	}
+
 	DrawRotaGraph(UI_GEAR, UI_GEAR, IMG_OPEGEAR_UI_SIZE, 0.0, imgOpeGear_, true);
 
 	//入力チェック or 時間経過でフェード開始
@@ -236,12 +236,12 @@ void GameScene::Draw(void)
 	}
 	if (!uiFadeStart_) 
 	{
-		// フェード前（通常表示）
+		//フェード前（通常表示）
 		DrawRotaGraph((Application::SCREEN_SIZE_X / 2), GAME_HEIGHT_1, IMG_GAME_UI_1_SIZE, 0, imgGameUi1_, true);
 	}
 	else if (uiFadeFrame_ < ONE_SECOND_FRAME)
 	{
-		// フェード中（60フレームで徐々に消す）
+		//フェード中（60フレームで徐々に消す）
 		int alpha = static_cast<int>(255 * (ONE_SECOND_FRAME - uiFadeFrame_) / ONE_SECOND_FRAME);
 		DrawRotaGraph((Application::SCREEN_SIZE_X / 2), GAME_HEIGHT_1, IMG_GAME_UI_1_SIZE, 0, imgGameUi1_, true);
 		uiFadeFrame_++;
@@ -327,10 +327,11 @@ void GameScene::OnAllyKicked(AllyBase* kickedAlly)
 	if (!kickedAlly || !mainCamera) return;
 
 	isKicking_ = true;
-	currentKickedAlly_ = hitAlly;
+	currentKickedAlly_ = kickedAlly;        
+	allyLandTimer_ = 0.0f;                 
 
 	cameraMode = Camera::MODE::ALLY_FOLLOW;
-	mainCamera->SetFollow(&hitAlly->GetTransform());
+	mainCamera->SetFollow(&kickedAlly->GetTransform());
 	mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
 
 	player_->SetControlEnabled(false);

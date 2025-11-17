@@ -45,8 +45,9 @@ public:
 	static constexpr int IMG_3D_WIDTH = 1700;
 	static constexpr int IMG_3D_HEIGHT = 625;
 
-	static constexpr float IMG_TITLE_SIZE = 1.7; 
-	static constexpr int IMG_TITLE_HEIGHT = 150;
+	static constexpr float IMG_TITLE_SIZE = 2.3; 
+	static constexpr int IMG_TITLE_WIDTH = 1100;
+	static constexpr int IMG_TITLE_HEIGHT = 250;
 
 	static constexpr int WHITE_ALPHA = 255;
 	static constexpr int GRAY_ALPHA = 220;
@@ -107,6 +108,8 @@ private:
 	// ‰æ‘œ
 	int imgTitle_;
 	int imgBackTitle_;
+	int imgGameStart_;
+	int imgGameEnd_;
 	int imgUDCursor_;
 	int imgConfirmEnd_;
 	int imgYes_;

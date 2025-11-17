@@ -150,10 +150,11 @@ public:
 	bool IsAlive(void);			//生存判定
 	void SetAlive(bool alive);	//生存判定
 
-	// 吹っ飛び中かどうかを返す
+	//吹っ飛び中かどうかを返す
 	bool IsBlow(void) const;
 
-	void Damage(int damage,float chargeRate);	//ダメージを受ける
+	//ダメージを受ける
+	void Damage(int damage,float chargeRate);
 
 	//吹っ飛び中攻撃
 	void TriggerAttackWhileBlow(void);
