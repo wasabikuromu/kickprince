@@ -17,6 +17,8 @@ public:
 		BACK_TITLE,
 		GAME_START,
 		GAME_END,
+		LOOK_RULE,
+		A_BUTTON,
 		PUSH,
 		CURSOR,
 		PLAY,

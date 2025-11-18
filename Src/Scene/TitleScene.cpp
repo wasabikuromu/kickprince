@@ -38,16 +38,14 @@ void TitleScene::Init(void)
 	imgBackTitle_ = resMng_.Load(ResourceManager::SRC::BACK_TITLE).handleId_;	//タイトル背景
 	imgGameStart_ = resMng_.Load(ResourceManager::SRC::GAME_START).handleId_;	//ゲームスタート
 	imgGameEnd_ = resMng_.Load(ResourceManager::SRC::GAME_END).handleId_;		//ゲームを終了
+	imgLookRule_ = resMng_.Load(ResourceManager::SRC::LOOK_RULE).handleId_;		//ルールを見る
+	imgAbutton_ = resMng_.Load(ResourceManager::SRC::A_BUTTON).handleId_;		//Aボタン
 	imgConfirmEnd_ = resMng_.Load(ResourceManager::SRC::CONFIRM_END).handleId_;	//本当に終了しますか？画像
 	imgYes_ = resMng_.Load(ResourceManager::SRC::YES).handleId_;				//はい画像
 	imgNo_ = resMng_.Load(ResourceManager::SRC::NO).handleId_;					//いいえ画像
 	imgYesSel_ = resMng_.Load(ResourceManager::SRC::SELECT_YES).handleId_;		//選択中はい画像
 	imgNoSel_ = resMng_.Load(ResourceManager::SRC::SELECT_NO).handleId_;		//選択中いいえ画像
 
-	imgP1_[0] = LoadGraph("Data/Image/Title/1player1.png");
-	imgP1_[1] = LoadGraph("Data/Image/Title/1player2.png");
-	imgP2_[0] = LoadGraph("Data/Image/Title/2player1.png");
-	imgP2_[1] = LoadGraph("Data/Image/Title/2player2.png");
 
 	selectedIndex_ = 0;
 
@@ -246,11 +244,20 @@ void TitleScene::Draw(void)
 
 	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, black, true);
 
-	// タイトルロゴ表示
+	//タイトルロゴ表示
 	DrawGraph(0, 0, imgBackTitle_, true);
 	int titleW, titleH;
 	GetGraphSize(imgTitle_, &titleW, &titleH);
 	DrawRotaGraph(IMG_TITLE_WIDTH, IMG_TITLE_HEIGHT, IMG_TITLE_SIZE, 0, imgTitle_, true);
+
+	//ゲームプレイ画像表示
+	DrawGraph(740, 750, imgGameStart_, true);
+
+	//ルールを見る画像表示
+	DrawGraph(740, 850, imgLookRule_, true);
+
+	//ゲームを終了画像表示
+	DrawGraph(740, 950, imgGameEnd_, true);
 
 	#pragma region		ボタン設定
 
@@ -277,20 +284,26 @@ void TitleScene::Draw(void)
 		}
 	}
 
-	// カーソル描画
-	DrawRotaGraph(CURSOR_1_WIDTH, CURSOR_HEIGHT + 
-		(selectedIndex_ * INDEX), IMG_CURSOR_SIZE, 0, imgP1_[static_cast<int>(cnt * CURSOR_MOVE_SPEED) % 2], true);
+	//GetNowCount() = 経過ミリ秒
+	float alpha2 = (sinf(GetNowCount() * BLINK_SPEED) + 1.0f) * 0.5f;
 
-	DrawRotaGraph(CURSOR_2_WIDTH, CURSOR_HEIGHT + 
-		(selectedIndex_ * INDEX), IMG_CURSOR_SIZE, 0, imgP2_[static_cast<int>(cnt * CURSOR_MOVE_SPEED) % 2], true);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(alpha2 * 255));
+
+	//カーソル描画
+	DrawRotaGraph(
+		CURSOR_WIDTH,
+		CURSOR_HEIGHT + (selectedIndex_ * INDEX),
+		IMG_CURSOR_SIZE,
+		0,
+		imgAbutton_,
+		true
+	);
+
+	//ブレンドモード解除
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 
 	//テキスト
-	SetFontSize(DEFAULT_FONT_SIZE * 3.75);
-	DrawString(TEXT_WIDTH, TEXT_HEIGHT_1, "ゲームプレイ", white);
-	DrawString(TEXT_WIDTH, TEXT_HEIGHT_2, "神様のお告げ", white);
-	DrawString(TEXT_WIDTH, TEXT_HEIGHT_3, "ゲームを終了", white);
-
-	SetFontSize(DEFAULT_FONT_SIZE);
 	if (GetASyncLoadNum() != 0)
 	{
 		return;

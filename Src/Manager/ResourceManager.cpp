@@ -49,6 +49,14 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title/GameEnd.png");
 	resourcesMap_.emplace(SRC::GAME_END, std::move(res));
 
+	// ルールを見る画像
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title/LookRule.png");
+	resourcesMap_.emplace(SRC::LOOK_RULE, std::move(res));
+
+	// Aボタン画像
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title/AButton.png");
+	resourcesMap_.emplace(SRC::A_BUTTON, std::move(res));
+
 	// ゲーム画面のUI
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "GameUI1.png");
 	resourcesMap_.emplace(SRC::GAMEUI_1, std::move(res));

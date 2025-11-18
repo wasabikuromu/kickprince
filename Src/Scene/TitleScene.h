@@ -57,12 +57,11 @@ public:
 	static constexpr int BASE_Y = 450;
 	static constexpr int BUTTON_OFFSET = 120;
 
-	static constexpr int CURSOR_1_WIDTH = 720;
-	static constexpr int CURSOR_2_WIDTH = 1200;
-	static constexpr int CURSOR_HEIGHT = 450;
+	static constexpr int CURSOR_WIDTH = 700;
+	static constexpr int CURSOR_HEIGHT = 800;
 
-	static constexpr int INDEX = 110;
-	static constexpr float IMG_CURSOR_SIZE = 4.5;
+	static constexpr int INDEX = 100;
+	static constexpr float IMG_CURSOR_SIZE = 0.55;
 	static constexpr float CURSOR_MOVE_SPEED = 0.03;
 
 	static constexpr int TEXT_WIDTH = 780;
@@ -79,6 +78,8 @@ public:
 
 	static constexpr int NO_STRING_WIDTH = 1090;
 	static constexpr int NO_STRING_HEIGHT = 640;
+
+	static constexpr float BLINK_SPEED = 0.003f;
 
 	//êF
 	int white = 0xffffff; //îí
@@ -110,13 +111,14 @@ private:
 	int imgBackTitle_;
 	int imgGameStart_;
 	int imgGameEnd_;
+	int imgLookRule_;
 	int imgUDCursor_;
 	int imgConfirmEnd_;
 	int imgYes_;
 	int imgNo_;
 	int imgYesSel_;
 	int imgNoSel_;
-	int imgP1_[2];
+	int imgAbutton_;
 	int imgP2_[2];
 
 	int selectedIndex_;
