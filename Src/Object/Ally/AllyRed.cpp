@@ -109,7 +109,7 @@ void AllyRed::CollisionAttack(void)
 			if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
 			{
 				enemy->Damage(attackPow_);
-				isAttack_ = false;  // 1‰ñ‚¾‚¯‚É‚·‚é
+				isAttack_ = false;
 				break;
 			}
 		}

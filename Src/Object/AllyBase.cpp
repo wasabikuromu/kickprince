@@ -329,7 +329,7 @@ void AllyBase::CollisionGravity(void)
 		auto hit = MV1CollCheck_Line(
 			c.lock()->modelId_, -1, gravHitPosUp_, gravHitPosDown_);
 
-		//if (hit.HitFlag > 0)
+		//if(hit.HitFlag > 0)
 		if (hit.HitFlag > 0 && VDot(dirGravity, jumpPow_) > 0.9f)
 		{
 			//Õ“Ë’n“_‚©‚çA­‚µã‚ÉˆÚ“®

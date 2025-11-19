@@ -14,6 +14,9 @@
 #include "../Object/Player.h"
 #include "../Object/AllyBase.h"
 #include "../Object/EnemyBase.h"
+#include "../Object/Enemy/EnemyDog.h"
+#include "../Object/Enemy/EnemyOnion.h"
+#include "../Object/Enemy/EnemyVirus.h"
 #include "../Object/Enemy/EnemyBoss.h"
 #include "../Object/Ally/AllyRed.h"
 #include "../Object/Ally/AllyBlue.h"
@@ -23,7 +26,8 @@
 
 static Camera::MODE cameraMode = Camera::MODE::FOLLOW;
 
-GameScene::GameScene(void)
+GameScene::GameScene(int stageNo)
+	: stageNo_(stageNo)
 {
 	player_ = nullptr;
 	skyDome_ = nullptr;
@@ -45,7 +49,10 @@ void GameScene::Init(void)
 	player_->Init();
 
 	//敵
-	BossCreate();
+	EnemyCreate();
+
+	//ステージごとの敵配置
+	SpawnEnemies(stageNo_);
 
 	//味方のモデル
 	AllyCreate();
@@ -194,6 +201,21 @@ void GameScene::Update(void)
 	for (auto& enemy : enemys_) {
 		if (!enemy) continue;
 		enemy->Update();
+	}
+
+	//敵が全滅したら次ステージへ
+	if (IsAllEnemiesDefeated())
+	{
+		// 次のステージへ
+		int nextStage = stageNo_ + 1;
+
+		// SceneManager に次ステージを渡す（2引数版 ChangeScene）
+		SceneManager::GetInstance().ChangeStageScene(
+			SceneManager::SCENE_ID::GAME,
+			nextStage
+		);
+
+		return;  // これ以降の Update を行わない
 	}
 }
 
@@ -352,26 +374,26 @@ void GameScene::AllyCreate(void)
 
 	// プレイヤー位置と回転を取得
 	VECTOR basePos = player_->GetTransform().pos;
-	float playerAngleY = player_->GetTransform().rot.y; // Y軸回転（ラジアン）
+	float playerAngleY = player_->GetTransform().rot.y; //Y軸回転（ラジアン）
 
-	// 前方・右方向ベクトル
+	//前方・右方向ベクトル
 	VECTOR forward = VGet(sinf(playerAngleY), 0.0f, cosf(playerAngleY));
 	VECTOR right = VGet(cosf(playerAngleY), 0.0f, -sinf(playerAngleY));
 
-	// プレイヤーの前方に出す距離と横間隔
-	const float forwardDist = 300.0f; // 前方方向へ距離
-	const float spacing = 200.0f;     // 横間隔
+	//プレイヤーの前方に出す距離と横間隔
+	const float forwardDist = 300.0f; //前方方向へ距離
+	const float spacing = 200.0f;     //横間隔
 
-	// 3種類の味方を左から右へ並べる
+	//3種類の味方を左から右へ並べる
 	struct EnemySpawnData {
 		AllyBase::TYPE type;
-		float horizontalOffset; // 横方向の位置補正
+		float horizontalOffset; //横方向の位置補正
 	};
 
 	std::vector<EnemySpawnData> spawnList = {
-		{ AllyBase::TYPE::RED,   -spacing }, // 左
-		{ AllyBase::TYPE::BLUE,   0.0f     }, // 中央
-		{ AllyBase::TYPE::BLACK,  spacing  }  // 右
+		{ AllyBase::TYPE::RED,   -spacing },	//左
+		{ AllyBase::TYPE::BLUE,   0.0f     },	//中央
+		{ AllyBase::TYPE::BLACK,  spacing  }	//右
 	};
 
 	for (auto& data : spawnList)
@@ -412,16 +434,23 @@ void GameScene::AllyCreate(void)
 	}
 }
 
-void GameScene::BossCreate(void)
+void GameScene::EnemyCreate(void)
 {
-	std::shared_ptr<EnemyBase> boss = std::make_shared<EnemyBoss>();
-	boss->SetGameScene(this);
-	boss->SetPos(VGet(0, 200, 3500));
-	boss->SetPlayer(player_);
-	boss->SetAlly(&Allys_);
-	boss->Init();
+	enemySpawnTable_[1] = {
+		{ VGet(0, 200, 3500), 3 }, // ボスだけ
+	};
 
-	enemys_.emplace_back(std::move(boss));
+	enemySpawnTable_[2] = {
+		{ VGet(0, 200, 1500), 0 },
+		{ VGet(0, 200, 2500), 1 },
+		{ VGet(0, 200, 3500), 2 },
+	};
+
+	enemySpawnTable_[3] = {
+		{ VGet(0, 200, 1500), 3 },
+		{ VGet(0, 200, 2500), 3 },
+		{ VGet(0, 200, 3500), 3 },
+	};
 }
 
 bool GameScene::PauseMenu(void)
@@ -476,6 +505,47 @@ bool GameScene::PauseMenu(void)
 	return true;
 }
 
+void GameScene::SpawnEnemies(int stageNo)
+{
+	//登録がないステージ
+	if (enemySpawnTable_.count(stageNo) == 0)
+		return;
+
+	auto& list = enemySpawnTable_[stageNo];
+
+	for (const auto& e : list)
+	{
+		std::shared_ptr<EnemyBase> enemy;
+
+		// 敵の種類を割り当て
+		switch (e.type)
+		{
+		case 0:
+			enemy = std::make_shared<EnemyDog>();
+			break;
+		case 1:
+			enemy = std::make_shared<EnemyOnion>();
+			break;
+		case 2:
+			enemy = std::make_shared<EnemyVirus>();
+			break;
+		case 3:
+			enemy = std::make_shared<EnemyBoss>();
+			break;
+		default:
+			continue;
+		}
+
+		enemy->SetGameScene(this);
+		enemy->SetPos(e.pos);
+		enemy->SetPlayer(player_);
+		enemy->SetAlly(&Allys_);
+		enemy->Init();
+
+		enemys_.push_back(enemy);
+	}
+}
+
 bool GameScene::IsAnyAllyFlying(void) const
 {
 	for (auto& a : Allys_)
@@ -495,4 +565,15 @@ AllyBase* GameScene::GetFlyingAlly(void) const
 			return a.get();
 	}
 	return nullptr;
+}
+
+bool GameScene::IsAllEnemiesDefeated(void) const
+{
+	for (auto& e : enemys_)
+	{
+		if (!e) continue;
+		if (e->IsAlive())
+			return false;
+	}
+	return true;
 }

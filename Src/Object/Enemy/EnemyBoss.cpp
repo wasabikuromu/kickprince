@@ -24,8 +24,8 @@ void EnemyBoss::InitAnimation(void)
 
 void EnemyBoss::SetParam(void)
 {
-	// 使用メモリ容量と読み込み時間の削減のため
-	// モデルデータをいくつもメモリ上に存在させない
+	//使用メモリ容量と読み込み時間の削減のため
+	//モデルデータをいくつもメモリ上に存在させない
 	transform_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::BOSS));
 
 	transform_.scl = { 0.8f, 0.8f, 0.8f };						// 大きさの設定
@@ -33,22 +33,22 @@ void EnemyBoss::SetParam(void)
 		, AsoUtility::Deg2RadF(180.0f), 0.0f);//クォータニオンをいじると向きが変わる
 	transform_.dir = { 0.0f, 0.0f, 0.0f };						// 右方向に移動する
 
-	speed_ = 0.0f;		// 移動スピード
+	speed_ = 0.0f;		//移動スピード
 
-	isAlive_ = true;	// 初期は生存状態
+	isAlive_ = true;	//初期は生存状態
 
-	hp_ = BOSS_MAX_HP;	// HPの設定
+	hp_ = BOSS_MAX_HP;	//HPの設定
 
 	attackPow_ = 3;
 
-	collisionRadius_ = 500.0f;	// 衝突判定用の球体半径
-	collisionLocalPos_ = { 0.0f, 300.0f, 0.0f };	// 衝突判定用の球体中心の調整座標
+	collisionRadius_ = 500.0f;						//衝突判定用の球体半径
+	collisionLocalPos_ = { 0.0f, 300.0f, 0.0f };	//衝突判定用の球体中心の調整座標
 
-	attackCollisionRadius_ = 500.0f;		// 攻撃判定用と攻撃範囲の球体半径
+	attackCollisionRadius_ = 500.0f;				//攻撃判定用と攻撃範囲の球体半径
 
 	enemyType_ = TYPE::BOSS;
 
-	// 初期状態
+	//初期状態
 	ChangeState(STATE::PLAY);
 }
 

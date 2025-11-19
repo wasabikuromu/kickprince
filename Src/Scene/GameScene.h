@@ -11,14 +11,29 @@ class Player;
 class Item;
 class Camera;
 
+//敵スポーン用のデータ
+struct EnemySpawnData
+{
+	VECTOR pos;   //敵の初期座標
+	int type;     //敵の種類
+};
+
+
 class GameScene : public SceneBase
 {
 public:
 
 	enum class MODE {
-		FOLLOW,       // プレイヤー追尾
-		ALLY_FOLLOW,  // 味方追尾
-		SIDE_VIEW     // 固定サイドビュー
+		FOLLOW,       //プレイヤー追尾
+		ALLY_FOLLOW,  //味方追尾
+		SIDE_VIEW     //固定サイドビュー
+	};
+
+	enum class PauseState
+	{
+		Menu,        // 通常のポーズメニュー
+		ShowControls,// 操作説明画面
+		ShowItems    // アイテム概要画面
 	};
 
 	static constexpr int ENCOUNT = 300;		//エンカウンタ
@@ -91,7 +106,7 @@ public:
 	int yellow = 0xffff00;//黄
 	int purpl = 0x800080; //紫
 	
-	GameScene(void);	// コンストラクタ
+	GameScene(int stageNo = 1);	// コンストラクタ
 	~GameScene(void);	// デストラクタ
 
 	void Init(void) override;
@@ -108,12 +123,14 @@ public:
 	bool IsAnyAllyFlying(void) const;
 	AllyBase* GetFlyingAlly(void) const;
 
+	bool IsAllEnemiesDefeated(void) const;
+
 
 private:
 	int cnt;
 
 	void AllyCreate(void);
-	void BossCreate(void);
+	void EnemyCreate(void);
 
 	bool PauseMenu(void);
 
@@ -151,12 +168,13 @@ private:
 	int pauseSelectIndex_;    // ポーズメニューの選択項目（上下選択）
 	int pauseExplainImgs_[2];
 
-	enum class PauseState 
-	{
-		Menu,        // 通常のポーズメニュー
-		ShowControls,// 操作説明画面
-		ShowItems    // アイテム概要画面
-	};
+	int stageNo_;   // ← ステージ番号
+
+	// 敵配置テーブル
+	std::map<int, std::vector<EnemySpawnData>> enemySpawnTable_;
+
+	// 敵スポーン関数
+	void SpawnEnemies(int stageNo);
 
 	PauseState pauseState_ = PauseState::Menu;
 	int  pauseImg_;

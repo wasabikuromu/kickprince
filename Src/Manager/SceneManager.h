@@ -43,7 +43,14 @@ public:
 	void Destroy(void);
 
 	// 状態遷移
+	void ChangeStageScene(SCENE_ID id, int stageNo);
+
 	void ChangeScene(SCENE_ID nextId);
+
+	int GetCurrentStage() const { return currentStageNo_; }
+
+	// 次のステージに行く
+	void GoToNextStage(int currentStage);
 
 	// シーンIDの取得
 	SCENE_ID GetSceneID(void);
@@ -61,6 +68,9 @@ private:
 
 	SCENE_ID sceneId_;
 	SCENE_ID waitSceneId_;
+
+	int nextStageNo_ = 1;
+	int currentStageNo_ = 1;
 
 	// フェード
 	std::unique_ptr<SceneBase> scene_;

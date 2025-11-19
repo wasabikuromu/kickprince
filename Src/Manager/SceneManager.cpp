@@ -162,15 +162,27 @@ void SceneManager::Destroy(void)
 
 void SceneManager::ChangeScene(SCENE_ID nextId)
 {
+	waitSceneId_ = nextId;
 
+	fader_->SetFade(Fader::STATE::FADE_OUT);
+	isSceneChanging_ = true;
+}
+
+void SceneManager::ChangeStageScene(SCENE_ID id,int stageNo)
+{
 	// フェード処理が終わってからシーンを変える場合もあるため、
 	// 遷移先シーンをメンバ変数に保持
-	waitSceneId_ = nextId;
+	waitSceneId_ = id;
+	nextStageNo_ = stageNo;
 
 	// フェードアウト(暗転)を開始する
 	fader_->SetFade(Fader::STATE::FADE_OUT);
 	isSceneChanging_ = true;
+}
 
+void SceneManager::GoToNextStage(int currentStage)
+{
+	ChangeStageScene(SceneManager::SCENE_ID::GAME, currentStage + 1);
 }
 
 SceneManager::SCENE_ID SceneManager::GetSceneID(void)
@@ -240,7 +252,8 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		SetFontSize(55);
 		break;
 	case SCENE_ID::GAME:
-		scene_ = std::make_unique<GameScene>();
+		currentStageNo_ = nextStageNo_;
+		scene_ = std::make_unique<GameScene>(currentStageNo_);
 		break;
 	case SCENE_ID::OVER:
 		scene_ = std::make_unique<OverScene>();

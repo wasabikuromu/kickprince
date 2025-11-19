@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Enemy\EnemyOnion.cpp" />
+    <ClCompile Include="Src\Object\Enemy\EnemyVirus.cpp" />
+    <ClCompile Include="Src\Object\Enemy\EnemyDog.cpp" />
     <ClCompile Include="Src\Object\shot.cpp" />
     <ClCompile Include="Src\Object\EnemyBase.cpp" />
     <ClCompile Include="Src\Object\Enemy\EnemyBoss.cpp" />
@@ -58,6 +61,9 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Enemy\EnemyOnion.h" />
+    <ClInclude Include="Src\Object\Enemy\EnemyVirus.h" />
+    <ClInclude Include="Src\Object\Enemy\EnemyDog.h" />
     <ClInclude Include="Src\Object\shot.h" />
     <ClInclude Include="Src\Object\EnemyBase.h" />
     <ClInclude Include="Src\Object\Enemy\EnemyBoss.h" />

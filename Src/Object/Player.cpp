@@ -40,8 +40,6 @@ Player::Player(void)
 
 	//攻撃の初期化
 	normalAttack_ = NORMAL_ATTACK;
-	slashAttack_ = SLASH_ATTACK;
-	exrAttack_ = EX_ATTACK;
 	powerUpFlag_ = false;
 	isAttack_ = false;
 	exTimer_ = EX_TIME;
@@ -724,15 +722,18 @@ void Player::CollisionCapsule(void)
 }
 
 void Player::CollisionAttack(float chargeRate)
-{
+{	
+	//アニメーションのステップ数を取得
+	const auto& anim = animationController_->GetPlayAnim();
+
 	if (isAttack_ || ally_)
 	{
-		//エネミーとの衝突判定
-		
 		//攻撃の球の半径
 		float attackRadius = ATTACK_RADIUS;
+
 		//攻撃の方向(プレイヤーの前方)
 		VECTOR forward = transform_.quaRot.GetForward();
+
 		//攻撃の開始位置と終了位置
 		VECTOR attackPos = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD));
 
@@ -744,14 +745,24 @@ void Player::CollisionAttack(float chargeRate)
 			VECTOR allyPos = ally->GetCollisionPos();
 			float allyRadius = ally->GetCollisionRadius();
 
-			//球体同士の当たり判定
-			if (AsoUtility::IsHitSpheres(attackPos,attackRadius,allyPos,allyRadius))
+
+			if (AsoUtility::IsHitSpheres(attackPos, attackRadius, allyPos, allyRadius))
 			{
 				ally->Damage(normalAttack_, chargeRate);
-				//1体のみヒット
+				isAttack_ = false; 
 				break;
 			}
+			////球体同士の当たり判定
+			//if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_)
+			//{
+			//}
 		}
+	}
+
+	// 攻撃が終わったら次回用にリセット
+	if (anim.step > ATTACK_END)
+	{
+		isAttack_ = true;
 	}
 }
 
@@ -782,8 +793,10 @@ void Player::ProcessAttack(void)
 {
 	bool isPress = CheckHitKey(KEY_INPUT_E) ||
 		ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);
+
 	bool isHold = CheckHitKey(KEY_INPUT_E) ||
 		ins_.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);
+
 	bool isRelease = CheckHitKey(KEY_INPUT_E) == 0 &&
 		ins_.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);
 
@@ -791,7 +804,7 @@ void Player::ProcessAttack(void)
 	if (!isCharging_ && isPress)
 	{
 		isCharging_ = true;
-		isChargeIncreasing_ = true; // 追加：増加中フラグ
+		isChargeIncreasing_ = true; //増加中フラグ
 		chargeTime_ = 0.0f;
 		animationController_->Play((int)ANIM_TYPE::IDLE, true);
 	}
@@ -910,8 +923,6 @@ void Player::PowerUpTimer(void)
 			powerUpFlag_ = false;
 
 			normalAttack_ = NORMAL_ATTACK;
-			slashAttack_ = SLASH_ATTACK;
-			exrAttack_ = EX_ATTACK;
 			powerUpCnt_ = POWER_UP_TIME;
 		}
 	}

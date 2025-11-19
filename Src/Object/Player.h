@@ -83,15 +83,12 @@ public:
 
 	//攻撃
 	static constexpr int NORMAL_ATTACK = 2;				//通常攻撃
-	static constexpr int SLASH_ATTACK = 1;				//スラッシュ
-	static constexpr int EX_ATTACK = 2;					//回転斬り
 	static constexpr float ATTACK_RADIUS = 100.0f;		//通常攻撃判定の球半径
 	static constexpr float ATTACK_FORWARD = 100.0f;		//通常攻撃位置の前方オフセット
-	static constexpr float ATTACK2_RADIUS = 140.0f;		//スラッシュ判定半径
-	static constexpr float ATTACK2_FORWARD = 80.0f;		//スラッシュ位置前方オフセット
-	static constexpr float ATTACK2_HEIGHT = 100.0f;		//スラッシュ位置高さ
-	static constexpr float EX_RADIUS = 140.0f;			//回転斬り判定半径
-	static constexpr float EX_HEIGHT = 100.0f;			//回転斬り位置高さ
+
+	//攻撃判定フレーム
+	const float ATTACK_START = 15.0f;
+	const float ATTACK_END = 20.0f;
 
 	//ステータス関連
 	static constexpr int NAME_X = 55;										//名前の位置X

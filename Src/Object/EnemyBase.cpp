@@ -332,15 +332,16 @@ EnemyBase::TYPE EnemyBase::GetEnemyType(void) const
 void EnemyBase::Damage(int damage)
 {
 	hp_ -= damage;
-	// É_ÉÅÅ[ÉWâπ
+
 	SoundManager::GetInstance().Play(SoundManager::SRC::E_DAMAGE_SE, Sound::TIMES::FORCE_ONCE);
 	isAttack_ = false;
-	if (hp_ <= ZERO && isAlive_)
+
+	if (hp_ <= 0 && isAlive_)
 	{
-		ChangeState(STATE::DEATH);	
+		ChangeState(STATE::DEATH);
 		SoundManager::GetInstance().Play(SoundManager::SRC::E_DOWN_SE, Sound::TIMES::ONCE);
 	}
-	else if (hp_ >= VALUE_ONE && isAlive_ && enemyType_ != TYPE::BOSS)
+	else if (hp_ > 0 && isAlive_ && enemyType_ != TYPE::BOSS)
 	{
 		ChangeState(STATE::DAMAGE);
 	}
