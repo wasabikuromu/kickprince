@@ -23,6 +23,7 @@ public:
 		NONE,
 		TITLE,
 		DEMO,
+		STAGE_SELECT,
 		GAME,
 		OVER,
 		CLEAR

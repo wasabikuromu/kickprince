@@ -5,6 +5,7 @@
 #include "../Manager/GravityManager.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/DemoScene.h"
+#include "../Scene/StageSelectScene.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/OverScene.h"
 #include "../Scene/ClearScene.h"
@@ -52,7 +53,7 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::TITLE);
+	DoChangeScene(SCENE_ID::GAME);
 
 }
 
@@ -121,7 +122,6 @@ void SceneManager::Update(void)
 
 void SceneManager::Draw(void)
 {
-	
 	// 描画先グラフィック領域の指定
 	// (３Ｄ描画で使用するカメラの設定などがリセットされる)
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -250,6 +250,9 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	case SCENE_ID::DEMO:
 		scene_ = std::make_unique<DemoScene>();
 		SetFontSize(55);
+		break;
+	case SCENE_ID::STAGE_SELECT:
+		scene_ = std::make_unique<StageSelectScene>();
 		break;
 	case SCENE_ID::GAME:
 		currentStageNo_ = nextStageNo_;

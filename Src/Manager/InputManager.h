@@ -134,6 +134,7 @@ public:
 	// アナログキーの入力値から方向を取得
 	VECTOR GetDirectionXZAKey(int aKeyX, int aKeyY);
 
+
 private:
 
 	// キー情報

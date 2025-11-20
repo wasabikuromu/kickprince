@@ -43,6 +43,7 @@ GameScene::~GameScene(void)
 void GameScene::Init(void)
 {
 	cnt = 0;
+
 	//プレイヤー
 	player_ = std::make_shared<Player>();
 	GravityManager::GetInstance().SetPlayer(player_);
@@ -88,6 +89,10 @@ void GameScene::Init(void)
 	isPaused_ = false;
 	pauseSelectIndex_ = 0;
 
+	//ステージメニュー
+	isStageMenu_ = false;
+	stageSelectIndex_ = 0;
+
 	//カメラのポーズ解除
 	camera_ = SceneManager::GetInstance().GetCamera().lock();
 	if (camera_) {
@@ -119,9 +124,13 @@ void GameScene::Update(void)
 	//簡易deltaTime(60FPS想定）
 	const float deltaTime = 1.0f / 60.0f;
 
-	if (PauseMenu()) return;
+	//ステージクリアメニューの処理を最優先
+	if (stageMenu_ == StageState::StageMenu)
+	{
+		if (StageClearMenu()) return;
+	}
 
-	// カメラモード管理
+	if (PauseMenu()) return;
 
 	//右入力で順送り
 	if (ins.IsTrgDown(KEY_INPUT_R) ||
@@ -206,16 +215,11 @@ void GameScene::Update(void)
 	//敵が全滅したら次ステージへ
 	if (IsAllEnemiesDefeated())
 	{
-		// 次のステージへ
-		int nextStage = stageNo_ + 1;
+		isStageMenu_ = true;				
+		stageMenu_ = StageState::StageMenu;
+		stageSelectIndex_ = 0;
 
-		// SceneManager に次ステージを渡す（2引数版 ChangeScene）
-		SceneManager::GetInstance().ChangeStageScene(
-			SceneManager::SCENE_ID::GAME,
-			nextStage
-		);
-
-		return;  // これ以降の Update を行わない
+		return;
 	}
 }
 
@@ -275,7 +279,7 @@ void GameScene::Draw(void)
 		DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), black, TRUE);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-		if (pauseState_ == PauseState::Menu)
+		if (pauseState_ == PauseState::PauseMenu)
 		{
 			DrawRotaGraph((Application::SCREEN_SIZE_X / 2), UI_PAUSE_IMG_HEIGHT, PAUSE_IMG_UI_SIZE, 0, pauseImg_, true);
 			SetFontSize(DEFAULT_FONT_SIZE * 5.0);
@@ -320,6 +324,25 @@ void GameScene::Draw(void)
 			if (cnt % FLASH * 2.0 <= FLASH)DrawString(BACK_PAUSE_WIDTH, BACK_PAUSE_HEIGHT, "Enterキーで戻る", white);
 			SetFontSize(DEFAULT_FONT_SIZE);
 		}
+		return;
+	}
+
+	if (isStageMenu_)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+		DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), black, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		SetFontSize(DEFAULT_FONT_SIZE * 5);
+
+		DrawString(400, 300, "次のステージへ",
+			stageSelectIndex_ == 0 ? yellow : white);
+		DrawString(400, 450, "ステージ選択へ",
+			stageSelectIndex_ == 1 ? yellow : white);
+		DrawString(400, 600, "タイトルへ戻る",
+			stageSelectIndex_ == 2 ? yellow : white);
+
+		SetFontSize(DEFAULT_FONT_SIZE);
 		return;
 	}
 #pragma region UI
@@ -406,12 +429,15 @@ void GameScene::AllyCreate(void)
 		case AllyBase::TYPE::RED:
 			enemy = std::make_shared<AllyRed>();
 			break;
+
 		case AllyBase::TYPE::BLUE:
-			enemy = std::make_shared<AllyBule>();
+			enemy =std::make_shared<AllyBule>();
 			break;
+
 		case AllyBase::TYPE::BLACK:
 			enemy = std::make_shared<AllyBlack>();
 			break;
+
 		default:
 			continue;
 		}
@@ -437,18 +463,21 @@ void GameScene::AllyCreate(void)
 void GameScene::EnemyCreate(void)
 {
 	enemySpawnTable_[1] = {
-		{ VGet(0, 200, 3500), 3 }, // ボスだけ
+		{ VGet(0, 200, -1000), 0},
+		{ VGet(0, 200, -500), 1},
+		{ VGet(0, 200, 0), 2},
+		{ VGet(0, 200, 1000 ), 3},
 	};
 
 	enemySpawnTable_[2] = {
-		{ VGet(0, 200, 1500), 0 },
-		{ VGet(0, 200, 2500), 1 },
-		{ VGet(0, 200, 3500), 2 },
+		{ VGet(0, 200, 1500), 3 },
+		{ VGet(0, 200, 2500), 3 },
+		{ VGet(0, 200, 3500), 3 },
 	};
 
 	enemySpawnTable_[3] = {
-		{ VGet(0, 200, 1500), 3 },
-		{ VGet(0, 200, 2500), 3 },
+		{ VGet(0, 200, 1500), 1 },
+		{ VGet(0, 200, 2500), 2 },
 		{ VGet(0, 200, 3500), 3 },
 	};
 }
@@ -457,10 +486,16 @@ bool GameScene::PauseMenu(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 
+	//ポーズ画面種類
+	constexpr int GameBack = 0;
+	constexpr int ShowControls = 1;
+	constexpr int ShowItems = 2;
+	constexpr int TitleBack = 3;
+
 	//TABキーでポーズのON/OFF切り替え（Menu中のみ）
 	if (ins.IsTrgDown(KEY_INPUT_TAB)|| 
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::MENU)
-		&& pauseState_ == PauseState::Menu)
+		&& pauseState_ == PauseState::PauseMenu)
 	{
 		isPaused_ = !isPaused_;
 		pauseSelectIndex_ = 0;
@@ -470,7 +505,7 @@ bool GameScene::PauseMenu(void)
 
 	if (!isPaused_) return false; // ポーズ中でなければ通常更新
 
-	if (pauseState_ == PauseState::Menu)
+	if (pauseState_ == PauseState::PauseMenu)
 	{
 		if (ins.IsTrgDown(KEY_INPUT_DOWN)||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
@@ -485,13 +520,22 @@ bool GameScene::PauseMenu(void)
 		{
 			switch (pauseSelectIndex_)
 			{
-			case 0:
+			case GameBack:
 				isPaused_ = false;
 				mainCamera->SetPaused(false);
 				break;
-			case 1: pauseState_ = PauseState::ShowControls; break;
-			case 2: pauseState_ = PauseState::ShowItems; break;
-			case 3: SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE); break;
+
+			case ShowControls: 
+				pauseState_ = PauseState::ShowControls; 
+				break;
+
+			case ShowItems:
+				pauseState_ = PauseState::ShowItems; 
+				break;
+
+			case TitleBack:
+				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+				break;
 			}
 		}
 	}
@@ -499,10 +543,53 @@ bool GameScene::PauseMenu(void)
 	{
 		if (ins.IsTrgDown(KEY_INPUT_RETURN)||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
-			pauseState_ = PauseState::Menu;
+			pauseState_ = PauseState::PauseMenu;
 	}
 
 	return true;
+}
+
+bool GameScene::StageClearMenu(void)
+{
+	InputManager& ins = InputManager::GetInstance();
+
+	constexpr int NextStage = 0;
+	constexpr int StageSelect = 1;
+	constexpr int BackToTitle = 2;
+
+	if (isStageMenu_)
+	{
+		if (ins.IsTrgDown(KEY_INPUT_DOWN))
+			stageSelectIndex_ = (stageSelectIndex_ + 1) % 3;
+
+		if (ins.IsTrgDown(KEY_INPUT_UP))
+			stageSelectIndex_ = (stageSelectIndex_ + 3 - 1) % 3;
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN))
+		{
+			switch (stageSelectIndex_)
+			{
+			case NextStage:
+				SceneManager::GetInstance()
+					.ChangeStageScene(SceneManager::SCENE_ID::GAME, stageNo_ + 1);
+				break;
+
+			case StageSelect:
+				SceneManager::GetInstance()
+					.ChangeScene(SceneManager::SCENE_ID::STAGE_SELECT);
+				break;
+
+			case BackToTitle:
+				SceneManager::GetInstance()
+					.ChangeScene(SceneManager::SCENE_ID::TITLE);
+				break;
+			}
+		}
+
+		return true; // ← メニュー中なら更新停止
+	}
+
+	return false;
 }
 
 void GameScene::SpawnEnemies(int stageNo)
@@ -511,27 +598,37 @@ void GameScene::SpawnEnemies(int stageNo)
 	if (enemySpawnTable_.count(stageNo) == 0)
 		return;
 
+	//敵種類
+	constexpr int Dog = 0;
+	constexpr int Onion = 1;
+	constexpr int Virus = 2;
+	constexpr int Boss = 3;
+
 	auto& list = enemySpawnTable_[stageNo];
 
 	for (const auto& e : list)
 	{
 		std::shared_ptr<EnemyBase> enemy;
 
-		// 敵の種類を割り当て
+		//敵の種類を割り当て
 		switch (e.type)
 		{
-		case 0:
+		case Dog:
 			enemy = std::make_shared<EnemyDog>();
 			break;
-		case 1:
+
+		case Onion:
 			enemy = std::make_shared<EnemyOnion>();
 			break;
-		case 2:
+
+		case Virus:
 			enemy = std::make_shared<EnemyVirus>();
 			break;
-		case 3:
+
+		case Boss:
 			enemy = std::make_shared<EnemyBoss>();
 			break;
+
 		default:
 			continue;
 		}

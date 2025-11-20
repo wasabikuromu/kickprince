@@ -18,22 +18,31 @@ struct EnemySpawnData
 	int type;     //敵の種類
 };
 
-
 class GameScene : public SceneBase
 {
 public:
 
+	//カメラのモード
 	enum class MODE {
 		FOLLOW,       //プレイヤー追尾
 		ALLY_FOLLOW,  //味方追尾
 		SIDE_VIEW     //固定サイドビュー
 	};
 
+	//ポーズ時
 	enum class PauseState
 	{
-		Menu,        // 通常のポーズメニュー
-		ShowControls,// 操作説明画面
-		ShowItems    // アイテム概要画面
+		PauseMenu,		//通常のポーズメニュー
+		ShowControls,	//操作説明画面
+		ShowItems		//アイテム概要画面
+	};
+
+	//ステージクリア時
+	enum class StageState
+	{
+		StageMenu,
+		NextStage,		//次のステージへ
+		SelectStage		//ステージを選択
 	};
 
 	static constexpr int ENCOUNT = 300;		//エンカウンタ
@@ -52,6 +61,8 @@ public:
 	static constexpr int BOSS_WAIT = 0;		//ボス出現待機
 	static constexpr int BOSS_ON = 1;		//ボス出現可能
 	static constexpr int BOSS_OFF = 2;		//ボス出現不可
+
+	static const int MAX_STAGE = 3;			//最終ステージ番号
 
 	//UI関係-----------------------------------------------------
 	//-------------------------------------------------------------------
@@ -125,14 +136,21 @@ public:
 
 	bool IsAllEnemiesDefeated(void) const;
 
-
 private:
 	int cnt;
 
+	//味方生成
 	void AllyCreate(void);
+	//敵生成
 	void EnemyCreate(void);
 
+	//ポーズメニュー
 	bool PauseMenu(void);
+	//ステージクリア時のメニュー
+	bool StageClearMenu(void);
+
+	//敵スポーン関数
+	void SpawnEnemies(int stageNo);
 
 	std::unique_ptr<Stage> stage_;		// ステージ
 	std::unique_ptr<SkyDome> skyDome_;	// スカイドーム
@@ -163,19 +181,20 @@ private:
 
 	int isB_;
 
-	// ポーズ
-	bool isPaused_;           // ポーズ中かどうか
-	int pauseSelectIndex_;    // ポーズメニューの選択項目（上下選択）
+	//ポーズ関連
+	PauseState pauseState_ = PauseState::PauseMenu;
+	int  pauseImg_;
+	bool isPaused_;				 //ポーズ中かどうか
+	int pauseSelectIndex_;		 //ポーズメニューの選択項目（上下選択）
 	int pauseExplainImgs_[2];
+
+	//ステージ変更関係
+	StageState stageMenu_ = StageState::StageMenu;
+	bool isStageMenu_;			//ステージクリアしたかどうか
+	int stageSelectIndex_;		//ステージクリア時の選択項目（上下選択）
 
 	int stageNo_;   // ← ステージ番号
 
 	// 敵配置テーブル
 	std::map<int, std::vector<EnemySpawnData>> enemySpawnTable_;
-
-	// 敵スポーン関数
-	void SpawnEnemies(int stageNo);
-
-	PauseState pauseState_ = PauseState::Menu;
-	int  pauseImg_;
 };

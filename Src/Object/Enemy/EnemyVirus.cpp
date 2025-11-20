@@ -34,6 +34,8 @@ void EnemyVirus::SetParam(void)
 		, AsoUtility::Deg2RadF(180.0f), 0.0f);//クォータニオンをいじると向きが変わる
 	transform_.dir = { AsoUtility::VECTOR_ZERO };						// 右方向に移動する
 
+	speed_ = 0.0f;		//移動スピード
+
 	isAlive_ = true;	// 初期は生存状態
 
 	hp_ = HP;	// HPの設定
@@ -42,6 +44,8 @@ void EnemyVirus::SetParam(void)
 	collisionLocalPos_ = { 0.0f,60.0f, 0.0f };		//衝突判定用の球体中心の調整座標
 
 	attackCollisionRadius_ = ATTACK_RADIUS_SIZE;		// 攻撃判定用と攻撃範囲の球体半径
+
+	enemyType_ = TYPE::VIRUS;
 
 	// 初期状態
 	ChangeState(STATE::PLAY);

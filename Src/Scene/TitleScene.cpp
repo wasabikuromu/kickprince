@@ -197,7 +197,7 @@ void TitleScene::Update(void)
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
 		if (selectedIndex_ == 0) {
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::STAGE_SELECT);
 			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 		}
 		else if (selectedIndex_ == 1) {

@@ -30,7 +30,7 @@ public:
 
 	//デバッグ &　汎用
 	static constexpr float VALUE_ZERO = 0.0f;	//初期化の値用
-	static constexpr float VALUE_ONE = 1.0f;
+	static constexpr float VALUE_ONE = 6.0f;
 	static constexpr float VALUE_TWO = 2.0f;
 	static constexpr int  VALUE_SIXTY = 60;
 
