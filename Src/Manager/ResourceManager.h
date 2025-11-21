@@ -14,7 +14,7 @@ public:
 	{
 		//‰æ‘œ(UI)
 		TITLE,
-		BACK_TITLE,
+		BACK_GROUND_TITLE,
 		GAME_START,
 		GAME_END,
 		LOOK_RULE,
@@ -25,6 +25,9 @@ public:
 		RULE,
 		GAMEUI_1,
 		NICE_KICK,
+		NEXT_STAGE,
+		SELECT_STAGE,
+		//BACK_TITLE,
 		UPDOWN,
 		GOTITLE,
 		GOGAME,

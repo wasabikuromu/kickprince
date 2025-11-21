@@ -39,7 +39,7 @@ void ResourceManager::Init(void)
 
 	// タイトル背景
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title/BackTitle.png");
-	resourcesMap_.emplace(SRC::BACK_TITLE, std::move(res));
+	resourcesMap_.emplace(SRC::BACK_GROUND_TITLE, std::move(res));
 
 	// ゲームプレイ画像
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title/GamePlay.png");
@@ -65,10 +65,21 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "NiceKick.png");
 	resourcesMap_.emplace(SRC::NICE_KICK, std::move(res));
 
+	// 次のステージへ
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "NiceKick.png");
+	resourcesMap_.emplace(SRC::NICE_KICK, std::move(res));
+
+	// ステージ選択
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "NiceKick.png");
+	resourcesMap_.emplace(SRC::NICE_KICK, std::move(res));
 
 	// タイトルに戻る
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "GoTitle.png");
-	resourcesMap_.emplace(SRC::GOTITLE, std::move(res));
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "NiceKick.png");
+	resourcesMap_.emplace(SRC::NICE_KICK, std::move(res));
+
+	//// タイトルに戻る
+	//res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "GoTitle.png");
+	//resourcesMap_.emplace(SRC::GOTITLE, std::move(res));
 
 	// ゲームに戻る
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "BackGame.png");

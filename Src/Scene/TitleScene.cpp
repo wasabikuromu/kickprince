@@ -35,7 +35,7 @@ void TitleScene::Init(void)
 	GravityManager::GetInstance().Init();
 	// 画像読み込み
 	imgTitle_ = resMng_.Load(ResourceManager::SRC::TITLE).handleId_;			//タイトル名前画像
-	imgBackTitle_ = resMng_.Load(ResourceManager::SRC::BACK_TITLE).handleId_;	//タイトル背景
+	imgBackTitle_ = resMng_.Load(ResourceManager::SRC::BACK_GROUND_TITLE).handleId_;	//タイトル背景
 	imgGameStart_ = resMng_.Load(ResourceManager::SRC::GAME_START).handleId_;	//ゲームスタート
 	imgGameEnd_ = resMng_.Load(ResourceManager::SRC::GAME_END).handleId_;		//ゲームを終了
 	imgLookRule_ = resMng_.Load(ResourceManager::SRC::LOOK_RULE).handleId_;		//ルールを見る
