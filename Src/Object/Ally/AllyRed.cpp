@@ -28,8 +28,8 @@ void AllyRed::InitAnimation(void)
 
 void AllyRed::SetParam(void)
 {
-	// 使用メモリ容量と読み込み時間の削減のため
-	// モデルデータをいくつもメモリ上に存在させない
+	//使用メモリ容量と読み込み時間の削減のため
+	//モデルデータをいくつもメモリ上に存在させない
 	transform_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ALLY_RED));
 
 	transform_.scl = { ALLY_SIZE,ALLY_SIZE,ALLY_SIZE };				// 大きさの設定
@@ -37,16 +37,16 @@ void AllyRed::SetParam(void)
 			,AsoUtility::Deg2RadF(DEGREE), 0.0f);//クォータニオンをいじると向きが変わる
 	transform_.dir = { AsoUtility::VECTOR_ZERO };						// 右方向に移動する
 
-	speed_ = SPEED;		// 移動スピード
+	speed_ = SPEED;		//移動スピード
 
-	isAlive_ = true;	// 初期は生存状態
+	isAlive_ = true;	//初期は生存状態
 
-	hp_ = HP;	// HPの設定
+	hp_ = HP;	//HPの設定
 
-	collisionRadius_ = COLLOSION_RADIUS;	// 衝突判定用の球体半径
-	collisionLocalPos_ = COLLISION_POS;	// 衝突判定用の球体中心の調整座標
+	collisionRadius_ = COLLOSION_RADIUS;	//衝突判定用の球体半径
+	collisionLocalPos_ = COLLISION_POS	;	//衝突判定用の球体中心の調整座標
 
-	attackCollisionRadius_ = ATTACK_RADIUS_SIZE;		// 攻撃判定用と攻撃範囲の球体半径
+	attackCollisionRadius_ = ATTACK_RADIUS_SIZE;		//攻撃判定用と攻撃範囲の球体半径
 
 	// 初期状態
 	ChangeState(STATE::IDLE);
@@ -61,9 +61,9 @@ void AllyRed::UpdateAttack(void)
 	}
 
 	//ゆっくり落下処理
-	const float gravity = 0.3f;          // 通常よりかなり小さい重力（例: 通常1.0fくらい）
-	velocity_.y -= gravity;              // 下方向に加速
-	transform_.pos.y += velocity_.y;     // 位置に反映
+	const float gravity = 0.3f;          //通常よりかなり小さい重力
+	velocity_.y -= gravity;              //下方向に加速
+	transform_.pos.y += velocity_.y;     //位置に反映
 
 	//地面との接地判定
 	if (transform_.pos.y < defaultPos_.y)
@@ -109,13 +109,11 @@ void AllyRed::CollisionAttack(void)
 			if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
 			{
 				enemy->Damage(attackPow_);
-				isAttack_ = false;
-				break;
 			}
 		}
 	}
 
-	// 攻撃が終わったら次回用にリセット
+	//攻撃が終わったら次回用にリセット
 	if (anim.step > ATTACK_END)
 	{
 		isAttack_ = true;

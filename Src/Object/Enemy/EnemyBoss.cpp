@@ -30,7 +30,7 @@ void EnemyBoss::SetParam(void)
 
 	transform_.scl = { 0.8f, 0.8f, 0.8f };						// 大きさの設定
 	transform_.quaRotLocal = Quaternion::Euler(AsoUtility::Deg2RadF(0.0f)
-		, AsoUtility::Deg2RadF(180.0f), 0.0f);//クォータニオンをいじると向きが変わる
+		, AsoUtility::Deg2RadF(0.0f), 0.0f);//クォータニオンをいじると向きが変わる
 	transform_.dir = { 0.0f, 0.0f, 0.0f };						// 右方向に移動する
 
 	speed_ = 0.0f;		//移動スピード

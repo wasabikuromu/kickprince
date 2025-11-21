@@ -30,10 +30,10 @@ void EnemyOnion::SetParam(void)
 	transform_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ONION));
 
 	//大きさの設定
-	transform_.scl = { AsoUtility::VECTOR_ONE };		
+	transform_.scl = { 2.5f, 2.5f, 2.5f };
 
 	//クォータニオン(向き)
-	transform_.quaRotLocal = Quaternion::Euler(AsoUtility::Deg2RadF(0.0f), AsoUtility::Deg2RadF(180.0f), 0.0f);
+	transform_.quaRotLocal = Quaternion::Euler(AsoUtility::Deg2RadF(0.0f), AsoUtility::Deg2RadF(0.0f), 0.0f);
 
 	//方向
 	transform_.dir = { AsoUtility::VECTOR_ZERO };						
@@ -44,7 +44,7 @@ void EnemyOnion::SetParam(void)
 
 	hp_ = HP;	// HPの設定
 
-	collisionRadius_ = 100.0f;	//衝突判定用の球体半径
+	collisionRadius_ = 250.0f;	//衝突判定用の球体半径
 	collisionLocalPos_ = { 0.0f,60.0f, 0.0f };		//衝突判定用の球体中心の調整座標
 
 	attackCollisionRadius_ = ATTACK_RADIUS_SIZE;		// 攻撃判定用と攻撃範囲の球体半径

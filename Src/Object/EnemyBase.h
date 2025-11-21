@@ -108,7 +108,6 @@ public:
 
 	void Damage(int damage);	// ダメージを受ける
 
-
 	TYPE GetEnemyType(void) const;
 	TYPE enemyType_;	//敵のタイプ
 
@@ -197,23 +196,23 @@ protected:
 	void UpdateNone(void){};		// 更新ステップ
 	virtual void UpdateIdle(void);	// 待機状態の更新
 	virtual void UpdatePlay(void);	// 移動時の更新処理
-	virtual void UpdateAttack(void);// アタック時の更新処理
+	//virtual void UpdateAttack(void);// アタック時の更新処理
 	virtual void UpdateDamage(void);// ダメージ時の更新処理
 	virtual void UpdateDeath(void);	// 死んだ時の更新処理
 
-	void ChasePlayer(void);			//プレイヤーを追いかける
+	//void ChasePlayer(void);			//プレイヤーを追いかける
 
-	//攻撃関係
-	void AttackCollisionPos(void);	//攻撃用関数
-	void EnemyToPlayer(void);		//敵がプレイヤー攻撃
-	void CollisionAttack(void);	//攻撃が当たったか確認する
+	////攻撃関係
+	//void AttackCollisionPos(void);	//攻撃用関数
+	//void EnemyToPlayer(void);		//敵がプレイヤー攻撃
+	//void CollisionAttack(void);	//攻撃が当たったか確認する
 
 	// 状態遷移
 	void ChangeState(STATE state);
 	void ChangeStateNone(void);
 	void ChangeStateIdle(void);
 	void ChangeStatePlay(void);
-	void ChangeStateAttack(void);
+	//void ChangeStateAttack(void);
 	void ChangeStateDamage(void);
 	void ChangeStateDeath(void);
 

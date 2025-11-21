@@ -24,6 +24,7 @@ public:
 		PLAY,
 		RULE,
 		GAMEUI_1,
+		NICE_KICK,
 		UPDOWN,
 		GOTITLE,
 		GOGAME,

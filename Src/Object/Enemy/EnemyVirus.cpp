@@ -29,9 +29,9 @@ void EnemyVirus::SetParam(void)
 	// モデルデータをいくつもメモリ上に存在させない
 	transform_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::VIRUS));
 
-	transform_.scl = { AsoUtility::VECTOR_ONE };						// 大きさの設定
+	transform_.scl = { 2.5f, 2.5f, 2.5f };								// 大きさの設定
 	transform_.quaRotLocal = Quaternion::Euler(AsoUtility::Deg2RadF(0.0f)
-		, AsoUtility::Deg2RadF(180.0f), 0.0f);//クォータニオンをいじると向きが変わる
+		, AsoUtility::Deg2RadF(0.0f), 0.0f);//クォータニオンをいじると向きが変わる
 	transform_.dir = { AsoUtility::VECTOR_ZERO };						// 右方向に移動する
 
 	speed_ = 0.0f;		//移動スピード
@@ -40,8 +40,8 @@ void EnemyVirus::SetParam(void)
 
 	hp_ = HP;	// HPの設定
 
-	collisionRadius_ = 100.0f;	//衝突判定用の球体半径
-	collisionLocalPos_ = { 0.0f,60.0f, 0.0f };		//衝突判定用の球体中心の調整座標
+	collisionRadius_ = 250.0f;	//衝突判定用の球体半径
+	collisionLocalPos_ = { 0.0f,300.0f, 0.0f };		//衝突判定用の球体中心の調整座標
 
 	attackCollisionRadius_ = ATTACK_RADIUS_SIZE;		// 攻撃判定用と攻撃範囲の球体半径
 

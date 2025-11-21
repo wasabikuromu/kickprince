@@ -512,7 +512,7 @@ void Player::ProcessMove(void)
 
 	// ゲームパッドの接続数で処理を分ける
 
-	if (!isAttack_ && IsEndLandingA())
+	if (!isAttack_ && !isCharging_ && IsEndLandingA())
 	{
 		if (GetJoypadNum() == 0)
 		{
@@ -583,6 +583,30 @@ void Player::ProcessMove(void)
 		{
 			animationController_->Play((int)ANIM_TYPE::IDLE);
 		}
+	}
+
+	//フィールド範囲
+	const float fieldXmin = -1100.0f;
+	const float fieldXmax = 900.0f;
+	const float fieldZmin = -2100.0f;
+	const float fieldZmax = -1350.0f;
+
+	//次フレームの想定位置
+	VECTOR nextPos;
+	nextPos.x = transform_.pos.x + movePow_.x;
+	nextPos.y = transform_.pos.y + movePow_.y;
+	nextPos.z = transform_.pos.z + movePow_.z;
+
+	//X方向の制限
+	if (nextPos.x < fieldXmin || nextPos.x > fieldXmax)
+	{
+		movePow_.x = 0;   // この方向の移動をキャンセル
+	}
+
+	// Z方向の制限
+	if (nextPos.z < fieldZmin || nextPos.z > fieldZmax)
+	{
+		movePow_.z = 0;
 	}
 }
 
@@ -791,37 +815,67 @@ void Player::CalcGravityPow(void)
 
 void Player::ProcessAttack(void)
 {
-	bool isPress = CheckHitKey(KEY_INPUT_E) ||
-		ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);
+	//入力
+	bool isPress = ins_.IsTrgDown(KEY_INPUT_E) ||
+		ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);	//押した瞬間
 
 	bool isHold = CheckHitKey(KEY_INPUT_E) ||
-		ins_.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);
+		ins_.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);       //押しっぱなし
 
-	bool isRelease = CheckHitKey(KEY_INPUT_E) == 0 &&
-		ins_.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);
+	bool isRelease = (!CheckHitKey(KEY_INPUT_E)) &&
+		ins_.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);		//離した瞬間
 
-	// --- チャージ開始 ---
-	if (!isCharging_ && isPress)
+	//============================================================
+	// ① 攻撃アニメ中（キャンセル不可）
+	//============================================================
+	if (isAttack_)
+	{
+		attackTimer_ += scnMng_.GetDeltaTime();
+
+		if (attackTimer_ >= attackDuration_)
+		{
+			// 攻撃アニメ終了
+			isAttack_ = false;
+			attackTimer_ = 0.0f;
+			animationController_->Play((int)ANIM_TYPE::IDLE, true);
+		}
+
+		return;
+	}
+
+
+	//============================================================
+	// ※ チャージは移動中は開始できない
+	//============================================================
+	bool isMoving = (fabs(movePow_.x) > 0.01f || fabs(movePow_.z) > 0.01f);
+
+
+	//============================================================
+	// ② チャージ開始（押した瞬間のみ）
+	//============================================================
+	if (!isCharging_ && isPress && !isMoving)
 	{
 		isCharging_ = true;
-		isChargeIncreasing_ = true; //増加中フラグ
+		isChargeIncreasing_ = true;
 		chargeTime_ = 0.0f;
 		animationController_->Play((int)ANIM_TYPE::IDLE, true);
 	}
 
-	// --- チャージ中 ---
+
+	//============================================================
+	// ③ チャージ中
+	//============================================================
 	if (isCharging_)
 	{
 		float dt = scnMng_.GetDeltaTime();
 
-		// 増減方向に応じて加算 or 減算
 		if (isChargeIncreasing_)
 		{
 			chargeTime_ += dt;
 			if (chargeTime_ >= maxChargeTime_)
 			{
 				chargeTime_ = maxChargeTime_;
-				isChargeIncreasing_ = false; // 減少に切り替え
+				isChargeIncreasing_ = false;
 			}
 		}
 		else
@@ -830,37 +884,32 @@ void Player::ProcessAttack(void)
 			if (chargeTime_ <= 0.0f)
 			{
 				chargeTime_ = 0.0f;
-				isChargeIncreasing_ = true; // 増加に切り替え
+				isChargeIncreasing_ = true;
 			}
 		}
 
-		// ガイド線表示
 		DrawGuideLine();
-
-		// ゲージ描画
 		DrawChargeGauge();
 	}
 
-	// --- チャージ解除（キーを離した瞬間に攻撃発動） ---
+
+	//============================================================
+	// ④ チャージ解除 → 攻撃開始（離した瞬間のみ）
+	//============================================================
 	if (isCharging_ && isRelease)
 	{
 		isCharging_ = false;
+
+		// --- 攻撃開始 ---
+		isAttack_ = true;
+		attackTimer_ = 0.0f;
+
 		animationController_->Play((int)ANIM_TYPE::KICK, false);
 
-		// チャージ率を0～1に正規化
 		float chargeRate = chargeTime_ / maxChargeTime_;
-
-		// 攻撃判定と威力設定
 		CollisionAttack(chargeRate);
 
 		SoundManager::GetInstance().Play(SoundManager::SRC::ATK_SE1, Sound::TIMES::FORCE_ONCE);
-	}
-
-	// アニメーションが終わったらリセット
-	if (animationController_->IsEnd())
-	{
-		isAttack_ = false;
-		//animationController_->Play((int)ANIM_TYPE::IDLE);
 	}
 }
 

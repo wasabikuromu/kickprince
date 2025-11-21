@@ -562,7 +562,6 @@ void AllyBase::ChangeState(STATE state)
 
 	//Šeó‘Ô‘JˆÚ‚Ì‰Šúˆ—
 	stateChanges_[state_]();
-
 }
 
 void AllyBase::ChangeStateNone(void)

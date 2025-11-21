@@ -59,7 +59,12 @@ void ResourceManager::Init(void)
 
 	// ゲーム画面のUI
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "GameUI1.png");
-	resourcesMap_.emplace(SRC::GAMEUI_1, std::move(res));
+	resourcesMap_.emplace(SRC::GAMEUI_1, std::move(res));	
+	
+	// いい蹴り
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "NiceKick.png");
+	resourcesMap_.emplace(SRC::NICE_KICK, std::move(res));
+
 
 	// タイトルに戻る
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "GoTitle.png");
@@ -81,8 +86,8 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "PauseOpe.png");
 	resourcesMap_.emplace(SRC::PAUSEOPE, std::move(res));
 
-	// ポーズのアイテム
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "PauseItem.png");
+	// ポーズの味方説明
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "AllyLook.png");
 	resourcesMap_.emplace(SRC::PAUSEITEM, std::move(res));
 
 	// 設定表示

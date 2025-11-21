@@ -17,7 +17,7 @@ public:
 	//プレイヤー
 	static constexpr VECTOR PLAYER_POS = { -82.0f,170.0f, -1950.0f };	//初期位置
 	static constexpr VECTOR CAPSULE_TOP = { 0.0f, 110.0f, 0.0f };	//カプセルの頂点
-	static constexpr VECTOR CAPSULE_BOTTOM = { 0.0f,  30.0f, 0.0f };//カプセルの足元
+	static constexpr VECTOR CAPSULE_BOTTOM = { 0.0f, 30.0f, 0.0f };//カプセルの足元
 	static constexpr float PLAYER_ROT_Y = 180.0f;					// Y軸回転(度数)
 	static constexpr float COLLISION_RADIUS = 100.0f;				//衝突判定の半径
 	static constexpr float CAPSULE_RADIUS = 20.0f;					//カプセルの半径
@@ -315,6 +315,8 @@ private:
 
 	//攻撃フラグ
 	bool isAttack_;		//縦斬り
+	float attackTimer_ = 0.0f;
+	float attackDuration_ = 1.6f; // 攻撃アニメの長さ（調整可）
 	int exTimer_;		//クールタイム 10秒（ミリ秒）
 	int lastExTime_;	//exが解放されたらすぐに使えるようにする
 	

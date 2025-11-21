@@ -49,8 +49,8 @@ public:
 	static constexpr int ENEMY_MAX = 200;	//最大出現数
 	static constexpr int ENE_ENC = 30;		//最大許容量
 	static constexpr int BORN_DIR = 3;		//敵の出現方向
-	static constexpr int STAGE_WIDTH=20000; //ステージの全体
-	static constexpr int STAGE_LANGE=10000;	//ステージの幅
+	static constexpr int STAGE_WIDTH = 20000; //ステージの全体
+	static constexpr int STAGE_LANGE = 10000;	//ステージの幅
 
 	static constexpr int LV_MAX = 100;		//木のレベル最大
 	static constexpr int LV_OLD = 75;		//木の成長段階
@@ -62,7 +62,11 @@ public:
 	static constexpr int BOSS_ON = 1;		//ボス出現可能
 	static constexpr int BOSS_OFF = 2;		//ボス出現不可
 
-	static const int MAX_STAGE = 3;			//最終ステージ番号
+	//敵配置
+	static constexpr float X_ENEMY_POS = -90.0f;
+	static constexpr float Y_ENEMY_POS = 170.0f;
+
+	static const int MAX_STAGE = 5;			//最終ステージ番号
 
 	//UI関係-----------------------------------------------------
 	//-------------------------------------------------------------------
@@ -192,6 +196,7 @@ private:
 	StageState stageMenu_ = StageState::StageMenu;
 	bool isStageMenu_;			//ステージクリアしたかどうか
 	int stageSelectIndex_;		//ステージクリア時の選択項目（上下選択）
+	int imgNiceKick_;
 
 	int stageNo_;   // ← ステージ番号
 

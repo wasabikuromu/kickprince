@@ -77,6 +77,8 @@ void GameScene::Init(void)
 
 	pauseImg_ = LoadGraph("Data/Image/pause.png");
 
+	imgNiceKick_ = resMng_.Load(ResourceManager::SRC::NICE_KICK).handleId_; // 操作説明
+
 	pauseExplainImgs_[0] = resMng_.Load(ResourceManager::SRC::PAUSEOPE).handleId_; // 操作説明
 	pauseExplainImgs_[1] = resMng_.Load(ResourceManager::SRC::PAUSEITEM).handleId_;   // アイテム概要
 
@@ -215,7 +217,16 @@ void GameScene::Update(void)
 	//敵が全滅したら次ステージへ
 	if (IsAllEnemiesDefeated())
 	{
-		isStageMenu_ = true;				
+		//最後のステージなら即ゲームクリアへ
+		if (stageNo_ >= MAX_STAGE)
+		{
+			SceneManager::GetInstance()
+				.ChangeScene(SceneManager::SCENE_ID::CLEAR);
+			return;
+		}
+
+		//それ以外は従来どおりクリアメニューへ
+		isStageMenu_ = true;
 		stageMenu_ = StageState::StageMenu;
 		stageSelectIndex_ = 0;
 
@@ -332,6 +343,8 @@ void GameScene::Draw(void)
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
 		DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), black, TRUE);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		DrawGraph(500, 0, imgNiceKick_, true);
 
 		SetFontSize(DEFAULT_FONT_SIZE * 5);
 
@@ -463,22 +476,28 @@ void GameScene::AllyCreate(void)
 void GameScene::EnemyCreate(void)
 {
 	enemySpawnTable_[1] = {
-		{ VGet(0, 200, -1000), 0},
-		{ VGet(0, 200, -500), 1},
-		{ VGet(0, 200, 0), 2},
-		{ VGet(0, 200, 1000 ), 3},
+		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 2500), 2},
 	};
 
 	enemySpawnTable_[2] = {
-		{ VGet(0, 200, 1500), 3 },
-		{ VGet(0, 200, 2500), 3 },
-		{ VGet(0, 200, 3500), 3 },
+		{ VGet(X_ENEMY_POS + 200, Y_ENEMY_POS, 1500), 1 },
+		{ VGet(X_ENEMY_POS - 200, Y_ENEMY_POS, 1500), 1 },
 	};
 
 	enemySpawnTable_[3] = {
-		{ VGet(0, 200, 1500), 1 },
-		{ VGet(0, 200, 2500), 2 },
-		{ VGet(0, 200, 3500), 3 },
+		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 3500), 3 },
+	};
+
+	enemySpawnTable_[4] = {
+		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 1500), 0 },
+		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 2500), 1 },
+		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 3500), 2 },
+	};
+
+	enemySpawnTable_[5] = {
+		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 1500), 0 },
+		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 2500), 0 },
+		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 3500), 3 },
 	};
 }
 
@@ -570,8 +589,17 @@ bool GameScene::StageClearMenu(void)
 			switch (stageSelectIndex_)
 			{
 			case NextStage:
-				SceneManager::GetInstance()
-					.ChangeStageScene(SceneManager::SCENE_ID::GAME, stageNo_ + 1);
+				if (stageNo_ >= MAX_STAGE) {
+					// すべてのステージをクリアしたのでゲームクリアへ
+					SceneManager::GetInstance()
+						.ChangeScene(SceneManager::SCENE_ID::CLEAR);
+				}
+				else {
+					// 次のステージへ
+					SceneManager::GetInstance()
+						.ChangeStageScene(SceneManager::SCENE_ID::GAME, stageNo_ + 1);
+				}
+
 				break;
 
 			case StageSelect:

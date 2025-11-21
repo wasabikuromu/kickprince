@@ -31,8 +31,8 @@ EnemyBase::EnemyBase()
 		STATE::IDLE, std::bind(&EnemyBase::ChangeStateIdle, this));
 	stateChanges_.emplace(
 		STATE::PLAY, std::bind(&EnemyBase::ChangeStatePlay, this));
-	stateChanges_.emplace(
-		STATE::ATTACK, std::bind(&EnemyBase::ChangeStateAttack, this));
+	//stateChanges_.emplace(
+	//	STATE::ATTACK, std::bind(&EnemyBase::ChangeStateAttack, this));
 	stateChanges_.emplace(
 		STATE::DAMAGE, std::bind(&EnemyBase::ChangeStateDamage, this));
 	stateChanges_.emplace(
@@ -64,6 +64,8 @@ void EnemyBase::Init(void)
 	d8img_ = LoadGraph("Data/Image/8.png");
 	d16img_ = LoadGraph("Data/Image/16.png");
 	d32img_ = LoadGraph("Data/Image/32.png");
+
+	animationController_->Play((int)ANIM_TYPE::IDLE, true);
 }
 
 void EnemyBase::Update(void)
@@ -77,7 +79,6 @@ void EnemyBase::Update(void)
 
 	//アニメーション再生
 	animationController_->Update();
-
 
 	// 更新ステップ
 	if (stateUpdate_)
@@ -93,7 +94,7 @@ void EnemyBase::UpdateIdle(void)
 	animationController_->Play((int)ANIM_TYPE::IDLE, false);
 	if (animationController_->IsEnd() || state_ != STATE::IDLE)
 	{
-		AttackCollisionPos();
+		//AttackCollisionPos();
 	}
 }
 
@@ -104,45 +105,40 @@ void EnemyBase::UpdatePlay(void)
 		return;
 	}
 
-	ChasePlayer();
-
 	// 衝突判定
 	Collision();
-
-	//攻撃範囲に入ったかを見る
-	AttackCollisionPos();
 }
 
-void EnemyBase::UpdateAttack(void)
-{
-	animationController_->Play((int)ANIM_TYPE::ATTACK, false);
-
-	// 攻撃タイミング
-	if (!isAttack_ && isAttack_P)
-	{
-		isAttack_ = true; // 多重ヒット防止用フラグ
-		isAttack_P = false;
-	}
-	else if (!isAttack_ && isAttack_T)
-	{
-		isAttack_ = true;
-		isAttack_T = false;
-	}
-
-	 //アニメーション終了で次の状態に遷移
-	if (animationController_->IsEnd() || state_ != STATE::ATTACK) {
-		isAttack_ = false;
-		CollisionAttack();
-		ChangeState(STATE::IDLE);
-	}
-}
+//void EnemyBase::UpdateAttack(void)
+//{
+//	animationController_->Play((int)ANIM_TYPE::ATTACK, false);
+//
+//	// 攻撃タイミング
+//	if (!isAttack_ && isAttack_P)
+//	{
+//		isAttack_ = true; // 多重ヒット防止用フラグ
+//		isAttack_P = false;
+//	}
+//	else if (!isAttack_ && isAttack_T)
+//	{
+//		isAttack_ = true;
+//		isAttack_T = false;
+//	}
+//
+//	 //アニメーション終了で次の状態に遷移
+//	if (animationController_->IsEnd() || state_ != STATE::ATTACK) {
+//		isAttack_ = false;
+//		//CollisionAttack();
+//		ChangeState(STATE::IDLE);
+//	}
+//}
 
 void EnemyBase::UpdateDamage(void)
 {
 	animationController_->Play((int)ANIM_TYPE::DAMAGE, false);
 	if (animationController_->IsEnd())
 	{
-		ChangeState(STATE::PLAY);
+		ChangeState(STATE::IDLE);
 	}
 }
 
@@ -153,50 +149,44 @@ void EnemyBase::UpdateDeath(void)
 	if (animationController_->IsEnd())
 	{
 		isAlive_ = false;
-		
-		//アイテムドロップ
-		VECTOR dropPos = this->GetTransform().pos;
-
-		// マップ中心との距離を計算
-		float distance = VSize(VSub(dropPos, AsoUtility::VECTOR_ZERO));
 	}
 }
 
 #pragma endregion
 
 
-void EnemyBase::ChasePlayer(void)
-{
-	if (!player_) {
-		return;
-	}
-
-	VECTOR playerPos = player_->GetTransform().pos;
-
-	VECTOR toPlayer = VSub(playerPos, transform_.pos);
-	toPlayer.y = ZERO;  // 高さ無視
-
-	float distance = VSize(toPlayer);
-
-	// 現在のアニメーションと違う場合のみRUNアニメーションを再生する
-	if (animtype_ != ANIM_TYPE::RUN)
-	{
-		animationController_->Play((int)ANIM_TYPE::RUN, true);
-	}
-	
-	//playerを追いかける
-	if (state_ == STATE::PLAY 
-		&& player_->pstate_ == Player::PlayerState::NORMAL)
-	{
-		VECTOR dirToPlayer = VNorm(toPlayer);
-		VECTOR moveVec = VScale(dirToPlayer, speed_);
-
-		transform_.pos = VAdd(transform_.pos, moveVec);
-
-		// 方向からクォータニオンに変換
-		transform_.quaRot = Quaternion::LookRotation(dirToPlayer);
-	}
-}
+//void EnemyBase::ChasePlayer(void)
+//{
+//	if (!player_) {
+//		return;
+//	}
+//
+//	VECTOR playerPos = player_->GetTransform().pos;
+//
+//	VECTOR toPlayer = VSub(playerPos, transform_.pos);
+//	toPlayer.y = ZERO;  // 高さ無視
+//
+//	float distance = VSize(toPlayer);
+//
+//	// 現在のアニメーションと違う場合のみRUNアニメーションを再生する
+//	if (animtype_ != ANIM_TYPE::RUN)
+//	{
+//		animationController_->Play((int)ANIM_TYPE::RUN, true);
+//	}
+//	
+//	//playerを追いかける
+//	if (state_ == STATE::PLAY 
+//		&& player_->pstate_ == Player::PlayerState::NORMAL)
+//	{
+//		VECTOR dirToPlayer = VNorm(toPlayer);
+//		VECTOR moveVec = VScale(dirToPlayer, speed_);
+//
+//		transform_.pos = VAdd(transform_.pos, moveVec);
+//
+//		// 方向からクォータニオンに変換
+//		transform_.quaRot = Quaternion::LookRotation(dirToPlayer);
+//	}
+//}
 
 void EnemyBase::Draw(void)
 {
@@ -384,66 +374,66 @@ float EnemyBase::GetCollisionRadius(void)
 }
 #pragma endregion
 
-void EnemyBase::AttackCollisionPos(void)
-{
-	//プレイヤーとの衝突判定
-	// 攻撃の方向（エネミー）
-	VECTOR forward = transform_.quaRot.GetForward();
-	// 攻撃の開始位置と終了位置
-	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
-	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;  // 攻撃の高さ調整
-
-	//プレイヤーを見る
-	EnemyToPlayer();
-}
-
-void EnemyBase::EnemyToPlayer(void)
-{
-	//プレイヤーの当たり判定とサイズ
-	playerCenter_ = player_->GetCollisionPos();
-	playerRadius_ = player_->GetCollisionRadius();
-
-	if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
-			&& player_->pstate_ != Player::PlayerState::DOWN)
-	{
-		isAttack_P = true;
-		ChangeState(STATE::ATTACK);
-	}
-	else if (!AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
-		|| player_->pstate_ == Player::PlayerState::DOWN)
-	{
-		ChangeState(STATE::PLAY);
-	}
-}
-
-void EnemyBase::CollisionAttack(void)
-{
-	//プレイヤーの当たり判定とサイズ
-	playerCenter_ = player_->GetCollisionPos();
-	playerRadius_ = player_->GetCollisionRadius();
-
-	if(AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_,playerCenter_, playerRadius_))
-	{
-		player_->Damage(attackPow_);
-	}
-
-	for (const auto& ally : *ally_)
-	{
-		if (!ally || !ally->IsAlive()) continue;
-
-		//敵の当たり判定とサイズ
-		VECTOR allyPos = ally->GetCollisionPos();
-		float allyRadius = ally->GetCollisionRadius();
-
-		//球体同士の当たり判定
-		if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, allyPos, allyRadius))
-		{
-			//ally_->Damage(attackPow_);
-			//1体のみヒット
-			break;
-		}
-	}
-}
+//void EnemyBase::AttackCollisionPos(void)
+//{
+//	//プレイヤーとの衝突判定
+//	// 攻撃の方向（エネミー）
+//	VECTOR forward = transform_.quaRot.GetForward();
+//	// 攻撃の開始位置と終了位置
+//	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
+//	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;  // 攻撃の高さ調整
+//
+//	//プレイヤーを見る
+//	EnemyToPlayer();
+//}
+//
+//void EnemyBase::EnemyToPlayer(void)
+//{
+//	//プレイヤーの当たり判定とサイズ
+//	playerCenter_ = player_->GetCollisionPos();
+//	playerRadius_ = player_->GetCollisionRadius();
+//
+//	if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
+//			&& player_->pstate_ != Player::PlayerState::DOWN)
+//	{
+//		isAttack_P = true;
+//		ChangeState(STATE::ATTACK);
+//	}
+//	else if (!AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
+//		|| player_->pstate_ == Player::PlayerState::DOWN)
+//	{
+//		ChangeState(STATE::PLAY);
+//	}
+//}
+//
+//void EnemyBase::CollisionAttack(void)
+//{
+//	//プレイヤーの当たり判定とサイズ
+//	playerCenter_ = player_->GetCollisionPos();
+//	playerRadius_ = player_->GetCollisionRadius();
+//
+//	if(AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_,playerCenter_, playerRadius_))
+//	{
+//		player_->Damage(attackPow_);
+//	}
+//
+//	for (const auto& ally : *ally_)
+//	{
+//		if (!ally || !ally->IsAlive()) continue;
+//
+//		//敵の当たり判定とサイズ
+//		VECTOR allyPos = ally->GetCollisionPos();
+//		float allyRadius = ally->GetCollisionRadius();
+//
+//		//球体同士の当たり判定
+//		if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, allyPos, allyRadius))
+//		{
+//			//ally_->Damage(attackPow_);
+//			//1体のみヒット
+//			break;
+//		}
+//	}
+//}
 
 void EnemyBase::SetGameScene(GameScene* scene)
 {
@@ -475,10 +465,10 @@ void EnemyBase::ChangeStatePlay(void)
 	stateUpdate_ = std::bind(&EnemyBase::UpdatePlay, this);
 }
 
-void EnemyBase::ChangeStateAttack(void)
-{
-	stateUpdate_ = std::bind(&EnemyBase::UpdateAttack, this);
-}
+//void EnemyBase::ChangeStateAttack(void)
+//{
+//	stateUpdate_ = std::bind(&EnemyBase::UpdateAttack, this);
+//}
 
 void EnemyBase::ChangeStateDamage(void)
 {

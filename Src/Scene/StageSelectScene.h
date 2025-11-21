@@ -12,5 +12,5 @@ public:
 
 private:
     int selectIndex_ = 0;
-    static constexpr int maxStage_ = 3;
+    static constexpr int maxStage_ = 5;
 };
