@@ -5,7 +5,7 @@ class EnemyDog : public EnemyBase
 {
 public:
 
-	static constexpr  int HP = 8;
+	static constexpr int HP = 6;
 
 	EnemyDog();
 

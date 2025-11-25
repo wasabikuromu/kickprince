@@ -19,6 +19,9 @@ public:
 	const float ATTACK_START = 40.0f;
 	const float ATTACK_END = 50.0f;
 
+	//攻撃力
+	const int ATTACK_POWER = 4;
+
 	AllyBule();
 
 	//アニメーションロード用

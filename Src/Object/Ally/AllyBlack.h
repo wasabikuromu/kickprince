@@ -17,6 +17,9 @@ public:
 	const float ATTACK_START = 47.0f;
 	const float ATTACK_END = 55.0f;
 
+	//攻撃力
+	const int ATTACK_POWER = 10;
+
 	AllyBlack();
 
 	//アニメーションロード用

@@ -30,8 +30,6 @@ AllyBase::AllyBase()
 
 	state_ = STATE::NONE;
 
-	attackPow_ = VALUE_ONE;	//UŒ‚—Í
-
 	//ó‘ÔŠÇ—
 	stateChanges_.emplace(
 		STATE::NONE, std::bind(&AllyBase::ChangeStateNone, this));

@@ -37,6 +37,8 @@ void AllyRed::SetParam(void)
 			,AsoUtility::Deg2RadF(DEGREE), 0.0f);//クォータニオンをいじると向きが変わる
 	transform_.dir = { AsoUtility::VECTOR_ZERO };						// 右方向に移動する
 
+	attackPow_ = ATTACK_POWER;
+
 	speed_ = SPEED;		//移動スピード
 
 	isAlive_ = true;	//初期は生存状態
@@ -109,6 +111,7 @@ void AllyRed::CollisionAttack(void)
 			if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
 			{
 				enemy->Damage(attackPow_);
+				isAttack_ = false;
 			}
 		}
 	}

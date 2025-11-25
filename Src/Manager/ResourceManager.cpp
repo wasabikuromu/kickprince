@@ -57,25 +57,49 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title/AButton.png");
 	resourcesMap_.emplace(SRC::A_BUTTON, std::move(res));
 
-	// ゲーム画面のUI
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "GameUI1.png");
-	resourcesMap_.emplace(SRC::GAMEUI_1, std::move(res));	
+	// ステージを選択してください画像(セレクトステージシーン)
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/PlzSelectStage.png");
+	resourcesMap_.emplace(SRC::PLZ_SELECT_STAGE, std::move(res));
+
+	// ステージ1画像
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/1.png");
+	resourcesMap_.emplace(SRC::STAGE_1, std::move(res));
+
+	// ステージ2画像
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/2.png");
+	resourcesMap_.emplace(SRC::STAGE_2, std::move(res));
+
+	// ステージ3画像
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/3.png");
+	resourcesMap_.emplace(SRC::STAGE_3, std::move(res));
+
+	// ステージ4画像
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/4.png");
+	resourcesMap_.emplace(SRC::STAGE_4, std::move(res));
+
+	// ステージ5画像
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/5.png");
+	resourcesMap_.emplace(SRC::STAGE_5, std::move(res));
+
+	// セレクト中
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/SelectUI.png");
+	resourcesMap_.emplace(SRC::SELECT_UI, std::move(res));
 	
 	// いい蹴り
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "NiceKick.png");
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "StageClear/NiceKick.png");
 	resourcesMap_.emplace(SRC::NICE_KICK, std::move(res));
 
 	// 次のステージへ
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "NiceKick.png");
-	resourcesMap_.emplace(SRC::NICE_KICK, std::move(res));
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "StageClear/NextStage.png");
+	resourcesMap_.emplace(SRC::NEXT_STAGE, std::move(res));
 
 	// ステージ選択
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "NiceKick.png");
-	resourcesMap_.emplace(SRC::NICE_KICK, std::move(res));
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "StageClear/SelectStage.png");
+	resourcesMap_.emplace(SRC::SELECT_STAGE, std::move(res));
 
 	// タイトルに戻る
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "NiceKick.png");
-	resourcesMap_.emplace(SRC::NICE_KICK, std::move(res));
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "StageClear/TitleBack.png");
+	resourcesMap_.emplace(SRC::BACK_TITLE, std::move(res));
 
 	//// タイトルに戻る
 	//res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "GoTitle.png");

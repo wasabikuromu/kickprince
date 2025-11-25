@@ -32,7 +32,6 @@ GameScene::GameScene(int stageNo)
 	player_ = nullptr;
 	skyDome_ = nullptr;
 	stage_ = nullptr;
-	imgGameUi1_ = -1;
 	imgOpeGear_ = -1;
 }
 
@@ -72,12 +71,15 @@ void GameScene::Init(void)
 	skyDome_->Init();
 
 	//画像
-	imgGameUi1_ = resMng_.Load(ResourceManager::SRC::GAMEUI_1).handleId_;
 	imgOpeGear_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR).handleId_;
 
 	pauseImg_ = LoadGraph("Data/Image/pause.png");
 
-	imgNiceKick_ = resMng_.Load(ResourceManager::SRC::NICE_KICK).handleId_; // 操作説明
+	imgNiceKick_ = resMng_.Load(ResourceManager::SRC::NICE_KICK).handleId_;
+	imgNextStage_ = resMng_.Load(ResourceManager::SRC::NEXT_STAGE).handleId_;
+	imgSelectStage_ = resMng_.Load(ResourceManager::SRC::SELECT_STAGE).handleId_;
+	imgBackTitle_ = resMng_.Load(ResourceManager::SRC::BACK_TITLE).handleId_;
+	imgAbutton_ = resMng_.Load(ResourceManager::SRC::A_BUTTON).handleId_;
 
 	pauseExplainImgs_[0] = resMng_.Load(ResourceManager::SRC::PAUSEOPE).handleId_; // 操作説明
 	pauseExplainImgs_[1] = resMng_.Load(ResourceManager::SRC::PAUSEITEM).handleId_;   // アイテム概要
@@ -271,18 +273,6 @@ void GameScene::Draw(void)
 			uiFadeFrame_ = 0;
 		}
 	}
-	if (!uiFadeStart_) 
-	{
-		//フェード前（通常表示）
-		DrawRotaGraph((Application::SCREEN_SIZE_X / 2), GAME_HEIGHT_1, IMG_GAME_UI_1_SIZE, 0, imgGameUi1_, true);
-	}
-	else if (uiFadeFrame_ < ONE_SECOND_FRAME)
-	{
-		//フェード中（60フレームで徐々に消す）
-		int alpha = static_cast<int>(255 * (ONE_SECOND_FRAME - uiFadeFrame_) / ONE_SECOND_FRAME);
-		DrawRotaGraph((Application::SCREEN_SIZE_X / 2), GAME_HEIGHT_1, IMG_GAME_UI_1_SIZE, 0, imgGameUi1_, true);
-		uiFadeFrame_++;
-	}
 
 	if (isPaused_) 
 	{
@@ -345,19 +335,31 @@ void GameScene::Draw(void)
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 		DrawGraph(500, 0, imgNiceKick_, true);
+		DrawGraph(1300, 700, imgNextStage_, true);
+		DrawGraph(1300, 800, imgSelectStage_, true);
+		DrawGraph(1300, 900, imgBackTitle_, true);
 
-		SetFontSize(DEFAULT_FONT_SIZE * 5);
+		//GetNowCount() = 経過ミリ秒
+		float alpha2 = (sinf(GetNowCount() * BLINK_SPEED) + 1.0f) * 0.5f;
 
-		DrawString(400, 300, "次のステージへ",
-			stageSelectIndex_ == 0 ? yellow : white);
-		DrawString(400, 450, "ステージ選択へ",
-			stageSelectIndex_ == 1 ? yellow : white);
-		DrawString(400, 600, "タイトルへ戻る",
-			stageSelectIndex_ == 2 ? yellow : white);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(alpha2 * 255));
 
-		SetFontSize(DEFAULT_FONT_SIZE);
+		//カーソル描画
+		DrawRotaGraph(
+			CURSOR_WIDTH,
+			CURSOR_HEIGHT + (stageSelectIndex_ * INDEX),
+			0.7,
+			0,
+			imgAbutton_,
+			true
+		);
+
+		//ブレンドモード解除
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 		return;
 	}
+
 #pragma region UI
 	SetFontSize(DEFAULT_FONT_SIZE * 2.0);
 	DrawString(UI_ATTACK_X,UI_NORMAL_ATTACK_Y,"E:通常攻撃" , white);
@@ -578,13 +580,16 @@ bool GameScene::StageClearMenu(void)
 
 	if (isStageMenu_)
 	{
-		if (ins.IsTrgDown(KEY_INPUT_DOWN))
+		if (ins.IsTrgDown(KEY_INPUT_DOWN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
 			stageSelectIndex_ = (stageSelectIndex_ + 1) % 3;
 
-		if (ins.IsTrgDown(KEY_INPUT_UP))
+		if (ins.IsTrgDown(KEY_INPUT_UP) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP))
 			stageSelectIndex_ = (stageSelectIndex_ + 3 - 1) % 3;
 
-		if (ins.IsTrgDown(KEY_INPUT_RETURN))
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{
 			switch (stageSelectIndex_)
 			{

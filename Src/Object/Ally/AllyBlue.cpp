@@ -41,6 +41,8 @@ void AllyBule::SetParam(void)
 
 	speed_ = SPEED;		// 移動スピード
 
+	attackPow_ = ATTACK_POWER;
+
 	isAlive_ = true;	// 初期は生存状態
 
 	hp_ = HP;	// HPの設定

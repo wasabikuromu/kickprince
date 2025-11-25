@@ -88,6 +88,12 @@ public:
 	static constexpr int FLASH = 45;					//点滅
 	static constexpr int ONE_SECOND_FRAME = 60;			//1秒
 
+	//ステージクリア
+	static constexpr float BLINK_SPEED = 0.003f;
+	static constexpr int CURSOR_WIDTH = 1290;
+	static constexpr int CURSOR_HEIGHT = 765;
+	static constexpr int INDEX = 100;
+
 	//設定系
 	static constexpr int UI_GEAR = 100;					//imgOpeGear_のX,Yの場所
 
@@ -163,7 +169,6 @@ private:
 	std::shared_ptr<Camera> camera_;	//カメラ
 
 	int enemyModelId_;
-	int imgGameUi1_;
 	int uiDisplayFrame_;	//カウンタ
 
 	bool uiFadeStart_ = false;
@@ -197,6 +202,10 @@ private:
 	bool isStageMenu_;			//ステージクリアしたかどうか
 	int stageSelectIndex_;		//ステージクリア時の選択項目（上下選択）
 	int imgNiceKick_;
+	int imgNextStage_;
+	int imgSelectStage_;
+	int imgBackTitle_;
+	int imgAbutton_;
 
 	int stageNo_;   // ← ステージ番号
 
