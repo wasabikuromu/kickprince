@@ -94,6 +94,9 @@ void Player::Init(void)
 	imgSpeedIcon_ = resMng_.Load(ResourceManager::SRC::SPEED_UP_ICON).handleId_;
 	imgRotateAttackIcon_ = resMng_.Load(ResourceManager::SRC::ROTA_ATTACK_ICON).handleId_;
 
+	//UI画像
+	imgGaugeFrame_ = resMng_.Load(ResourceManager::SRC::GAUGE_FRAME).handleId_;	//ゲージ枠
+
 	//足煙エフェクト
 	effectSmokeResId_ = ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::FOOT_SMOKE).handleId_;
@@ -487,14 +490,64 @@ void Player::DrawGuideLine(void)
 {
 }
 
-void Player::DrawChargeGauge(void)
+void Player::DrawChargeGauge()
 {
-	int x = 100, y = 600, width = 300, height = 20;
-	int filled = (int)(width * (chargeTime_ / maxChargeTime_));
+	const int drawX = 1000;
+	const int drawY = 500;
 
-	DrawBox(x, y, x + width, y + height, GetColor(100, 100, 100), TRUE); // 背景
-	DrawBox(x, y, x + filled, y + height, GetColor(0, 255, 0), TRUE);    // チャージ量
-	DrawBox(x, y, x + width, y + height, GetColor(255, 255, 255), FALSE); // 枠線
+	float rate = chargeTime_ / maxChargeTime_;
+	if (rate < 0.0f) rate = 0.0f;
+	if (rate > 1.0f) rate = 1.0f;
+
+	const int innerHeight = 448;
+	const float bottomWidth = 38.0f;
+	const float topWidth = 97.0f;
+	const float slope = (topWidth - bottomWidth) / innerHeight;
+
+	const int frameWidth = 110;
+	const int frameHeight = 460;
+
+	const int offsetY = (frameHeight - innerHeight) / 2;
+	const int offsetX = (frameWidth - (int)bottomWidth) / 2;
+	// ※左を固定したいので bottomWidth を基準にします
+
+	int filledH = (int)(innerHeight * rate);
+
+	for (int i = 0; i < filledH; i++)
+	{
+		float w = bottomWidth + slope * i;
+
+		int drawYLine = drawY + (innerHeight - i) + offsetY;
+
+		// ★ 左端は固定
+		int left = drawX + offsetX;
+
+		// ★ 右側だけ広がる
+		int right = left + (int)w;
+
+		// 色（緑→黄→赤）
+		float t = (float)i / innerHeight;
+
+		int r, g, b;
+		if (t < 0.5f)
+		{
+			float k = t / 0.5f;
+			r = (int)(255 * k);
+			g = 255;
+			b = 0;
+		}
+		else
+		{
+			float k = (t - 0.5f) / 0.5f;
+			r = 255;
+			g = (int)(255 * (1.0f - k));
+			b = 0;
+		}
+
+		DrawBox(left, drawYLine, right, drawYLine + 1, GetColor(r, g, b), TRUE);
+	}
+
+	DrawGraph(drawX, drawY, imgGaugeFrame_, TRUE);
 }
 
 void Player::ProcessMove(void)

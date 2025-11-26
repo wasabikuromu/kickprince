@@ -324,6 +324,7 @@ private:
 	int imgPowerIcon_;			//パワー
 	int imgSpeedIcon_;			//スピード
 	int imgRotateAttackIcon_;	//回転切り
+	int imgGaugeFrame_;			//ゲージの枠
 
 	//丸影
 	int imgShadow_;

@@ -27,6 +27,7 @@ public:
 		STAGE_4,
 		STAGE_5,
 		SELECT_UI,
+		GAUGE_FRAME,
 		CURSOR,
 		PLAY,
 		RULE,

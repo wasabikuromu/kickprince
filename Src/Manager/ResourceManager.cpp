@@ -84,13 +84,17 @@ void ResourceManager::Init(void)
 	// セレクト中
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/SelectUI.png");
 	resourcesMap_.emplace(SRC::SELECT_UI, std::move(res));
+
+	// ゲージ枠
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "GaugeFrame.png");
+	resourcesMap_.emplace(SRC::GAUGE_FRAME, std::move(res));
 	
 	// いい蹴り
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "StageClear/NiceKick.png");
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "GaugeFrame.png");
 	resourcesMap_.emplace(SRC::NICE_KICK, std::move(res));
 
 	// 次のステージへ
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "StageClear/NextStage.png");
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "StageClear/NiceKick.png");
 	resourcesMap_.emplace(SRC::NEXT_STAGE, std::move(res));
 
 	// ステージ選択
