@@ -7,6 +7,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/SoundManager.h"
 #include "../Scene/GameScene.h"
+#include "../Scene/TutorialScene.h"
 #include "../Utility/AsoUtility.h"
 #include "Common/AnimationController.h"
 #include "Common/Capsule.h"
@@ -18,7 +19,7 @@
 
 AllyBase::AllyBase() 
 	: 
-	scene_(nullptr),
+	gScene_(nullptr),
 	enemy_(nullptr),
 	movePow_(AsoUtility::VECTOR_ZERO),
 	isBlowedEnd_(false),   // ‰Šú’l
@@ -75,7 +76,7 @@ void AllyBase::Init(void)
 	collisionLocalPos_ = { 0.0f, capsule_->GetCenter().y, 0.0f };
 
 	//‰Šúó‘Ô
-	ChangeState(STATE::PLAY);
+	ChangeState(STATE::IDLE);
 }
 
 void AllyBase::Update(void)
@@ -102,9 +103,9 @@ void AllyBase::Update(void)
 		if (returnCameraTimer_ <= 0.0f)
 		{
 			shouldReturnCamera_ = false;
-			if (scene_)
+			if (gScene_)
 			{
-				scene_->ReturnToPlayerCamera();
+				gScene_->ReturnToPlayerCamera();
 			}
 		}
 	}
@@ -267,9 +268,9 @@ void AllyBase::Damage(int damage,float chargeRate)
 		ChangeState(STATE::BLOW);
 
 		// ƒJƒƒ‰‚ğ‚±‚Ì–¡•û‚ÉØ‚è‘Ö‚¦‚é
-		if (scene_)
+		if (gScene_)
 		{
-			scene_->OnAllyKicked(this);
+			gScene_->OnAllyKicked(this);
 		}
 	}
 }
@@ -546,9 +547,14 @@ void AllyBase::CollisionAttack(void)
 {
 }
 
-void AllyBase::SetGameScene(GameScene* scene)
+void AllyBase::SetGameScene(GameScene* gscene)
 {
-	scene_ = scene;
+	gScene_ = gscene;
+}
+
+void AllyBase::SetTutorialScene(TutorialScene* tscene)
+{
+	tScene_ = tscene;
 }
 
 #pragma region State‚ÌØ‚è‘Ö‚¦

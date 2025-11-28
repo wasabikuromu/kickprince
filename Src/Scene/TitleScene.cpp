@@ -201,7 +201,7 @@ void TitleScene::Update(void)
 			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 		}
 		else if (selectedIndex_ == 1) {
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::DEMO);
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TUTORIAL);
 			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 		}
 		else if (selectedIndex_ == 2) {

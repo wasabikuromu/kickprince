@@ -12,13 +12,13 @@ class Item;
 class Camera;
 
 //敵スポーン用のデータ
-struct EnemySpawnData
+struct TutorialEnemySpawnData
 {
 	VECTOR pos;   //敵の初期座標
 	int type;     //敵の種類
 };
 
-class GameScene : public SceneBase
+class TutorialScene : public SceneBase
 {
 public:
 
@@ -126,9 +126,9 @@ public:
 	int blue = 0x0000ff;  //青
 	int yellow = 0xffff00;//黄
 	int purpl = 0x800080; //紫
-	
-	GameScene(int stageNo = 1);	// コンストラクタ
-	~GameScene(void);	// デストラクタ
+
+	TutorialScene(int stageNo = 1);	// コンストラクタ
+	~TutorialScene(void);	// デストラクタ
 
 	void Init(void) override;
 	void Update(void) override;
@@ -177,7 +177,7 @@ private:
 	int uiFadeFrame_ = 0;
 
 	//-1なら追尾していない状態
-	int followAllyIndex_ = -1; 
+	int followAllyIndex_ = -1;
 
 	// 設定開く
 	int imgOpeGear_;
@@ -212,5 +212,5 @@ private:
 	int stageNo_;   // ← ステージ番号
 
 	// 敵配置テーブル
-	std::map<int, std::vector<EnemySpawnData>> enemySpawnTable_;
+	std::map<int, std::vector<TutorialEnemySpawnData>> enemySpawnTable_;
 };

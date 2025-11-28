@@ -5,6 +5,7 @@
 #include "../Manager/GravityManager.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/DemoScene.h"
+#include "../Scene/TutorialScene.h"
 #include "../Scene/StageSelectScene.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/OverScene.h"
@@ -249,6 +250,9 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	case SCENE_ID::DEMO:
 		scene_ = std::make_unique<DemoScene>();
 		SetFontSize(55);
+		break;
+	case SCENE_ID::TUTORIAL:
+		scene_ = std::make_unique<TutorialScene>();
 		break;
 	case SCENE_ID::STAGE_SELECT:
 		scene_ = std::make_unique<StageSelectScene>();

@@ -15,7 +15,7 @@
 
 EnemyBase::EnemyBase() 
 	: 
-	scene_(nullptr),
+	gScene_(nullptr),
 	movePow_(AsoUtility::VECTOR_ZERO)
 {
 	animationController_ = nullptr;
@@ -435,9 +435,14 @@ float EnemyBase::GetCollisionRadius(void)
 //	}
 //}
 
-void EnemyBase::SetGameScene(GameScene* scene)
+void EnemyBase::SetGameScene(GameScene* gscene)
 {
-	scene_ = scene;
+	gScene_ = gscene;
+}
+
+void EnemyBase::SetTutorialScene(TutorialScene* tscene)
+{
+	tScene_ = tscene;
 }
 
 #pragma region StateÇÃêÿÇËë÷Ç¶

@@ -8,6 +8,7 @@
 
 class AnimationController;
 class GameScene;
+class TutorialScene;
 class Player;
 class Capsule;
 
@@ -166,7 +167,8 @@ public:
 	VECTOR GetCollisionPos(void)const;	//衝突用の中心座標の取得
 	float GetCollisionRadius(void);		//衝突用の球体半径の取得
 
-	void SetGameScene(GameScene* scene);
+	void SetGameScene(GameScene* gscene);
+	void SetTutorialScene(TutorialScene* tscene);
 
 	void DrawDebug(void);	//デバッグ
 
@@ -184,7 +186,8 @@ protected:
 
 	std::shared_ptr<Player> player_;
 	
-	GameScene* scene_;
+	GameScene* gScene_;
+	TutorialScene* tScene_;
 
 	const std::vector<std::shared_ptr<EnemyBase>>* enemy_;
 

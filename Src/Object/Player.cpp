@@ -492,16 +492,16 @@ void Player::DrawGuideLine(void)
 
 void Player::DrawChargeGauge()
 {
-	const int drawX = 1000;
-	const int drawY = 500;
+	const int drawX = 1200;
+	const int drawY = 550;
 
 	float rate = chargeTime_ / maxChargeTime_;
 	if (rate < 0.0f) rate = 0.0f;
 	if (rate > 1.0f) rate = 1.0f;
 
-	const int innerHeight = 448;
-	const float bottomWidth = 38.0f;
-	const float topWidth = 97.0f;
+	const int innerHeight = 450;
+	const float bottomWidth = 40.0f;
+	const float topWidth = 99.0f;
 	const float slope = (topWidth - bottomWidth) / innerHeight;
 
 	const int frameWidth = 110;
@@ -509,25 +509,19 @@ void Player::DrawChargeGauge()
 
 	const int offsetY = (frameHeight - innerHeight) / 2;
 	const int offsetX = (frameWidth - (int)bottomWidth) / 2;
-	// ※左を固定したいので bottomWidth を基準にします
 
 	int filledH = (int)(innerHeight * rate);
 
+	// ----------- ① filled 部分（カラーグラデーション）-----------
 	for (int i = 0; i < filledH; i++)
 	{
 		float w = bottomWidth + slope * i;
 
 		int drawYLine = drawY + (innerHeight - i) + offsetY;
-
-		// ★ 左端は固定
 		int left = drawX + offsetX;
-
-		// ★ 右側だけ広がる
 		int right = left + (int)w;
 
-		// 色（緑→黄→赤）
 		float t = (float)i / innerHeight;
-
 		int r, g, b;
 		if (t < 0.5f)
 		{
@@ -547,7 +541,26 @@ void Player::DrawChargeGauge()
 		DrawBox(left, drawYLine, right, drawYLine + 1, GetColor(r, g, b), TRUE);
 	}
 
-	DrawGraph(drawX, drawY, imgGaugeFrame_, TRUE);
+	//②空の部分（グレー）
+	int emptyH = innerHeight - filledH;
+
+	for (int i = filledH; i < innerHeight; i++)
+	{
+		float w = bottomWidth + slope * i;
+
+		int drawYLine = drawY + (innerHeight - i) + offsetY;
+		int left = drawX + offsetX;
+		int right = left + (int)w;
+
+		// 半透明のグレー（例：RGBA = 100,100,100,128）
+		unsigned int color = GetColor(100, 100, 100);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+		DrawBox(left, drawYLine, right, drawYLine + 1, color, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
+
+	//③枠を重ねる
+	DrawGraph(drawX + 29, drawY, imgGaugeFrame_, TRUE);
 }
 
 void Player::ProcessMove(void)
@@ -829,10 +842,6 @@ void Player::CollisionAttack(float chargeRate)
 				isAttack_ = false; 
 				break;
 			}
-			////球体同士の当たり判定
-			//if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_)
-			//{
-			//}
 		}
 	}
 
