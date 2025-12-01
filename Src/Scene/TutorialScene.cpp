@@ -118,6 +118,14 @@ void TutorialScene::Init(void)
 	currentKickedAlly_ = nullptr;
 
 	isB_ = BOSS_WAIT;
+
+	step_ = TutorialStep::INTRO_MESSAGE;
+	msg_ = "";
+	showMsgBox_ = false;
+
+	// まずすべての操作を禁止
+	player_->SetControlEnabled(false);
+	//mainCamera->SetControlEnabled(false);
 }
 
 void TutorialScene::Update(void)
@@ -706,4 +714,91 @@ bool TutorialScene::IsAllEnemiesDefeated(void) const
 			return false;
 	}
 	return true;
+}
+
+void TutorialScene::RunTutorial(void)
+{
+	InputManager& ins = InputManager::GetInstance();
+	Camera& cam = Camera::GetInstance();
+
+	switch (step_)
+	{
+		//①最初の説明
+	case TutorialStep::INTRO_MESSAGE:
+		showMsgBox_ = true;
+		msg_ = "ここでは基本操作を練習していくよ。\nEnterで進む。";
+		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
+			step_ = TutorialStep::MOVE_MESSAGE;
+		}
+		break;
+
+		// ②移動方法
+	case TutorialStep::MOVE_MESSAGE:
+		showMsgBox_ = true;
+		msg_ = "WASD で移動してみよう！\nEnterで開始。";
+		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
+			// 移動を解禁
+			player_->SetControlEnabled(true);
+			moveStartPos_ = player_->GetTransform().pos;
+			showMsgBox_ = false;
+			step_ = TutorialStep::WAIT_MOVE;
+		}
+		break;
+
+		// ③移動チェック
+	case TutorialStep::WAIT_MOVE:
+	{
+		VECTOR pos = player_->GetTransform().pos;
+		float dist = sqrtf(
+			(pos.x - moveStartPos_.x) * (pos.x - moveStartPos_.x) +
+			(pos.z - moveStartPos_.z) * (pos.z - moveStartPos_.z)
+		);
+
+		if (dist > 200.0f) { // 適当に 200 移動
+			player_->SetControlEnabled(false);
+			step_ = TutorialStep::CAMERA_MESSAGE;
+		}
+		break;
+	}
+
+	// ④カメラ操作説明
+	case TutorialStep::CAMERA_MESSAGE:
+		showMsgBox_ = true;
+		msg_ = "マウスを動かして\nカメラをぐるっと回してみよう。\nEnterで開始。";
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
+			cam.SetControlEnabled(true);
+			cameraStartRotX_ = cam.GetRotX();
+			cameraStartRotY_ = cam.GetRotY();
+			showMsgBox_ = false;
+			step_ = TutorialStep::WAIT_CAMERA;
+		}
+		break;
+
+		// カメラ動かす
+	case TutorialStep::WAIT_CAMERA:
+	{
+		float dx = fabsf(cam.GetRotX() - cameraStartRotX_);
+		float dy = fabsf(cam.GetRotY() - cameraStartRotY_);
+
+		if (dx + dy > 0.2f) { // 適当な閾値
+			cam.SetControlEnabled(false);
+			step_ = TutorialStep::COMPLETE_MESSAGE;
+		}
+		break;
+	}
+
+	// 完了
+	case TutorialStep::COMPLETE_MESSAGE:
+		showMsgBox_ = true;
+		msg_ = "チュートリアル完了！\nEnter でゲームへ進む。";
+		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
+			step_ = TutorialStep::END;
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME, 1);
+		}
+		break;
+
+	case TutorialStep::END:
+		break;
+	}
 }

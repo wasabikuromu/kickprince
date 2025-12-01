@@ -45,6 +45,17 @@ public:
 		SelectStage		//ステージを選択
 	};
 
+	//チュートリアル
+	enum class TutorialStep {
+		INTRO_MESSAGE,      //①ゲーム説明
+		MOVE_MESSAGE,       //②移動説明
+		WAIT_MOVE,          //③移動中
+		CAMERA_MESSAGE,     //④カメラ説明
+		WAIT_CAMERA,        //カメラ操作中
+		COMPLETE_MESSAGE,   //完了
+		END                 //終了
+	};
+
 	static constexpr int ENCOUNT = 300;		//エンカウンタ
 	static constexpr int ENEMY_MAX = 200;	//最大出現数
 	static constexpr int ENE_ENC = 30;		//最大許容量
@@ -146,6 +157,8 @@ public:
 
 	bool IsAllEnemiesDefeated(void) const;
 
+	void RunTutorial(void);
+
 private:
 	int cnt;
 
@@ -213,4 +226,14 @@ private:
 
 	// 敵配置テーブル
 	std::map<int, std::vector<TutorialEnemySpawnData>> enemySpawnTable_;
+
+	//チュートリアル
+	TutorialStep step_;
+
+	std::string msg_;
+	bool showMsgBox_ = false;
+
+	VECTOR moveStartPos_;
+	float cameraStartRotX_;
+	float cameraStartRotY_;
 };

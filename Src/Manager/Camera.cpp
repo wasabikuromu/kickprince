@@ -276,16 +276,13 @@ void Camera::SetBeforeDrawSelfShot(void)
 
 void Camera::SetBeforeDrawSideView(void)
 {
-	// 完全固定カメラ（追従なし・真横）
-	// 例：右側から Y 水平で真横に見る
-	// Z は固定、X は横方向、Y は高さ
 
 	const float sideX = 3000.0f; 
 	const float camY = 550.0f;
 	const float camZ = 860.0f;
 
-	pos_ = VGet(sideX, camY, camZ); // カメラの位置
-	targetPos_ = VGet(0.0f, camY, camZ);  // 注視点（同じ高さで真横に向ける）
+	pos_ = VGet(sideX, camY, camZ); //カメラの位置
+	targetPos_ = VGet(0.0f, camY, camZ);  //注視点
 
 	// 上方向はY軸
 	cameraUp_ = VGet(0.0f, 1.0f, 0.0f);
