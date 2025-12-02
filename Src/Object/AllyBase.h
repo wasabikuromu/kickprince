@@ -174,6 +174,9 @@ public:
 
 	void SetPlayer(std::shared_ptr<Player> player);
 	void SetEnemy(const std::vector<std::shared_ptr<EnemyBase>>* enemys);
+
+	// ‹ó’†UŒ‚‰Â”\‚©
+	bool CanGlideAttack(void) const;
 	
 protected:
 	VECTOR defaultPos_ = VGet(0, 0, 0);  //‰ŠúˆÊ’u

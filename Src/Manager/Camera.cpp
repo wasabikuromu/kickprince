@@ -77,6 +77,26 @@ void Camera::SetFollow(const Transform* follow)
 	followTransform_ = follow;
 }
 
+float Camera::GetRotX(void) const
+{
+	return angles_.x;
+}
+
+float Camera::GetRotY(void) const
+{
+	return angles_.y;
+}
+
+void Camera::SetControlEnabled(bool enabled)
+{
+	isControlEnabled_ = enabled;
+}
+
+bool Camera::IsControlEnabled(void) const
+{
+	return isControlEnabled_;
+}
+
 VECTOR Camera::GetPos(void) const
 {
 	return pos_;
@@ -261,13 +281,12 @@ void Camera::SetBeforeDrawFixedPoint(void)
 
 void Camera::SetBeforeDrawFollow(void)
 {
-
-	// ƒJƒƒ‰‘€ì
-	ProcessRot();
+	if (isControlEnabled_) {
+		ProcessRot();
+	}
 
 	// ’Ç]‘ÎÛ‚Æ‚Ì‘Š‘ÎˆÊ’u‚ğ“¯Šú
 	SyncFollow();
-
 }
 
 void Camera::SetBeforeDrawSelfShot(void)

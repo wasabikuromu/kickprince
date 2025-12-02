@@ -242,6 +242,8 @@ void TutorialScene::Update(void)
 
 		return;
 	}
+
+	RunTutorial();
 }
 
 void TutorialScene::Draw(void)
@@ -367,12 +369,21 @@ void TutorialScene::Draw(void)
 
 		return;
 	}
+	
+	if (showMsgBox_)
+	{
+		const int boxX = 60;
+		const int boxY = Application::SCREEN_SIZE_Y - 180;
+		const int boxW = Application::SCREEN_SIZE_X - 120;
+		const int boxH = 140;
 
-#pragma region UI
-	SetFontSize(DEFAULT_FONT_SIZE * 2.0);
-	DrawString(UI_ATTACK_X, UI_NORMAL_ATTACK_Y, "E:通常攻撃", white);
-	SetFontSize(DEFAULT_FONT_SIZE);
-#pragma endregion
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+		DrawBox(boxX, boxY, boxX + boxW, boxY + boxH, GetColor(0, 0, 0), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		SetFontSize(32);
+		DrawString(boxX + 20, boxY + 20, msg_.c_str(), GetColor(255, 255, 255));
+	}
 }
 
 void TutorialScene::Release(void)
@@ -719,11 +730,14 @@ bool TutorialScene::IsAllEnemiesDefeated(void) const
 void TutorialScene::RunTutorial(void)
 {
 	InputManager& ins = InputManager::GetInstance();
-	Camera& cam = Camera::GetInstance();
+	Camera& cam = *camera_;
+	Player& play = *player_;
 
 	switch (step_)
 	{
-		//①最初の説明
+		// ---------------------------------------------------------
+		// ① 最初の説明
+		// ---------------------------------------------------------
 	case TutorialStep::INTRO_MESSAGE:
 		showMsgBox_ = true;
 		msg_ = "ここでは基本操作を練習していくよ。\nEnterで進む。";
@@ -732,12 +746,14 @@ void TutorialScene::RunTutorial(void)
 		}
 		break;
 
-		// ②移動方法
+
+		// ---------------------------------------------------------
+		// ② 移動の説明
+		// ---------------------------------------------------------
 	case TutorialStep::MOVE_MESSAGE:
 		showMsgBox_ = true;
 		msg_ = "WASD で移動してみよう！\nEnterで開始。";
 		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
-			// 移動を解禁
 			player_->SetControlEnabled(true);
 			moveStartPos_ = player_->GetTransform().pos;
 			showMsgBox_ = false;
@@ -745,7 +761,10 @@ void TutorialScene::RunTutorial(void)
 		}
 		break;
 
-		// ③移動チェック
+
+		// ---------------------------------------------------------
+		// ③ 移動中
+		// ---------------------------------------------------------
 	case TutorialStep::WAIT_MOVE:
 	{
 		VECTOR pos = player_->GetTransform().pos;
@@ -754,51 +773,144 @@ void TutorialScene::RunTutorial(void)
 			(pos.z - moveStartPos_.z) * (pos.z - moveStartPos_.z)
 		);
 
-		if (dist > 200.0f) { // 適当に 200 移動
+		if (dist > 200.0f) {
 			player_->SetControlEnabled(false);
 			step_ = TutorialStep::CAMERA_MESSAGE;
 		}
 		break;
 	}
 
-	// ④カメラ操作説明
+
+	// ---------------------------------------------------------
+	// ④ カメラ説明
+	// ---------------------------------------------------------
 	case TutorialStep::CAMERA_MESSAGE:
 		showMsgBox_ = true;
 		msg_ = "マウスを動かして\nカメラをぐるっと回してみよう。\nEnterで開始。";
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
 			cam.SetControlEnabled(true);
+
 			cameraStartRotX_ = cam.GetRotX();
 			cameraStartRotY_ = cam.GetRotY();
+
 			showMsgBox_ = false;
 			step_ = TutorialStep::WAIT_CAMERA;
 		}
 		break;
 
-		// カメラ動かす
+
+		// ---------------------------------------------------------
+		// ⑤ カメラ操作チェック
+		// ---------------------------------------------------------
 	case TutorialStep::WAIT_CAMERA:
 	{
 		float dx = fabsf(cam.GetRotX() - cameraStartRotX_);
 		float dy = fabsf(cam.GetRotY() - cameraStartRotY_);
 
-		if (dx + dy > 0.2f) { // 適当な閾値
+		if (dx + dy > 0.2f) {
 			cam.SetControlEnabled(false);
-			step_ = TutorialStep::COMPLETE_MESSAGE;
+			step_ = TutorialStep::KICK_CHARGE_MESSAGE;
 		}
 		break;
 	}
 
-	// 完了
+
+	// ---------------------------------------------------------
+	// ⑥ 攻撃説明
+	// ---------------------------------------------------------
+	case TutorialStep::KICK_CHARGE_MESSAGE:
+		showMsgBox_ = true;
+		msg_ = "ボタンを長押しすることでゲージがたまっていき、飛ぶ距離が変わるぞ！";
+		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
+			showMsgBox_ = false;
+			step_ = TutorialStep::WAIT_KICK_CHARGE;
+		}
+		break;
+
+
+		// ---------------------------------------------------------
+		// ⑦攻撃待ち
+		// ---------------------------------------------------------
+	case TutorialStep::WAIT_KICK_CHARGE:
+		if (player_->IsKickReleased()) { // ← 名前を変更
+			step_ = TutorialStep::KICK_FRIEND_MESSAGE;
+		}
+		break;
+
+
+		// ---------------------------------------------------------
+		// ⑧ 味方を蹴る説明
+		// ---------------------------------------------------------
+	case TutorialStep::KICK_FRIEND_MESSAGE:
+		showMsgBox_ = true;
+		msg_ = "味方に近づいて蹴ってみよう！";
+		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
+			showMsgBox_ = false;
+			step_ = TutorialStep::WAIT_KICK_FRIEND;
+		}
+		break;
+
+
+		// ---------------------------------------------------------
+		// ⑨ 味方キック待ち
+		// ---------------------------------------------------------
+	case TutorialStep::WAIT_KICK_FRIEND:
+		if (tutorialFlags_.isAllyKicked) { // ← ally側から通知する
+			step_ = TutorialStep::GLIDE_ATTACK_MESSAGE;
+		}
+		break;
+
+
+		// ---------------------------------------------------------
+		// ⑩ 空中攻撃の説明
+		// ---------------------------------------------------------
+	case TutorialStep::GLIDE_ATTACK_MESSAGE:
+		showMsgBox_ = true;
+		msg_ = "味方が飛んでいる間に\nE（○）で攻撃させることができるよ！";
+		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
+			showMsgBox_ = false;
+			step_ = TutorialStep::WAIT_GLIDE_ATTACK;
+		}
+		break;
+
+
+		// ---------------------------------------------------------
+		// ⑪ 空中攻撃入力待ち
+		// ---------------------------------------------------------
+	case TutorialStep::WAIT_GLIDE_ATTACK:
+		for (const auto& ally : Allys_) {  // allies_ はチュートリアル対象の味方リスト
+			if (!ally) continue;
+
+			if (ally->CanGlideAttack()) {  // 空中攻撃可能になったら次へ
+				step_ = TutorialStep::COMPLETE_MESSAGE;
+				break;
+			}
+		}
+		break;
+
+
+		// ---------------------------------------------------------
+		// ⑫ 完了
+		// ---------------------------------------------------------
 	case TutorialStep::COMPLETE_MESSAGE:
 		showMsgBox_ = true;
 		msg_ = "チュートリアル完了！\nEnter でゲームへ進む。";
 		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
 			step_ = TutorialStep::END;
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME, 1);
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::STAGE_SELECT);
 		}
 		break;
 
+
+		// ---------------------------------------------------------
+		// ⑬ END
+		// ---------------------------------------------------------
 	case TutorialStep::END:
 		break;
 	}
+
+	// --- 全チュートリアル共通の制御 ---
+	player_->SetControlEnabled(!showMsgBox_);
+	cam.SetControlEnabled(!showMsgBox_);
 }

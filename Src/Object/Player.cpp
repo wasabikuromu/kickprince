@@ -134,6 +134,16 @@ void Player::Init(void)
 
 void Player::Update(void)
 {
+	if (isTutorialPaused_) {
+		// 動きを完全停止
+		movePow_ = VGet(0, 0, 0);
+
+		// 歩きアニメを止める（idleに固定）
+		animationController_->Play((int)ANIM_TYPE::IDLE);
+
+		return;
+	}
+
 	//操作禁止中なら、入力に関わる処理をスキップ
 	if (!controlEnabled_)
 	{
@@ -163,6 +173,11 @@ void Player::UpdateDown(float deltaTime)
 		}
 		return;
 	}
+}
+
+void Player::SetTutorialPause(bool pause)
+{
+	isTutorialPaused_ = pause;
 }
 
 void Player::Draw(void)
@@ -1093,6 +1108,16 @@ void Player::Heal(void)
 void Player::Muteki(void)
 {
 	invincible_ = true;
+}
+
+bool Player::IsPreparingAttack(void) const
+{
+	return isCharging_;  //攻撃ボタン押下中なら true
+}
+
+bool Player::IsKickReleased(void) const
+{
+	return attackReleased_;
 }
 
 void Player::StartRevival()

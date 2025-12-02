@@ -18,6 +18,12 @@ struct TutorialEnemySpawnData
 	int type;     //敵の種類
 };
 
+struct TutorialFlags
+{
+	bool isAllyKicked = false;   // 味方を蹴った瞬間
+	// 他のチュートリアルフラグもここに追加可能
+};
+
 class TutorialScene : public SceneBase
 {
 public:
@@ -47,13 +53,19 @@ public:
 
 	//チュートリアル
 	enum class TutorialStep {
-		INTRO_MESSAGE,      //①ゲーム説明
-		MOVE_MESSAGE,       //②移動説明
-		WAIT_MOVE,          //③移動中
-		CAMERA_MESSAGE,     //④カメラ説明
-		WAIT_CAMERA,        //カメラ操作中
-		COMPLETE_MESSAGE,   //完了
-		END                 //終了
+		INTRO_MESSAGE,			//①ゲーム説明
+		MOVE_MESSAGE,			//②移動説明
+		WAIT_MOVE,				//③移動中
+		CAMERA_MESSAGE,			//④カメラ説明
+		WAIT_CAMERA,			//⑤カメラ移動
+		KICK_CHARGE_MESSAGE,    //⑥キックしてみよう
+		WAIT_KICK_CHARGE,       //⑦キックチャージ
+		KICK_FRIEND_MESSAGE,    //⑧味方に近づいて蹴ろう
+		WAIT_KICK_FRIEND,       //⑨味方が蹴られるの待ち
+		GLIDE_ATTACK_MESSAGE,   //⑩飛んでいる味方を攻撃させよう
+		WAIT_GLIDE_ATTACK,      //⑪プレイヤーが攻撃ボタンを押すの待ち
+		COMPLETE_MESSAGE,       //⑫完了
+		END                     //⑬終了
 	};
 
 	static constexpr int ENCOUNT = 300;		//エンカウンタ
@@ -236,4 +248,6 @@ private:
 	VECTOR moveStartPos_;
 	float cameraStartRotX_;
 	float cameraStartRotY_;
+	TutorialFlags tutorialFlags_;
+	bool isTutorialMsgActive_ = false;   //メッセージ表示中は操作禁止
 };

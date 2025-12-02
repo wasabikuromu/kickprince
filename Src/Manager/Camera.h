@@ -77,6 +77,14 @@ public:
 	bool isPaused_ = false; // ポーズ状態フラグ
 	void SetPaused(bool paused) { isPaused_ = paused; }
 
+	float GetRotX(void) const;
+	float GetRotY(void) const;
+
+	//カメラ操作（回転）を有効・無効にする
+	void SetControlEnabled(bool enabled);
+
+	bool IsControlEnabled(void) const;
+
 private:
 
 	// カメラが追従対象とするTransform
@@ -102,6 +110,8 @@ private:
 
 	// カメラの上方向
 	VECTOR cameraUp_;
+
+	bool isControlEnabled_ = true; //デフォルトは操作可能
 
 	// 現在のモード
 	//MODE mode_ = MODE::FOLLOW;

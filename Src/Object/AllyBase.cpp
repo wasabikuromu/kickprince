@@ -607,6 +607,11 @@ void AllyBase::SetEnemy(const std::vector<std::shared_ptr<EnemyBase>>* enemys)
 	enemy_ = enemys;
 }
 
+bool AllyBase::CanGlideAttack(void) const
+{
+	return state_ == STATE::ATTACK && isAttack_;
+}
+
 void AllyBase::DrawDebug(void)
 {
 

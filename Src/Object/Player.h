@@ -204,6 +204,9 @@ public:
 	void Heal(void);			//回復
 	void Muteki(void);			//無敵
 
+	bool IsPreparingAttack(void) const;		//攻撃準中か
+	bool IsKickReleased(void) const;		//攻撃後か
+
 private:
 	//アニメーション
 	std::unique_ptr<AnimationController> animationController_;
@@ -220,6 +223,9 @@ private:
 
 	void UpdatePlay(void);				//stateがplayの状態のupdate
 	void UpdateDown(float deltaTime);	//ダウン中の処理
+
+	void SetTutorialPause(bool pause);
+	bool isTutorialPaused_ = false;
 
 	//kickのゲージ管理
 	bool isCharging_ = false;     // チャージ中かどうか
@@ -240,17 +246,18 @@ private:
 	void CollisionGravity(void);
 	void CollisionCapsule(void);
 
+	//プレイヤーの動き
+	void ProcessMove(void);			// 移動
+	void ProcessAttack(void);		//攻撃モーション
+
 	//攻撃判定
 	void CollisionAttack(float chargeRate);
+	bool attackReleased_ = false; //攻撃フラグ
 
 	//プレイヤーが持つ判定
 	VECTOR collisionPos_;			//プレイヤーの当たり判定移動後座標
 	float collisionRadius_;			// 衝突判定用の球体半径
 	VECTOR collisionLocalPos_;		// 衝突判定用の球体中心の調整座標
-
-	//プレイヤーの動き
-	void ProcessMove(void);			// 移動
-	void ProcessAttack(void);		//攻撃モーション
 
 	//回転
 	void SetGoalRotate(double rotRad);
