@@ -49,7 +49,9 @@ public:
 
 	void ChangeScene(SCENE_ID nextId);
 
-	int GetCurrentStage() const { return currentStageNo_; }
+	int GetCurrentStage(void) const { return currentStageNo_; }
+
+	void NotifyTutorial_AllyKicked(void);
 
 	// 次のステージに行く
 	void GoToNextStage(int currentStage);

@@ -180,6 +180,15 @@ void SceneManager::ChangeStageScene(SCENE_ID id,int stageNo)
 	isSceneChanging_ = true;
 }
 
+void SceneManager::NotifyTutorial_AllyKicked(void)
+{
+	// Œ»İ‚ÌƒV[ƒ“‚ğ TutorialScene ‚Æ‚µ‚Ä”»’è
+	auto* t = dynamic_cast<TutorialScene*>(scene_.get());
+	if (t) {
+		t->OnAllyKicked();
+	}
+}
+
 void SceneManager::GoToNextStage(int currentStage)
 {
 	ChangeStageScene(SceneManager::SCENE_ID::GAME, currentStage + 1);

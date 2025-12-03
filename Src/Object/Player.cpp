@@ -297,7 +297,7 @@ void Player::SetControlEnabled(bool enabled)
 	controlEnabled_ = enabled;
 }
 
-bool Player::IsControlEnabled() const
+bool Player::IsControlEnabled(void) const
 {
 	return controlEnabled_;
 }
@@ -902,6 +902,14 @@ void Player::ProcessAttack(void)
 	bool isRelease = (!CheckHitKey(KEY_INPUT_E)) &&
 		ins_.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::RIGHT);		//離した瞬間
 
+	//チュートリアルで攻撃禁止のときは何もさせない
+	if (!attackEnable_) {
+		isCharging_ = false;    //チャージ中断
+		isAttack_ = false;      //攻撃も中断
+		attackReleased_ = false;
+		return;
+	}
+
 	//============================================================
 	// ① 攻撃アニメ中（キャンセル不可）
 	//============================================================
@@ -976,6 +984,9 @@ void Player::ProcessAttack(void)
 	if (isCharging_ && isRelease)
 	{
 		isCharging_ = false;
+
+		//1フレーム限定ではなく保持する
+		attackReleased_ = true;
 
 		// --- 攻撃開始 ---
 		isAttack_ = true;
@@ -1118,6 +1129,21 @@ bool Player::IsPreparingAttack(void) const
 bool Player::IsKickReleased(void) const
 {
 	return attackReleased_;
+}
+
+bool Player::ConsumeKickReleased(void)
+{
+	if (attackReleased_)
+	{
+		attackReleased_ = false;
+		return true;    // ← 呼ばれたフレームで1回だけ true
+	}
+	return false;
+}
+
+void Player::SetAttackEnabled(bool e)
+{
+	attackEnable_ = e;
 }
 
 void Player::StartRevival()

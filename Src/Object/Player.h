@@ -193,7 +193,7 @@ public:
 
 	//操作可能？
 	void SetControlEnabled(bool enabled);  // ← 追加
-	bool IsControlEnabled() const;         // ← 追加
+	bool IsControlEnabled(void) const;         // ← 追加
 
 	//エネミーの衝突用座標
 	const std::vector<std::shared_ptr<AllyBase>>& GetEnemyCollision(void) const;
@@ -206,6 +206,8 @@ public:
 
 	bool IsPreparingAttack(void) const;		//攻撃準中か
 	bool IsKickReleased(void) const;		//攻撃後か
+	bool ConsumeKickReleased(void);	//
+	void SetAttackEnabled(bool e);
 
 private:
 	//アニメーション
@@ -252,7 +254,8 @@ private:
 
 	//攻撃判定
 	void CollisionAttack(float chargeRate);
-	bool attackReleased_ = false; //攻撃フラグ
+	bool attackReleased_ = false;
+	bool attackEnable_ = true;
 
 	//プレイヤーが持つ判定
 	VECTOR collisionPos_;			//プレイヤーの当たり判定移動後座標

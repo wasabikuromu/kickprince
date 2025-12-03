@@ -125,7 +125,7 @@ void TutorialScene::Init(void)
 
 	// まずすべての操作を禁止
 	player_->SetControlEnabled(false);
-	//mainCamera->SetControlEnabled(false);
+	mainCamera->SetControlEnabled(false);
 }
 
 void TutorialScene::Update(void)
@@ -399,6 +399,16 @@ void TutorialScene::AddItem(std::shared_ptr<Item> item)
 const std::vector<std::shared_ptr<AllyBase>>& TutorialScene::GetEnemies() const
 {
 	return Allys_;
+}
+
+void TutorialScene::NotifyAllyKicked(void)
+{
+	tutorialFlags_.isAllyKicked = true;
+}
+
+void TutorialScene::OnAllyKicked(void)
+{
+	tutorialFlags_.isAllyKicked = true;
 }
 
 void TutorialScene::OnAllyKicked(AllyBase* kickedAlly)
@@ -730,6 +740,7 @@ bool TutorialScene::IsAllEnemiesDefeated(void) const
 void TutorialScene::RunTutorial(void)
 {
 	InputManager& ins = InputManager::GetInstance();
+
 	Camera& cam = *camera_;
 	Player& play = *player_;
 
@@ -755,6 +766,7 @@ void TutorialScene::RunTutorial(void)
 		msg_ = "WASD で移動してみよう！\nEnterで開始。";
 		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
 			player_->SetControlEnabled(true);
+			cam.SetControlEnabled(false);
 			moveStartPos_ = player_->GetTransform().pos;
 			showMsgBox_ = false;
 			step_ = TutorialStep::WAIT_MOVE;
@@ -767,6 +779,7 @@ void TutorialScene::RunTutorial(void)
 		// ---------------------------------------------------------
 	case TutorialStep::WAIT_MOVE:
 	{
+		player_->SetAttackEnabled(false);
 		VECTOR pos = player_->GetTransform().pos;
 		float dist = sqrtf(
 			(pos.x - moveStartPos_.x) * (pos.x - moveStartPos_.x) +
@@ -789,8 +802,7 @@ void TutorialScene::RunTutorial(void)
 		msg_ = "マウスを動かして\nカメラをぐるっと回してみよう。\nEnterで開始。";
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
-			cam.SetControlEnabled(true);
-
+	
 			cameraStartRotX_ = cam.GetRotX();
 			cameraStartRotY_ = cam.GetRotY();
 
@@ -805,6 +817,8 @@ void TutorialScene::RunTutorial(void)
 		// ---------------------------------------------------------
 	case TutorialStep::WAIT_CAMERA:
 	{
+		player_->SetAttackEnabled(false);
+		cam.SetControlEnabled(true);
 		float dx = fabsf(cam.GetRotX() - cameraStartRotX_);
 		float dy = fabsf(cam.GetRotY() - cameraStartRotY_);
 
@@ -833,6 +847,7 @@ void TutorialScene::RunTutorial(void)
 		// ⑦攻撃待ち
 		// ---------------------------------------------------------
 	case TutorialStep::WAIT_KICK_CHARGE:
+		player_->SetAttackEnabled(true);
 		if (player_->IsKickReleased()) { // ← 名前を変更
 			step_ = TutorialStep::KICK_FRIEND_MESSAGE;
 		}
@@ -856,7 +871,8 @@ void TutorialScene::RunTutorial(void)
 		// ⑨ 味方キック待ち
 		// ---------------------------------------------------------
 	case TutorialStep::WAIT_KICK_FRIEND:
-		if (tutorialFlags_.isAllyKicked) { // ← ally側から通知する
+		if (tutorialFlags_.isAllyKicked) {
+			tutorialFlags_.isAllyKicked = false;
 			step_ = TutorialStep::GLIDE_ATTACK_MESSAGE;
 		}
 		break;
