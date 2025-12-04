@@ -159,7 +159,7 @@ void AllyBase::UpdateBlow(void)
 
 	// 攻撃ボタンが押されたら攻撃に移行
 	if (CheckHitKey(KEY_INPUT_SPACE)||
-		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::LEFT))
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
 		TriggerAttackWhileBlow();
 		return; // 状態切り替え後にこれ以上処理しない
@@ -252,13 +252,12 @@ void AllyBase::Damage(int damage,float chargeRate)
 	SoundManager::GetInstance().Play(SoundManager::SRC::E_DAMAGE_SE, Sound::TIMES::FORCE_ONCE);
 	isAttack_ = false;
 
-	if (hp_ <= 0 && isAlive_)
+	if (hp_ <= 0)
 	{
 		isBlow_ = true;
 
 		VECTOR dir = VGet(0.0f, 0.0f, 1.0f);
 
-		// チャージに応じた吹っ飛び速度（最小40～最大80）
 		float speed = 20.0f + (60.0f - 40.0f) * chargeRate;
 
 		VECTOR forwardVel = VScale(dir, speed);
@@ -267,18 +266,8 @@ void AllyBase::Damage(int damage,float chargeRate)
 		velocity_ = VAdd(forwardVel, upVel);
 		ChangeState(STATE::BLOW);
 
-		SceneManager::GetInstance().NotifyTutorial_AllyKicked();
-
-		//カメラをこの味方に切り替える
-		if (gScene_)
-		{
-			gScene_->OnAllyKicked(this);
-		}
-
-		if (tScene_)
-		{
-			tScene_->OnAllyKicked(this);
-		}
+		//GameScene/TutorialScene に通知
+		SceneManager::GetInstance().NotifyTutorial_AllyKicked(this);
 	}
 }
 

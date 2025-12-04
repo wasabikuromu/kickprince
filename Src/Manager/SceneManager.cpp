@@ -180,12 +180,22 @@ void SceneManager::ChangeStageScene(SCENE_ID id,int stageNo)
 	isSceneChanging_ = true;
 }
 
-void SceneManager::NotifyTutorial_AllyKicked(void)
+void SceneManager::NotifyTutorial_AllyKicked(AllyBase* ally)
 {
-	// 現在のシーンを TutorialScene として判定
-	auto* t = dynamic_cast<TutorialScene*>(scene_.get());
-	if (t) {
-		t->OnAllyKicked();
+	if (!scene_) return;
+
+	// TutorialScene ならそっちに通知
+	if (auto* t = dynamic_cast<TutorialScene*>(scene_.get()))
+	{
+		t->OnAllyKicked(ally);
+		return;
+	}
+
+	// GameScene ならそっちに通知
+	if (auto* g = dynamic_cast<GameScene*>(scene_.get()))
+	{
+		g->OnAllyKicked(ally);
+		return;
 	}
 }
 

@@ -81,6 +81,10 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/5.png");
 	resourcesMap_.emplace(SRC::STAGE_5, std::move(res));
 
+	// チュートリアルのテキスト背景
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Tutorial/TutorialTextBackGround.png");
+	resourcesMap_.emplace(SRC::TUTORIAL_TEXT_BG, std::move(res));
+
 	// セレクト中
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/SelectUI.png");
 	resourcesMap_.emplace(SRC::SELECT_UI, std::move(res));

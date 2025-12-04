@@ -5,6 +5,7 @@
 // 推奨しませんが、どうしても使いたい方は
 #define mainCamera SceneManager::GetInstance().GetCamera().lock()
 
+class AllyBase;
 class SceneBase;
 class Fader;
 class Camera;
@@ -51,7 +52,7 @@ public:
 
 	int GetCurrentStage(void) const { return currentStageNo_; }
 
-	void NotifyTutorial_AllyKicked(void);
+	void NotifyTutorial_AllyKicked(AllyBase* ally);
 
 	// 次のステージに行く
 	void GoToNextStage(int currentStage);

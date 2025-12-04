@@ -26,6 +26,7 @@ public:
 		STAGE_3,
 		STAGE_4,
 		STAGE_5,
+		TUTORIAL_TEXT_BG,
 		SELECT_UI,
 		GAUGE_FRAME,
 		CURSOR,

@@ -254,4 +254,7 @@ private:
 	float cameraStartRotY_;
 	TutorialFlags tutorialFlags_;
 	bool isTutorialMsgActive_ = false;   //メッセージ表示中は操作禁止
+
+	//チュートリアル系画像
+	int imgTutorialTextBG_;			//チュートリアルのテキスト背景
 };

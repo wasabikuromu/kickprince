@@ -83,6 +83,9 @@ void TutorialScene::Init(void)
 
 	pauseExplainImgs_[0] = resMng_.Load(ResourceManager::SRC::PAUSEOPE).handleId_; // 操作説明
 	pauseExplainImgs_[1] = resMng_.Load(ResourceManager::SRC::PAUSEITEM).handleId_;   // アイテム概要
+	
+	//チュートリアル画像
+	imgTutorialTextBG_ = resMng_.Load(ResourceManager::SRC::TUTORIAL_TEXT_BG).handleId_;
 
 	//カウンタ
 	uiFadeStart_ = false;
@@ -268,7 +271,11 @@ void TutorialScene::Draw(void)
 		enemy->DrawBossHpBar();
 	}
 
+	//UI
 	DrawRotaGraph(UI_GEAR, UI_GEAR, IMG_OPEGEAR_UI_SIZE, 0.0, imgOpeGear_, true);
+
+	//チュートリアル背景
+	DrawGraph(1050, 30, imgTutorialTextBG_, true);
 
 	//入力チェック or 時間経過でフェード開始
 	if (!uiFadeStart_)
@@ -413,7 +420,10 @@ void TutorialScene::OnAllyKicked(void)
 
 void TutorialScene::OnAllyKicked(AllyBase* kickedAlly)
 {
-	if (!kickedAlly || !mainCamera) return;
+	if (!kickedAlly) return;
+	if (!mainCamera) return;
+
+	tutorialFlags_.isAllyKicked = true;
 
 	isKicking_ = true;
 	currentKickedAlly_ = kickedAlly;
