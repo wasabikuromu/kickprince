@@ -81,6 +81,43 @@ void TutorialScene::Init(void)
 	imgBackTitle_ = resMng_.Load(ResourceManager::SRC::BACK_TITLE).handleId_;
 	imgAbutton_ = resMng_.Load(ResourceManager::SRC::A_BUTTON).handleId_;
 
+	//チュートリアルメッセージ画像
+	imgTutorialMsg_[1] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_01).handleId_;
+	imgTutorialMsg_[2] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_02).handleId_;
+	imgTutorialMsg_[3] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_03).handleId_;
+	imgTutorialMsg_[4] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_04).handleId_;
+	imgTutorialMsg_[5] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_05).handleId_;
+	imgTutorialMsg_[6] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_06).handleId_;
+	imgTutorialMsg_[7] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_07).handleId_;
+	imgTutorialMsg_[8] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_08).handleId_;
+	imgTutorialMsg_[9] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_09).handleId_;
+	imgTutorialMsg_[10] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_10).handleId_;
+	imgTutorialMsg_[11] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_11).handleId_;
+	imgTutorialMsg_[12] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_12).handleId_;
+	imgTutorialMsg_[13] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_13).handleId_;
+	imgTutorialMsg_[14] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_14).handleId_;
+	imgTutorialMsg_[15] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_15).handleId_;
+	imgTutorialMsg_[16] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_16).handleId_;
+	imgTutorialMsg_[17] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_17).handleId_;
+	imgTutorialMsg_[18] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_18).handleId_;
+	imgTutorialMsg_[19] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_19).handleId_;
+	imgTutorialMsg_[20] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_20).handleId_;
+	imgTutorialMsg_[21] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_21).handleId_;
+	imgTutorialMsg_[22] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_22).handleId_;
+	imgTutorialMsg_[23] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_23).handleId_;
+	imgTutorialMsg_[24] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_24).handleId_;
+	imgTutorialMsg_[25] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_25).handleId_;
+	imgTutorialMsg_[26] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_26).handleId_;
+	imgTutorialMsg_[27] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_27).handleId_;
+	imgTutorialMsg_[28] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_28).handleId_;
+	imgTutorialMsg_[29] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_29).handleId_;
+	imgTutorialMsg_[30] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_30).handleId_;
+	imgTutorialMsg_[31] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_31).handleId_;
+	imgTutorialMsg_[32] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_32).handleId_;
+	imgTutorialMsg_[33] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_33).handleId_;
+	imgTutorialMsg_[34] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_34).handleId_;
+	imgTutorialMsg_[35] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_35).handleId_;
+
 	pauseExplainImgs_[0] = resMng_.Load(ResourceManager::SRC::PAUSEOPE).handleId_; // 操作説明
 	pauseExplainImgs_[1] = resMng_.Load(ResourceManager::SRC::PAUSEITEM).handleId_;   // アイテム概要
 	
@@ -120,11 +157,12 @@ void TutorialScene::Init(void)
 	isKicking_ = false;
 	currentKickedAlly_ = nullptr;
 
+	currentStep_ = 1;
+
 	isB_ = BOSS_WAIT;
 
-	step_ = TutorialStep::INTRO_MESSAGE;
-	msg_ = "";
-	showMsgBox_ = false;
+	step_ = TutorialStep::STEP_01_MESSAGE;
+	showMessage_ = false;
 
 	// まずすべての操作を禁止
 	player_->SetControlEnabled(false);
@@ -227,24 +265,24 @@ void TutorialScene::Update(void)
 		enemy->Update();
 	}
 
-	//敵が全滅したら次ステージへ
-	if (IsAllEnemiesDefeated())
-	{
-		//最後のステージなら即ゲームクリアへ
-		if (stageNo_ >= MAX_STAGE)
-		{
-			SceneManager::GetInstance()
-				.ChangeScene(SceneManager::SCENE_ID::CLEAR);
-			return;
-		}
+	////敵が全滅したら次ステージへ
+	//if (IsAllEnemiesDefeated())
+	//{
+	//	//最後のステージなら即ゲームクリアへ
+	//	if (stageNo_ >= MAX_STAGE)
+	//	{
+	//		SceneManager::GetInstance()
+	//			.ChangeScene(SceneManager::SCENE_ID::CLEAR);
+	//		return;
+	//	}
 
-		//それ以外は従来どおりクリアメニューへ
-		isStageMenu_ = true;
-		stageMenu_ = StageState::StageMenu;
-		stageSelectIndex_ = 0;
+	//	//それ以外は従来どおりクリアメニューへ
+	//	isStageMenu_ = true;
+	//	stageMenu_ = StageState::StageMenu;
+	//	stageSelectIndex_ = 0;
 
-		return;
-	}
+	//	return;
+	//}
 
 	RunTutorial();
 }
@@ -274,8 +312,10 @@ void TutorialScene::Draw(void)
 	//UI
 	DrawRotaGraph(UI_GEAR, UI_GEAR, IMG_OPEGEAR_UI_SIZE, 0.0, imgOpeGear_, true);
 
-	//チュートリアル背景
-	DrawGraph(1050, 30, imgTutorialTextBG_, true);
+	//チュートリアル
+	if (showMessage_) {
+		DrawGraph(1050, 30, imgCurrentMessage_, true);
+	}
 
 	//入力チェック or 時間経過でフェード開始
 	if (!uiFadeStart_)
@@ -377,20 +417,6 @@ void TutorialScene::Draw(void)
 		return;
 	}
 	
-	if (showMsgBox_)
-	{
-		const int boxX = 60;
-		const int boxY = Application::SCREEN_SIZE_Y - 180;
-		const int boxW = Application::SCREEN_SIZE_X - 120;
-		const int boxH = 140;
-
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-		DrawBox(boxX, boxY, boxX + boxW, boxY + boxH, GetColor(0, 0, 0), TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-		SetFontSize(32);
-		DrawString(boxX + 20, boxY + 20, msg_.c_str(), GetColor(255, 255, 255));
-	}
 }
 
 void TutorialScene::Release(void)
@@ -756,39 +782,114 @@ void TutorialScene::RunTutorial(void)
 
 	switch (step_)
 	{
-		// ---------------------------------------------------------
-		// ① 最初の説明
-		// ---------------------------------------------------------
-	case TutorialStep::INTRO_MESSAGE:
-		showMsgBox_ = true;
-		msg_ = "ここでは基本操作を練習していくよ。\nEnterで進む。";
-		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
-			step_ = TutorialStep::MOVE_MESSAGE;
+		//①最初の説明
+	case TutorialStep::STEP_01_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[1];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)){
+			step_ = TutorialStep::STEP_02_MESSAGE;
 		}
 		break;
 
+	case TutorialStep::STEP_02_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[2];
 
-		// ---------------------------------------------------------
-		// ② 移動の説明
-		// ---------------------------------------------------------
-	case TutorialStep::MOVE_MESSAGE:
-		showMsgBox_ = true;
-		msg_ = "WASD で移動してみよう！\nEnterで開始。";
-		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)){
+			step_ = TutorialStep::STEP_03_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_03_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[3];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_04_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_04_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[4];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_05_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_05_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[5];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_06_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_06_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[6];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_07_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_07_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[7];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_08_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_08_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[8];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_09_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_09_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[9];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_10_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_10_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[10];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
 			player_->SetControlEnabled(true);
 			cam.SetControlEnabled(false);
 			moveStartPos_ = player_->GetTransform().pos;
-			showMsgBox_ = false;
+			showMessage_ = false;
 			step_ = TutorialStep::WAIT_MOVE;
 		}
 		break;
 
-
-		// ---------------------------------------------------------
-		// ③ 移動中
-		// ---------------------------------------------------------
 	case TutorialStep::WAIT_MOVE:
 	{
+		showMessage_ = false;
 		player_->SetAttackEnabled(false);
 		VECTOR pos = player_->GetTransform().pos;
 		float dist = sqrtf(
@@ -798,35 +899,48 @@ void TutorialScene::RunTutorial(void)
 
 		if (dist > 200.0f) {
 			player_->SetControlEnabled(false);
-			step_ = TutorialStep::CAMERA_MESSAGE;
+			step_ = TutorialStep::STEP_11_MESSAGE;
 		}
 		break;
 	}
 
+	case TutorialStep::STEP_11_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[11];
 
-	// ---------------------------------------------------------
-	// ④ カメラ説明
-	// ---------------------------------------------------------
-	case TutorialStep::CAMERA_MESSAGE:
-		showMsgBox_ = true;
-		msg_ = "マウスを動かして\nカメラをぐるっと回してみよう。\nEnterで開始。";
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_12_MESSAGE;
+		}
+		break;
 
-		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
-	
+	case TutorialStep::STEP_12_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[12];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_13_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_13_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[13];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
 			cameraStartRotX_ = cam.GetRotX();
 			cameraStartRotY_ = cam.GetRotY();
 
-			showMsgBox_ = false;
+			showMessage_ = false;
 			step_ = TutorialStep::WAIT_CAMERA;
 		}
 		break;
 
-
-		// ---------------------------------------------------------
-		// ⑤ カメラ操作チェック
-		// ---------------------------------------------------------
 	case TutorialStep::WAIT_CAMERA:
 	{
+		showMessage_ = false;
 		player_->SetAttackEnabled(false);
 		cam.SetControlEnabled(true);
 		float dx = fabsf(cam.GetRotX() - cameraStartRotX_);
@@ -834,109 +948,248 @@ void TutorialScene::RunTutorial(void)
 
 		if (dx + dy > 0.2f) {
 			cam.SetControlEnabled(false);
-			step_ = TutorialStep::KICK_CHARGE_MESSAGE;
+			step_ = TutorialStep::STEP_14_MESSAGE;
 		}
 		break;
 	}
 
+	case TutorialStep::STEP_14_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[14];
 
-	// ---------------------------------------------------------
-	// ⑥ 攻撃説明
-	// ---------------------------------------------------------
-	case TutorialStep::KICK_CHARGE_MESSAGE:
-		showMsgBox_ = true;
-		msg_ = "ボタンを長押しすることでゲージがたまっていき、飛ぶ距離が変わるぞ！";
-		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
-			showMsgBox_ = false;
-			step_ = TutorialStep::WAIT_KICK_CHARGE;
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_15_MESSAGE;
 		}
 		break;
 
+	case TutorialStep::STEP_15_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[15];
 
-		// ---------------------------------------------------------
-		// ⑦攻撃待ち
-		// ---------------------------------------------------------
-	case TutorialStep::WAIT_KICK_CHARGE:
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_16_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_16_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[16];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_17_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_17_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[17];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_18_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_18_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[18];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_19_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_19_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[19];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_20_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_20_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[20];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_21_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_21_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[21];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_22_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_22_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[22];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_23_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_23_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[23];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_24_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_24_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[24];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_25_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_25_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[25];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_26_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_26_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[26];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_27_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_27_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[27];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_28_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_28_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[28];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_29_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_29_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[29];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_30_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_30_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[30];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_31_MESSAGE;
+		}
+		break;
+
+	case TutorialStep::STEP_31_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[31];
+		player_->SetAttackEnabled(false);
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::WAIT_ATTACK;
+		}
+		break;
+
+	case TutorialStep::WAIT_ATTACK :
+		showMessage_ = false;
 		player_->SetAttackEnabled(true);
-		if (player_->IsKickReleased()) { // ← 名前を変更
-			step_ = TutorialStep::KICK_FRIEND_MESSAGE;
+		for (const auto& ally : Allys_) 
+		{if (!ally) continue; if (ally->CanGlideAttack()) 
+			{ step_ = TutorialStep::STEP_32_MESSAGE; break; }
+		} 
+		
+		break;
+
+	case TutorialStep::STEP_32_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[32];
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_33_MESSAGE;
 		}
 		break;
 
+	case TutorialStep::STEP_33_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[33];
 
-		// ---------------------------------------------------------
-		// ⑧ 味方を蹴る説明
-		// ---------------------------------------------------------
-	case TutorialStep::KICK_FRIEND_MESSAGE:
-		showMsgBox_ = true;
-		msg_ = "味方に近づいて蹴ってみよう！";
-		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
-			showMsgBox_ = false;
-			step_ = TutorialStep::WAIT_KICK_FRIEND;
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_34_MESSAGE;
 		}
 		break;
 
+	case TutorialStep::STEP_34_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[34];
 
-		// ---------------------------------------------------------
-		// ⑨ 味方キック待ち
-		// ---------------------------------------------------------
-	case TutorialStep::WAIT_KICK_FRIEND:
-		if (tutorialFlags_.isAllyKicked) {
-			tutorialFlags_.isAllyKicked = false;
-			step_ = TutorialStep::GLIDE_ATTACK_MESSAGE;
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			step_ = TutorialStep::STEP_35_MESSAGE;
 		}
 		break;
 
+	case TutorialStep::STEP_35_MESSAGE:
+		showMessage_ = true;
+		imgCurrentMessage_ = imgTutorialMsg_[35];
 
-		// ---------------------------------------------------------
-		// ⑩ 空中攻撃の説明
-		// ---------------------------------------------------------
-	case TutorialStep::GLIDE_ATTACK_MESSAGE:
-		showMsgBox_ = true;
-		msg_ = "味方が飛んでいる間に\nE（○）で攻撃させることができるよ！";
-		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
-			showMsgBox_ = false;
-			step_ = TutorialStep::WAIT_GLIDE_ATTACK;
-		}
-		break;
-
-
-		// ---------------------------------------------------------
-		// ⑪ 空中攻撃入力待ち
-		// ---------------------------------------------------------
-	case TutorialStep::WAIT_GLIDE_ATTACK:
-		for (const auto& ally : Allys_) {  // allies_ はチュートリアル対象の味方リスト
-			if (!ally) continue;
-
-			if (ally->CanGlideAttack()) {  // 空中攻撃可能になったら次へ
-				step_ = TutorialStep::COMPLETE_MESSAGE;
-				break;
-			}
-		}
-		break;
-
-
-		// ---------------------------------------------------------
-		// ⑫ 完了
-		// ---------------------------------------------------------
-	case TutorialStep::COMPLETE_MESSAGE:
-		showMsgBox_ = true;
-		msg_ = "チュートリアル完了！\nEnter でゲームへ進む。";
-		if (ins.IsTrgDown(KEY_INPUT_RETURN)) {
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
 			step_ = TutorialStep::END;
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::STAGE_SELECT);
 		}
 		break;
 
-
-		// ---------------------------------------------------------
-		// ⑬ END
-		// ---------------------------------------------------------
 	case TutorialStep::END:
+		SceneManager::GetInstance()
+			.ChangeScene(SceneManager::SCENE_ID::STAGE_SELECT);
 		break;
 	}
 
 	// --- 全チュートリアル共通の制御 ---
-	player_->SetControlEnabled(!showMsgBox_);
-	cam.SetControlEnabled(!showMsgBox_);
+	player_->SetControlEnabled(!showMessage_);
+	cam.SetControlEnabled(!showMessage_);
 }

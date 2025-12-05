@@ -81,6 +81,25 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/5.png");
 	resourcesMap_.emplace(SRC::STAGE_5, std::move(res));
 
+	//チュートリアル文字
+	for (int i = 1; i <= 35; i++)
+	{
+		char filename[256];
+		sprintf_s(filename, "Tutorial/Tutorial_msg_%02d.png", i);
+
+		auto res = std::make_unique<Resource>(
+			Resource::TYPE::IMG,
+			PATH_IMG + filename
+			);
+
+		// enum の先頭が TUTORIAL_MSG_01 なので + (i - 1)
+		SRC key = static_cast<SRC>(
+			static_cast<int>(SRC::TUTORIAL_MSG_01) + (i - 1)
+			);
+
+		resourcesMap_.emplace(key, std::move(res));
+	}
+
 	// チュートリアルのテキスト背景
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Tutorial/TutorialTextBackGround.png");
 	resourcesMap_.emplace(SRC::TUTORIAL_TEXT_BG, std::move(res));

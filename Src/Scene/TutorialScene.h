@@ -53,19 +53,45 @@ public:
 
 	//チュートリアル
 	enum class TutorialStep {
-		INTRO_MESSAGE,			//①ゲーム説明
-		MOVE_MESSAGE,			//②移動説明
-		WAIT_MOVE,				//③移動中
-		CAMERA_MESSAGE,			//④カメラ説明
-		WAIT_CAMERA,			//⑤カメラ移動
-		KICK_CHARGE_MESSAGE,    //⑥キックしてみよう
-		WAIT_KICK_CHARGE,       //⑦キックチャージ
-		KICK_FRIEND_MESSAGE,    //⑧味方に近づいて蹴ろう
-		WAIT_KICK_FRIEND,       //⑨味方が蹴られるの待ち
-		GLIDE_ATTACK_MESSAGE,   //⑩飛んでいる味方を攻撃させよう
-		WAIT_GLIDE_ATTACK,      //⑪プレイヤーが攻撃ボタンを押すの待ち
-		COMPLETE_MESSAGE,       //⑫完了
-		END                     //⑬終了
+		STEP_01_MESSAGE,
+		STEP_02_MESSAGE,
+		STEP_03_MESSAGE,
+		STEP_04_MESSAGE,
+		STEP_05_MESSAGE,
+		STEP_06_MESSAGE,
+		STEP_07_MESSAGE,
+		STEP_08_MESSAGE,
+		STEP_09_MESSAGE,
+		STEP_10_MESSAGE,
+		WAIT_MOVE,
+		STEP_11_MESSAGE,
+		STEP_12_MESSAGE,
+		STEP_13_MESSAGE,
+		WAIT_CAMERA,
+		STEP_14_MESSAGE,
+		STEP_15_MESSAGE,
+		STEP_16_MESSAGE,
+		STEP_17_MESSAGE,
+		STEP_18_MESSAGE,
+		STEP_19_MESSAGE,
+		STEP_20_MESSAGE,
+		STEP_21_MESSAGE,
+		STEP_22_MESSAGE,
+		STEP_23_MESSAGE,
+		STEP_24_MESSAGE,
+		STEP_25_MESSAGE,
+		STEP_26_MESSAGE,
+		STEP_27_MESSAGE,
+		STEP_28_MESSAGE,
+		STEP_29_MESSAGE,
+		STEP_30_MESSAGE,
+		STEP_31_MESSAGE,
+		WAIT_ATTACK,
+		STEP_32_MESSAGE,
+		STEP_33_MESSAGE,
+		STEP_34_MESSAGE,
+		STEP_35_MESSAGE,
+		END
 	};
 
 	static constexpr int ENCOUNT = 300;		//エンカウンタ
@@ -246,14 +272,18 @@ private:
 	//チュートリアル
 	TutorialStep step_;
 
-	std::string msg_;
-	bool showMsgBox_ = false;
+	bool showMessage_ = true;
 
 	VECTOR moveStartPos_;
 	float cameraStartRotX_;
 	float cameraStartRotY_;
 	TutorialFlags tutorialFlags_;
 	bool isTutorialMsgActive_ = false;   //メッセージ表示中は操作禁止
+	bool waitAttackReady_ = false;
+
+	int currentStep_ = 1;  
+	int imgCurrentMessage_ = -1;
+	int imgTutorialMsg_[36];
 
 	//チュートリアル系画像
 	int imgTutorialTextBG_;			//チュートリアルのテキスト背景
