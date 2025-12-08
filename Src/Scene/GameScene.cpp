@@ -188,6 +188,12 @@ void GameScene::Update(void)
 			{
 				allyLandTimer_ = 0.0f;
 				isKicking_ = false;
+
+				if (kickCount_ >= MAX_KICK)
+				{
+					waitForAllyActionEnd_ = true;
+				}
+
 				currentKickedAlly_ = nullptr;
 
 				cameraMode = Camera::MODE::FOLLOW;
@@ -233,6 +239,60 @@ void GameScene::Update(void)
 		stageSelectIndex_ = 0;
 
 		return;
+	}
+
+	if (waitForAllyActionEnd_)
+	{
+		bool allFinished = true;
+
+		// 味方の行動完了チェック
+		for (auto& ally : Allys_)
+		{
+			if (!ally) continue;
+
+			if (!ally->IsActionFinished())
+			{
+				allFinished = false;
+				break;
+			}
+		}
+
+		// 敵の死亡アニメーション終了チェック
+		if (allFinished)
+		{
+			for (auto& enemy : enemys_)
+			{
+				if (!enemy) continue;
+
+				// 生きてる敵がいたらダメ
+				if (enemy->IsAlive())
+				{
+					allFinished = false;
+					break;
+				}
+
+				// 死亡アニメーション中の敵がいたらダメ
+				if (!enemy->IsDeadFinished())
+				{
+					allFinished = false;
+					break;
+				}
+			}
+		}
+
+		// 全停止した瞬間に判定
+		if (allFinished)
+		{
+			waitForAllyActionEnd_ = false;
+			CheckEndCondition();
+		}
+	}
+
+	//3回以内に敵が全滅しなかった場合
+	if (resultMenuState_ == RESULT_MENU_STATE::SHOW_RETRY_MENU)
+	{
+		UpdateRetryMenu();
+		return;    // ゲーム本編は止める
 	}
 }
 
@@ -328,6 +388,23 @@ void GameScene::Draw(void)
 		return;
 	}
 
+	if (resultMenuState_ == RESULT_MENU_STATE::SHOW_RETRY_MENU)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+		DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, GetColor(0, 0, 0), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		SetFontSize(DEFAULT_FONT_SIZE * 2.0);
+		DrawString(500, 300, "味方が全て行動しました", GetColor(255, 255, 255));
+
+		// 選択肢
+		SetFontSize(DEFAULT_FONT_SIZE * 1.5);
+		DrawString(520, 380, menuIndex_ == 0 ? "> リトライ" : "  リトライ", menuIndex_ == 0 ? GetColor(255, 255, 0) : GetColor(255, 255, 255));
+		DrawString(520, 420, menuIndex_ == 1 ? "> ゲームオーバー" : "  ゲームオーバー", menuIndex_ == 1 ? GetColor(255, 255, 0) : GetColor(255, 255, 255));
+		SetFontSize(DEFAULT_FONT_SIZE);
+		return;
+	}
+
 	if (isStageMenu_)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
@@ -386,15 +463,79 @@ void GameScene::OnAllyKicked(AllyBase* kickedAlly)
 {
 	if (!kickedAlly || !mainCamera) return;
 
+	player_->SetControlEnabled(false);
+
 	isKicking_ = true;
-	currentKickedAlly_ = kickedAlly;        
-	allyLandTimer_ = 0.0f;                 
+	currentKickedAlly_ = kickedAlly;
+	allyLandTimer_ = 0.0f;
 
 	cameraMode = Camera::MODE::ALLY_FOLLOW;
 	mainCamera->SetFollow(&kickedAlly->GetTransform());
 	mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
 
-	player_->SetControlEnabled(false);
+	kickCount_++;
+}
+
+void GameScene::CheckEndCondition(void)
+{
+    bool isEnemyAlive = false;
+    for (auto& e : enemys_)
+    {
+        if (e && e->IsAlive())
+        {
+            isEnemyAlive = true;
+            break;
+        }
+    }
+
+    if (isEnemyAlive)
+    {
+        // 敵が残っている → リトライ / ゲームオーバー メニューへ
+        resultMenuState_ = RESULT_MENU_STATE::SHOW_RETRY_MENU;
+        menuIndex_ = 0; // メニュー初期選択をリトライに
+        // 必要ならゲーム進行を止める（カメラやプレイヤーの操作も停止）
+        //mainCamera->SetPaused(true);
+        player_->SetControlEnabled(false);
+    }
+}
+
+void GameScene::UpdateRetryMenu(void)
+{
+	InputManager& ins = InputManager::GetInstance();
+	// 矢印キーで選択
+	if (ins.IsTrgDown(KEY_INPUT_DOWN) ||
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
+	{
+		menuIndex_ = (menuIndex_ + 1) % 2;
+	}
+	if (ins.IsTrgDown(KEY_INPUT_UP) ||
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP))
+	{
+		menuIndex_ = (menuIndex_ + 2 - 1) % 2; // (menuIndex_ - 1 + 2) % 2
+	}
+
+	// 決定キー
+	if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
+	{
+		if (menuIndex_ == 0)
+		{
+			// リトライ：同じステージを再読み込みする
+			mainCamera->SetPaused(false);
+			SceneManager::GetInstance().ChangeStageScene(SceneManager::SCENE_ID::GAME, stageNo_);
+			return;
+		}
+		else if (menuIndex_ == 1)
+		{
+			// ゲームオーバー
+			mainCamera->SetPaused(false);
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::OVER);
+			return;
+		}
+	}
+
+	// メニュー表示中はそれ以外の更新を行わない
+	return;
 }
 
 void GameScene::ReturnToPlayerCamera(void)
@@ -595,12 +736,12 @@ bool GameScene::StageClearMenu(void)
 			{
 			case NextStage:
 				if (stageNo_ >= MAX_STAGE) {
-					// すべてのステージをクリアしたのでゲームクリアへ
+					//すべてのステージをクリアしたのでゲームクリアへ
 					SceneManager::GetInstance()
 						.ChangeScene(SceneManager::SCENE_ID::CLEAR);
 				}
 				else {
-					// 次のステージへ
+					//次のステージへ
 					SceneManager::GetInstance()
 						.ChangeStageScene(SceneManager::SCENE_ID::GAME, stageNo_ + 1);
 				}

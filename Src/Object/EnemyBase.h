@@ -75,6 +75,7 @@ public:
 		ATTACK,
 		DAMAGE,
 		DEATH,
+		DEAD_END,
 		MAX
 	};
 
@@ -115,6 +116,8 @@ public:
 	void SetCollisionPos(const VECTOR collision);//衝突判定用の球体
 	VECTOR GetCollisionPos(void)const;	// 衝突用の中心座標の取得
 	float GetCollisionRadius(void);		// 衝突用の球体半径の取得
+
+	bool IsDeadFinished(void);			//完全死亡？
 
 	void SetGameScene(GameScene* gscene);
 	void SetTutorialScene(TutorialScene* tscene);
@@ -196,12 +199,13 @@ protected:
 	float t_RadiusSum_;		//木との衝突半径の合計
 
 	//更新系
-	void UpdateNone(void){};		// 更新ステップ
-	virtual void UpdateIdle(void);	// 待機状態の更新
-	virtual void UpdatePlay(void);	// 移動時の更新処理
-	//virtual void UpdateAttack(void);// アタック時の更新処理
-	virtual void UpdateDamage(void);// ダメージ時の更新処理
-	virtual void UpdateDeath(void);	// 死んだ時の更新処理
+	void UpdateNone(void){};			//更新ステップ
+	virtual void UpdateIdle(void);		//待機状態の更新
+	virtual void UpdatePlay(void);		//移動時の更新処理
+	//virtual void UpdateAttack(void);	//アタック時の更新処理
+	virtual void UpdateDamage(void);	//ダメージ時の更新処理
+	virtual void UpdateDeath(void);		//死んだ時の更新処理
+	virtual void UpdateDeadEnd(void);	//完全死亡
 
 	//void ChasePlayer(void);			//プレイヤーを追いかける
 
@@ -218,6 +222,7 @@ protected:
 	//void ChangeStateAttack(void);
 	void ChangeStateDamage(void);
 	void ChangeStateDeath(void);
+	void ChangeStateDeadEnd(void);
 
 	void Collision(void);	// 衝突判定
 };

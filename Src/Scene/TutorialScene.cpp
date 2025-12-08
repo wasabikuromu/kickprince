@@ -74,12 +74,12 @@ void TutorialScene::Init(void)
 	imgOpeGear_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR).handleId_;
 
 	pauseImg_ = LoadGraph("Data/Image/pause.png");
+	imgPlayerMove_ = LoadGraph("Data/Image/Tutorial/PlayerMove.png");
+	imgCameraMove_ = LoadGraph("Data/Image/Tutorial/CameraMove.png");
+	imgAttack_ = LoadGraph("Data/Image/Tutorial/Attack.png");
 
-	imgNiceKick_ = resMng_.Load(ResourceManager::SRC::NICE_KICK).handleId_;
-	imgNextStage_ = resMng_.Load(ResourceManager::SRC::NEXT_STAGE).handleId_;
-	imgSelectStage_ = resMng_.Load(ResourceManager::SRC::SELECT_STAGE).handleId_;
-	imgBackTitle_ = resMng_.Load(ResourceManager::SRC::BACK_TITLE).handleId_;
 	imgAbutton_ = resMng_.Load(ResourceManager::SRC::A_BUTTON).handleId_;
+	imgEnter_ = resMng_.Load(ResourceManager::SRC::ENTER).handleId_;
 
 	//チュートリアルメッセージ画像
 	imgTutorialMsg_[1] = resMng_.Load(ResourceManager::SRC::TUTORIAL_MSG_01).handleId_;
@@ -133,10 +133,6 @@ void TutorialScene::Init(void)
 	isPaused_ = false;
 	pauseSelectIndex_ = 0;
 
-	//ステージメニュー
-	isStageMenu_ = false;
-	stageSelectIndex_ = 0;
-
 	//カメラのポーズ解除
 	camera_ = SceneManager::GetInstance().GetCamera().lock();
 	if (camera_) {
@@ -162,7 +158,6 @@ void TutorialScene::Init(void)
 	isB_ = BOSS_WAIT;
 
 	step_ = TutorialStep::STEP_01_MESSAGE;
-	showMessage_ = false;
 
 	// まずすべての操作を禁止
 	player_->SetControlEnabled(false);
@@ -176,12 +171,6 @@ void TutorialScene::Update(void)
 
 	//簡易deltaTime(60FPS想定）
 	const float deltaTime = 1.0f / 60.0f;
-
-	//ステージクリアメニューの処理を最優先
-	if (stageMenu_ == StageState::StageMenu)
-	{
-		if (StageClearMenu()) return;
-	}
 
 	if (PauseMenu()) return;
 
@@ -265,25 +254,6 @@ void TutorialScene::Update(void)
 		enemy->Update();
 	}
 
-	////敵が全滅したら次ステージへ
-	//if (IsAllEnemiesDefeated())
-	//{
-	//	//最後のステージなら即ゲームクリアへ
-	//	if (stageNo_ >= MAX_STAGE)
-	//	{
-	//		SceneManager::GetInstance()
-	//			.ChangeScene(SceneManager::SCENE_ID::CLEAR);
-	//		return;
-	//	}
-
-	//	//それ以外は従来どおりクリアメニューへ
-	//	isStageMenu_ = true;
-	//	stageMenu_ = StageState::StageMenu;
-	//	stageSelectIndex_ = 0;
-
-	//	return;
-	//}
-
 	RunTutorial();
 }
 
@@ -315,6 +285,53 @@ void TutorialScene::Draw(void)
 	//チュートリアル
 	if (showMessage_) {
 		DrawGraph(1050, 30, imgCurrentMessage_, true);
+
+		float alpha2 = (sinf(GetNowCount() * BLINK_SPEED) + 1.0f) * 0.5f;
+
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(alpha2 * 255));
+
+		if (GetJoypadNum() == 0)
+		{
+			//カーソル描画
+			DrawRotaGraph(
+				1810,
+				155,
+				0.6,
+				0,
+				imgEnter_,
+				true
+			);
+		}
+		else
+		{
+			//カーソル描画
+			DrawRotaGraph(
+				1810,
+				155,
+				0.4,
+				0,
+				imgAbutton_,
+				true
+			);
+		}
+
+		//ブレンドモード解除
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
+
+	if (isTutorialPlayerMove_)
+	{
+		DrawGraph(1100, 30, imgPlayerMove_, true);
+	}
+
+	if (isTutorialCameraMove_)
+	{
+		DrawGraph(1000, 30, imgCameraMove_, true);
+	}
+
+	if (isTutorialAttack_)
+	{
+		DrawGraph(1100, 30, imgAttack_, true);
 	}
 
 	//入力チェック or 時間経過でフェード開始
@@ -384,39 +401,6 @@ void TutorialScene::Draw(void)
 		}
 		return;
 	}
-
-	if (isStageMenu_)
-	{
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-		DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), black, TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-		DrawGraph(500, 0, imgNiceKick_, true);
-		DrawGraph(1300, 700, imgNextStage_, true);
-		DrawGraph(1300, 800, imgSelectStage_, true);
-		DrawGraph(1300, 900, imgBackTitle_, true);
-
-		//GetNowCount() = 経過ミリ秒
-		float alpha2 = (sinf(GetNowCount() * BLINK_SPEED) + 1.0f) * 0.5f;
-
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(alpha2 * 255));
-
-		//カーソル描画
-		DrawRotaGraph(
-			CURSOR_WIDTH,
-			CURSOR_HEIGHT + (stageSelectIndex_ * INDEX),
-			0.7,
-			0,
-			imgAbutton_,
-			true
-		);
-
-		//ブレンドモード解除
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-		return;
-	}
-	
 }
 
 void TutorialScene::Release(void)
@@ -546,26 +530,6 @@ void TutorialScene::EnemyCreate(void)
 		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 2500), 2},
 	};
 
-	enemySpawnTable_[2] = {
-		{ VGet(X_ENEMY_POS + 200, Y_ENEMY_POS, 1500), 1 },
-		{ VGet(X_ENEMY_POS - 200, Y_ENEMY_POS, 1500), 1 },
-	};
-
-	enemySpawnTable_[3] = {
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 3500), 3 },
-	};
-
-	enemySpawnTable_[4] = {
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 1500), 0 },
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 2500), 1 },
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 3500), 2 },
-	};
-
-	enemySpawnTable_[5] = {
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 1500), 0 },
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 2500), 0 },
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 3500), 3 },
-	};
 }
 
 bool TutorialScene::PauseMenu(void)
@@ -635,60 +599,7 @@ bool TutorialScene::PauseMenu(void)
 	return true;
 }
 
-bool TutorialScene::StageClearMenu(void)
-{
-	InputManager& ins = InputManager::GetInstance();
 
-	constexpr int NextStage = 0;
-	constexpr int StageSelect = 1;
-	constexpr int BackToTitle = 2;
-
-	if (isStageMenu_)
-	{
-		if (ins.IsTrgDown(KEY_INPUT_DOWN) ||
-			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
-			stageSelectIndex_ = (stageSelectIndex_ + 1) % 3;
-
-		if (ins.IsTrgDown(KEY_INPUT_UP) ||
-			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP))
-			stageSelectIndex_ = (stageSelectIndex_ + 3 - 1) % 3;
-
-		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
-			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
-		{
-			switch (stageSelectIndex_)
-			{
-			case NextStage:
-				if (stageNo_ >= MAX_STAGE) {
-					// すべてのステージをクリアしたのでゲームクリアへ
-					SceneManager::GetInstance()
-						.ChangeScene(SceneManager::SCENE_ID::CLEAR);
-				}
-				else {
-					// 次のステージへ
-					SceneManager::GetInstance()
-						.ChangeStageScene(SceneManager::SCENE_ID::GAME, stageNo_ + 1);
-				}
-
-				break;
-
-			case StageSelect:
-				SceneManager::GetInstance()
-					.ChangeScene(SceneManager::SCENE_ID::STAGE_SELECT);
-				break;
-
-			case BackToTitle:
-				SceneManager::GetInstance()
-					.ChangeScene(SceneManager::SCENE_ID::TITLE);
-				break;
-			}
-		}
-
-		return true; // ← メニュー中なら更新停止
-	}
-
-	return false;
-}
 
 void TutorialScene::SpawnEnemies(int stageNo)
 {
@@ -782,7 +693,6 @@ void TutorialScene::RunTutorial(void)
 
 	switch (step_)
 	{
-		//①最初の説明
 	case TutorialStep::STEP_01_MESSAGE:
 		showMessage_ = true;
 		imgCurrentMessage_ = imgTutorialMsg_[1];
@@ -890,6 +800,7 @@ void TutorialScene::RunTutorial(void)
 	case TutorialStep::WAIT_MOVE:
 	{
 		showMessage_ = false;
+		isTutorialPlayerMove_ = true;
 		player_->SetAttackEnabled(false);
 		VECTOR pos = player_->GetTransform().pos;
 		float dist = sqrtf(
@@ -897,7 +808,7 @@ void TutorialScene::RunTutorial(void)
 			(pos.z - moveStartPos_.z) * (pos.z - moveStartPos_.z)
 		);
 
-		if (dist > 200.0f) {
+		if (dist > 300.0f) {
 			player_->SetControlEnabled(false);
 			step_ = TutorialStep::STEP_11_MESSAGE;
 		}
@@ -906,6 +817,7 @@ void TutorialScene::RunTutorial(void)
 
 	case TutorialStep::STEP_11_MESSAGE:
 		showMessage_ = true;
+		isTutorialPlayerMove_ = false;
 		imgCurrentMessage_ = imgTutorialMsg_[11];
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
@@ -941,12 +853,13 @@ void TutorialScene::RunTutorial(void)
 	case TutorialStep::WAIT_CAMERA:
 	{
 		showMessage_ = false;
+		isTutorialCameraMove_ = true;
 		player_->SetAttackEnabled(false);
 		cam.SetControlEnabled(true);
 		float dx = fabsf(cam.GetRotX() - cameraStartRotX_);
 		float dy = fabsf(cam.GetRotY() - cameraStartRotY_);
 
-		if (dx + dy > 0.2f) {
+		if (dx + dy > 0.4f) {
 			cam.SetControlEnabled(false);
 			step_ = TutorialStep::STEP_14_MESSAGE;
 		}
@@ -955,6 +868,7 @@ void TutorialScene::RunTutorial(void)
 
 	case TutorialStep::STEP_14_MESSAGE:
 		showMessage_ = true;
+		isTutorialCameraMove_ = false;
 		imgCurrentMessage_ = imgTutorialMsg_[14];
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
@@ -1135,6 +1049,7 @@ void TutorialScene::RunTutorial(void)
 
 	case TutorialStep::WAIT_ATTACK :
 		showMessage_ = false;
+		isTutorialAttack_ = true;
 		player_->SetAttackEnabled(true);
 		for (const auto& ally : Allys_) 
 		{if (!ally) continue; if (ally->CanGlideAttack()) 
@@ -1145,6 +1060,7 @@ void TutorialScene::RunTutorial(void)
 
 	case TutorialStep::STEP_32_MESSAGE:
 		showMessage_ = true;
+		isTutorialAttack_ = false;
 		imgCurrentMessage_ = imgTutorialMsg_[32];
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||

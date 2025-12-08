@@ -94,19 +94,6 @@ public:
 		END
 	};
 
-	static constexpr int ENCOUNT = 300;		//エンカウンタ
-	static constexpr int ENEMY_MAX = 200;	//最大出現数
-	static constexpr int ENE_ENC = 30;		//最大許容量
-	static constexpr int BORN_DIR = 3;		//敵の出現方向
-	static constexpr int STAGE_WIDTH = 20000; //ステージの全体
-	static constexpr int STAGE_LANGE = 10000;	//ステージの幅
-
-	static constexpr int LV_MAX = 100;		//木のレベル最大
-	static constexpr int LV_OLD = 75;		//木の成長段階
-	static constexpr int LV_ADULT = 50;		//木の成長段階
-	static constexpr int LV_KID = 25;		//木の成長段階
-	static constexpr int HP_ZERO = 0;		//木の体力0
-
 	static constexpr int BOSS_WAIT = 0;		//ボス出現待機
 	static constexpr int BOSS_ON = 1;		//ボス出現可能
 	static constexpr int BOSS_OFF = 2;		//ボス出現不可
@@ -115,7 +102,7 @@ public:
 	static constexpr float X_ENEMY_POS = -90.0f;
 	static constexpr float Y_ENEMY_POS = 170.0f;
 
-	static const int MAX_STAGE = 5;			//最終ステージ番号
+	static const int MAX_STAGE = 1;			//最終ステージ番号
 
 	//UI関係-----------------------------------------------------
 	//-------------------------------------------------------------------
@@ -213,9 +200,6 @@ private:
 	//ポーズメニュー
 	bool PauseMenu(void);
 
-	//ステージクリア時のメニュー
-	bool StageClearMenu(void);
-
 	//敵スポーン関数
 	void SpawnEnemies(int stageNo);
 
@@ -254,15 +238,8 @@ private:
 	int pauseSelectIndex_;		 //ポーズメニューの選択項目（上下選択）
 	int pauseExplainImgs_[2];
 
-	//ステージ変更関係
-	StageState stageMenu_ = StageState::StageMenu;
-	bool isStageMenu_;			//ステージクリアしたかどうか
-	int stageSelectIndex_;		//ステージクリア時の選択項目（上下選択）
-	int imgNiceKick_;
-	int imgNextStage_;
-	int imgSelectStage_;
-	int imgBackTitle_;
 	int imgAbutton_;
+	int imgEnter_;
 
 	int stageNo_;   // ← ステージ番号
 
@@ -273,6 +250,16 @@ private:
 	TutorialStep step_;
 
 	bool showMessage_ = true;
+
+	bool isTutorialPlayerMove_ = false;
+	int imgPlayerMove_;		//プレイヤー移動説明画像
+
+	bool isTutorialCameraMove_ = false;
+	int imgCameraMove_;		//カメラ移動説明画像
+
+	bool isTutorialAttack_ = false;
+	int imgAttack_;			//攻撃画像
+
 
 	VECTOR moveStartPos_;
 	float cameraStartRotX_;

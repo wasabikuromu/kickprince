@@ -54,8 +54,12 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::LOOK_RULE, std::move(res));
 
 	// Aボタン画像
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title/AButton.png");
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "UI/AButton.png");
 	resourcesMap_.emplace(SRC::A_BUTTON, std::move(res));
+
+	// エンター画像
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "UI/Enter.png");
+	resourcesMap_.emplace(SRC::ENTER, std::move(res));
 
 	// ステージを選択してください画像(セレクトステージシーン)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/PlzSelectStage.png");
@@ -128,10 +132,6 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "StageClear/TitleBack.png");
 	resourcesMap_.emplace(SRC::BACK_TITLE, std::move(res));
 
-	//// タイトルに戻る
-	//res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "GoTitle.png");
-	//resourcesMap_.emplace(SRC::GOTITLE, std::move(res));
-
 	// ゲームに戻る
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "BackGame.png");
 	resourcesMap_.emplace(SRC::GOGAME, std::move(res));
@@ -153,7 +153,7 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::PAUSEITEM, std::move(res));
 
 	// 設定表示
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "OpeGear.png");
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "UI/OpeGear.png");
 	resourcesMap_.emplace(SRC::OPE_GEAR, std::move(res));
 
 	// パワーアップ状態アイコン

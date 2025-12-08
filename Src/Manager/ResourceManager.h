@@ -19,6 +19,7 @@ public:
 		GAME_END,
 		LOOK_RULE,
 		A_BUTTON,
+		ENTER,
 		PUSH,
 		PLZ_SELECT_STAGE,
 		STAGE_1,

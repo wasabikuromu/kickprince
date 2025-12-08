@@ -608,6 +608,11 @@ bool AllyBase::CanGlideAttack(void) const
 	return state_ == STATE::ATTACK && isAttack_;
 }
 
+bool AllyBase::IsActionFinished(void) const
+{
+	return state_ == STATE::IDLE;
+}
+
 void AllyBase::DrawDebug(void)
 {
 

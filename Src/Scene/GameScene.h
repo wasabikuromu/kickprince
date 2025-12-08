@@ -37,6 +37,13 @@ public:
 		ShowItems		//アイテム概要画面
 	};
 
+	//敵全滅できなかった時
+	enum class RESULT_MENU_STATE
+	{
+		NONE,
+		SHOW_RETRY_MENU
+	};
+
 	//ステージクリア時
 	enum class StageState
 	{
@@ -45,22 +52,12 @@ public:
 		SelectStage		//ステージを選択
 	};
 
-	static constexpr int ENCOUNT = 300;		//エンカウンタ
-	static constexpr int ENEMY_MAX = 200;	//最大出現数
-	static constexpr int ENE_ENC = 30;		//最大許容量
-	static constexpr int BORN_DIR = 3;		//敵の出現方向
-	static constexpr int STAGE_WIDTH = 20000; //ステージの全体
-	static constexpr int STAGE_LANGE = 10000;	//ステージの幅
-
-	static constexpr int LV_MAX = 100;		//木のレベル最大
-	static constexpr int LV_OLD = 75;		//木の成長段階
-	static constexpr int LV_ADULT = 50;		//木の成長段階
-	static constexpr int LV_KID = 25;		//木の成長段階
-	static constexpr int HP_ZERO = 0;		//木の体力0
-
 	static constexpr int BOSS_WAIT = 0;		//ボス出現待機
 	static constexpr int BOSS_ON = 1;		//ボス出現可能
 	static constexpr int BOSS_OFF = 2;		//ボス出現不可
+
+	//ケリ回数
+	static constexpr int MAX_KICK = 3;
 
 	//敵配置
 	static constexpr float X_ENEMY_POS = -90.0f;
@@ -139,6 +136,9 @@ public:
 	const std::vector<std::shared_ptr<AllyBase>>& GetEnemies() const;	//enemyの情報(pos)を見る
 
 	void OnAllyKicked(AllyBase* kickedAlly);
+	void CheckEndCondition(void);
+	void UpdateRetryMenu(void);
+
 	void ReturnToPlayerCamera(void);
 
 	bool IsAnyAllyFlying(void) const;
@@ -199,6 +199,12 @@ private:
 	int pauseSelectIndex_;		 //ポーズメニューの選択項目（上下選択）
 	int pauseExplainImgs_[2];
 
+	//敵全滅不可関連
+	RESULT_MENU_STATE resultMenuState_ = RESULT_MENU_STATE::NONE;
+	bool waitForAllyActionEnd_ = false;
+	int kickCount_ = 0;
+	int menuIndex_ = 0;
+	
 	//ステージ変更関係
 	StageState stageMenu_ = StageState::StageMenu;
 	bool isStageMenu_;			//ステージクリアしたかどうか

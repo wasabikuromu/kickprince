@@ -31,12 +31,12 @@ EnemyBase::EnemyBase()
 		STATE::IDLE, std::bind(&EnemyBase::ChangeStateIdle, this));
 	stateChanges_.emplace(
 		STATE::PLAY, std::bind(&EnemyBase::ChangeStatePlay, this));
-	//stateChanges_.emplace(
-	//	STATE::ATTACK, std::bind(&EnemyBase::ChangeStateAttack, this));
 	stateChanges_.emplace(
 		STATE::DAMAGE, std::bind(&EnemyBase::ChangeStateDamage, this));
 	stateChanges_.emplace(
 		STATE::DEATH, std::bind(&EnemyBase::ChangeStateDeath, this));
+	stateChanges_.emplace(
+		STATE::DEAD_END, std::bind(&EnemyBase::ChangeStateDeadEnd, this));
 
 	is1damage = false;
 	is2damage = false;
@@ -149,44 +149,16 @@ void EnemyBase::UpdateDeath(void)
 	if (animationController_->IsEnd())
 	{
 		isAlive_ = false;
+		ChangeState(STATE::DEAD_END);
 	}
+}
+
+void EnemyBase::UpdateDeadEnd(void)
+{
 }
 
 #pragma endregion
 
-
-//void EnemyBase::ChasePlayer(void)
-//{
-//	if (!player_) {
-//		return;
-//	}
-//
-//	VECTOR playerPos = player_->GetTransform().pos;
-//
-//	VECTOR toPlayer = VSub(playerPos, transform_.pos);
-//	toPlayer.y = ZERO;  // 高さ無視
-//
-//	float distance = VSize(toPlayer);
-//
-//	// 現在のアニメーションと違う場合のみRUNアニメーションを再生する
-//	if (animtype_ != ANIM_TYPE::RUN)
-//	{
-//		animationController_->Play((int)ANIM_TYPE::RUN, true);
-//	}
-//	
-//	//playerを追いかける
-//	if (state_ == STATE::PLAY 
-//		&& player_->pstate_ == Player::PlayerState::NORMAL)
-//	{
-//		VECTOR dirToPlayer = VNorm(toPlayer);
-//		VECTOR moveVec = VScale(dirToPlayer, speed_);
-//
-//		transform_.pos = VAdd(transform_.pos, moveVec);
-//
-//		// 方向からクォータニオンに変換
-//		transform_.quaRot = Quaternion::LookRotation(dirToPlayer);
-//	}
-//}
 
 void EnemyBase::Draw(void)
 {
@@ -372,6 +344,11 @@ float EnemyBase::GetCollisionRadius(void)
 {
 	return collisionRadius_;
 }
+
+bool EnemyBase::IsDeadFinished(void)
+{
+	return !isAlive_ && state_ == STATE::DEAD_END;
+}
 #pragma endregion
 
 //void EnemyBase::AttackCollisionPos(void)
@@ -483,6 +460,11 @@ void EnemyBase::ChangeStateDamage(void)
 void EnemyBase::ChangeStateDeath(void)
 {
 	stateUpdate_ = std::bind(&EnemyBase::UpdateDeath, this);
+}
+
+void EnemyBase::ChangeStateDeadEnd(void)
+{
+	stateUpdate_ = std::bind(&EnemyBase::UpdateDeadEnd, this);
 }
 
 #pragma endregion

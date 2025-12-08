@@ -175,8 +175,11 @@ public:
 	void SetPlayer(std::shared_ptr<Player> player);
 	void SetEnemy(const std::vector<std::shared_ptr<EnemyBase>>* enemys);
 
-	// 空中攻撃可能か
+	//空中攻撃可能か
 	bool CanGlideAttack(void) const;
+
+	//攻撃終了？
+	bool IsActionFinished(void) const;
 	
 protected:
 	VECTOR defaultPos_ = VGet(0, 0, 0);  //初期位置
