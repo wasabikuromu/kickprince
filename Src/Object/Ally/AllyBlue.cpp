@@ -128,12 +128,16 @@ void AllyBule::UpdateAttack(void)
 	//攻撃アニメーション終了時
 	if (animationController_->IsEnd() || state_ != STATE::ATTACK)
 	{
-		initFall_ = true;					// ← ここで落下開始！
-		velocity_.y = 0.0f;					// 落下初速度
-		ChangeState(STATE::IDLE);			// Idleに戻して落下処理へ
+		initFall_ = true;			
+		velocity_.y = 0.0f;					
+
+		SetActionFinished(true);
+
+		isAttack_ = false;
+		ChangeState(STATE::IDLE);
+
 		shouldReturnCamera_ = true;
 		returnCameraTimer_ = 2.0f;
-		isAttack_ = true;
 	}
 }
 

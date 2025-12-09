@@ -1052,7 +1052,7 @@ void TutorialScene::RunTutorial(void)
 		isTutorialAttack_ = true;
 		player_->SetAttackEnabled(true);
 		for (const auto& ally : Allys_) 
-		{if (!ally) continue; if (ally->CanGlideAttack()) 
+		{if (!ally) continue; if (ally->IsAttacking()) 
 			{ step_ = TutorialStep::STEP_32_MESSAGE; break; }
 		} 
 		

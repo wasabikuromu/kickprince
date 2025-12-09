@@ -189,11 +189,6 @@ void GameScene::Update(void)
 				allyLandTimer_ = 0.0f;
 				isKicking_ = false;
 
-				if (kickCount_ >= MAX_KICK)
-				{
-					waitForAllyActionEnd_ = true;
-				}
-
 				currentKickedAlly_ = nullptr;
 
 				cameraMode = Camera::MODE::FOLLOW;
@@ -245,33 +240,38 @@ void GameScene::Update(void)
 	{
 		bool allFinished = true;
 
-		// 味方の行動完了チェック
 		for (auto& ally : Allys_)
 		{
 			if (!ally) continue;
 
-			if (!ally->IsActionFinished())
+			// 攻撃中ならまだ終わっていない
+			if (ally->IsAttacking())
+			{
+				allFinished = false;
+				break;
+			}
+
+			// 動いているならまだ終わっていない
+			if (!ally->IsStoppedCompletely())
 			{
 				allFinished = false;
 				break;
 			}
 		}
 
-		// 敵の死亡アニメーション終了チェック
+		// 敵も同様チェック
 		if (allFinished)
 		{
 			for (auto& enemy : enemys_)
 			{
 				if (!enemy) continue;
 
-				// 生きてる敵がいたらダメ
 				if (enemy->IsAlive())
 				{
 					allFinished = false;
 					break;
 				}
 
-				// 死亡アニメーション中の敵がいたらダメ
 				if (!enemy->IsDeadFinished())
 				{
 					allFinished = false;
@@ -280,19 +280,75 @@ void GameScene::Update(void)
 			}
 		}
 
-		// 全停止した瞬間に判定
 		if (allFinished)
 		{
 			waitForAllyActionEnd_ = false;
 			CheckEndCondition();
 		}
-	}
 
-	//3回以内に敵が全滅しなかった場合
-	if (resultMenuState_ == RESULT_MENU_STATE::SHOW_RETRY_MENU)
-	{
-		UpdateRetryMenu();
-		return;    // ゲーム本編は止める
+		//3回以内に敵が全滅しなかった場合
+		if (resultMenuState_ == RESULT_MENU_STATE::SHOW_RETRY_MENU)
+		{
+			UpdateRetryMenu();
+			return;    // ゲーム本編は止める
+		}
+
+	//	bool allFinished = true;
+
+	//	// --- 味方チェック（ログつき） ---
+	//	for (size_t i = 0; i < Allys_.size(); ++i)
+	//	{
+	//		auto& ally = Allys_[i];
+	//		if (!ally) continue;
+
+	//		bool isAttacking = ally->IsAttacking();               // 追加した関数を使う前提
+	//		bool isStopped = ally->IsStoppedCompletely();
+	//		bool isActionFin = ally->IsActionFinished();          // 既存の関数
+
+	//		// ログ: index, flags
+	//		printfDx("Ally[%d] Attacking=%d Stopped=%d ActionFin=%d\n",
+	//			(int)i, (int)isAttacking, (int)isStopped, (int)isActionFin);
+
+	//		// まだ終わってないなら中断
+	//		if (isAttacking || !isStopped || !isActionFin)
+	//		{
+	//			allFinished = false;
+	//			// どの条件で止まっているか詳細ログ
+	//			if (isAttacking) printfDx(" -> Ally[%d] is still attacking\n", (int)i);
+	//			else if (!isStopped) printfDx(" -> Ally[%d] not stopped\n", (int)i);
+	//			else if (!isActionFin) printfDx(" -> Ally[%d] action not finished\n", (int)i);
+	//			break;
+	//		}
+	//	}
+
+	//	// --- 敵チェック（ログつき） ---
+	//	if (allFinished)
+	//	{
+	//		for (size_t j = 0; j < enemys_.size(); ++j)
+	//		{
+	//			auto& enemy = enemys_[j];
+	//			if (!enemy) continue;
+
+	//			bool alive = enemy->IsAlive();
+	//			bool deadFinished = enemy->IsDeadFinished();
+	//			printfDx("Enemy[%d] Alive=%d DeadFinished=%d\n", (int)j, (int)alive, (int)deadFinished);
+
+	//			if (alive || !deadFinished)
+	//			{
+	//				allFinished = false;
+	//				if (alive) printfDx(" -> Enemy[%d] still alive\n", (int)j);
+	//				else printfDx(" -> Enemy[%d] death anim not finished\n", (int)j);
+	//				break;
+	//			}
+	//		}
+	//	}
+
+	//	if (allFinished)
+	//	{
+	//		printfDx("All finished! Calling CheckEndCondition()\n");
+	//		waitForAllyActionEnd_ = false;
+	//		CheckEndCondition();
+	//	}
 	}
 }
 
@@ -469,16 +525,24 @@ void GameScene::OnAllyKicked(AllyBase* kickedAlly)
 	currentKickedAlly_ = kickedAlly;
 	allyLandTimer_ = 0.0f;
 
+	kickedAlly->SetActionFinished(false);
+
 	cameraMode = Camera::MODE::ALLY_FOLLOW;
 	mainCamera->SetFollow(&kickedAlly->GetTransform());
 	mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
 
 	kickCount_++;
+
+	if (kickCount_ >= MAX_KICK)
+	{
+		waitForAllyActionEnd_ = true;
+	}
 }
 
 void GameScene::CheckEndCondition(void)
 {
     bool isEnemyAlive = false;
+
     for (auto& e : enemys_)
     {
         if (e && e->IsAlive())
@@ -492,9 +556,7 @@ void GameScene::CheckEndCondition(void)
     {
         // 敵が残っている → リトライ / ゲームオーバー メニューへ
         resultMenuState_ = RESULT_MENU_STATE::SHOW_RETRY_MENU;
-        menuIndex_ = 0; // メニュー初期選択をリトライに
-        // 必要ならゲーム進行を止める（カメラやプレイヤーの操作も停止）
-        //mainCamera->SetPaused(true);
+        menuIndex_ = 0;
         player_->SetControlEnabled(false);
     }
 }
@@ -760,7 +822,7 @@ bool GameScene::StageClearMenu(void)
 			}
 		}
 
-		return true; // ← メニュー中なら更新停止
+		return true;
 	}
 
 	return false;

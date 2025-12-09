@@ -175,11 +175,15 @@ public:
 	void SetPlayer(std::shared_ptr<Player> player);
 	void SetEnemy(const std::vector<std::shared_ptr<EnemyBase>>* enemys);
 
-	//空中攻撃可能か
-	bool CanGlideAttack(void) const;
+	bool IsAttacking(void) const;
 
 	//攻撃終了？
 	bool IsActionFinished(void) const;
+	
+	//完全停止？
+	bool IsStoppedCompletely(void) const;
+
+	void SetActionFinished(bool finished);
 	
 protected:
 	VECTOR defaultPos_ = VGet(0, 0, 0);  //初期位置
@@ -187,6 +191,8 @@ protected:
 	bool isBlow_ = false;            //吹っ飛び中フラグ
 
 	bool isKicked_ = false;    //追加：蹴られ中フラグ
+
+	bool actionFinished_ = false;
 
 	int damageCnt_;
 
@@ -230,6 +236,7 @@ protected:
 	float attackHitTiming_ = 0.0f;  //攻撃モーションのどのタイミングで当たるか（例：0.4秒）
 	float attackElapsed_ = 0.0f;    //攻撃開始からの経過時間
 
+	bool isGrounded_ = false;
 	
 	ANIM_TYPE animtype_; //アニメーションのタイプ確認用
 
@@ -284,7 +291,6 @@ protected:
 	void ChangeStatePlay(void);
 	void ChangeStateAttack(void);
 	void ChangeStateBlow(void);
-
 
 	void CalcGravityPow(void);		//移動量の計算
 

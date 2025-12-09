@@ -76,10 +76,11 @@ void AllyRed::UpdateAttack(void)
 
 	//アニメーション終了で次の状態に遷移
 	if (animationController_->IsEnd() || state_ != STATE::ATTACK) {
+		SetActionFinished(true);
+
 		isAttack_ = false;
 		ChangeState(STATE::IDLE);
 
-		//数秒後にカメラ復帰予約
 		shouldReturnCamera_ = true;
 		returnCameraTimer_ = 2.0f;
 	}

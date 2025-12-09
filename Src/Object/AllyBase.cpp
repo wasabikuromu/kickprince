@@ -109,6 +109,17 @@ void AllyBase::Update(void)
 			}
 		}
 	}
+
+	// ========== ここに貼る（絶対に最後） ==========
+	printfDx("Ally STATE=%d  posY=%.2f defY=%.2f vel(%.2f,%.2f,%.2f) grounded=%d stopped=%d actionFin=%d\n",
+		state_,
+		transform_.pos.y,
+		defaultPos_.y,
+		velocity_.x, velocity_.y, velocity_.z,
+		isGrounded_,
+		IsStoppedCompletely(),
+		IsActionFinished()
+	);
 }
 
 #pragma region StateごとのUpdate
@@ -121,6 +132,13 @@ void AllyBase::UpdateIdle(void)
 	if (isBlowedEnd_)
 	{
 		return; //ずっと待機
+	}
+
+	if (transform_.pos.y <= defaultPos_.y)
+	{
+		transform_.pos.y = defaultPos_.y;
+		velocity_.y = 0;
+		isGrounded_ = true;
 	}
 }
 
@@ -171,9 +189,11 @@ void AllyBase::UpdateBlow(void)
 		velocity_ = AsoUtility::VECTOR_ZERO;
 		isBlow_ = false;
 		isBlowedEnd_ = true;
+
+		isGrounded_ = true;
+
 		ChangeState(STATE::IDLE);
 
-		//着地から数秒後にカメラ復帰
 		shouldReturnCamera_ = true;
 		returnCameraTimer_ = 2.0f;
 	}
@@ -266,7 +286,6 @@ void AllyBase::Damage(int damage,float chargeRate)
 		velocity_ = VAdd(forwardVel, upVel);
 		ChangeState(STATE::BLOW);
 
-		//GameScene/TutorialScene に通知
 		SceneManager::GetInstance().NotifyTutorial_AllyKicked(this);
 	}
 }
@@ -560,7 +579,17 @@ void AllyBase::ChangeState(STATE state)
 	//状態変更
 	state_ = state;
 
-	//各状態遷移の初期処理
+	if (state == STATE::ATTACK)
+	{
+		SetActionFinished(false);
+		isGrounded_ = false;
+	}
+
+	if (state == STATE::IDLE) {
+		velocity_.x = 0;
+		velocity_.z = 0;
+	}
+
 	stateChanges_[state_]();
 }
 
@@ -603,14 +632,28 @@ void AllyBase::SetEnemy(const std::vector<std::shared_ptr<EnemyBase>>* enemys)
 	enemy_ = enemys;
 }
 
-bool AllyBase::CanGlideAttack(void) const
+bool AllyBase::IsAttacking(void) const
 {
-	return state_ == STATE::ATTACK && isAttack_;
+	return state_ == STATE::ATTACK;
 }
 
 bool AllyBase::IsActionFinished(void) const
 {
-	return state_ == STATE::IDLE;
+	return actionFinished_;
+}
+
+bool AllyBase::IsStoppedCompletely(void) const
+{
+	if (!isGrounded_)
+		return false;
+
+	return fabs(velocity_.x) < 0.01f &&
+		fabs(velocity_.z) < 0.01f;
+}
+
+void AllyBase::SetActionFinished(bool finished)
+{
+	actionFinished_ = finished;
 }
 
 void AllyBase::DrawDebug(void)
