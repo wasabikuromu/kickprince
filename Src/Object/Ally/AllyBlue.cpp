@@ -70,7 +70,6 @@ void AllyBule::UpdateIdle(void)
 		{
 			transform_.pos.y = defaultPos_.y;
 			velocity_.y = 0.0f;
-			initFall_ = false; // 落下完了
 		}
 	}
 
@@ -126,7 +125,7 @@ void AllyBule::UpdateAttack(void)
 	);
 
 	//攻撃アニメーション終了時
-	if (animationController_->IsEnd() || state_ != STATE::ATTACK)
+	if (animationController_->IsEnd())
 	{
 		initFall_ = true;			
 		velocity_.y = 0.0f;					

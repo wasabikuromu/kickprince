@@ -236,120 +236,6 @@ void GameScene::Update(void)
 		return;
 	}
 
-	if (waitForAllyActionEnd_)
-	{
-		bool allFinished = true;
-
-		for (auto& ally : Allys_)
-		{
-			if (!ally) continue;
-
-			// 攻撃中ならまだ終わっていない
-			if (ally->IsAttacking())
-			{
-				allFinished = false;
-				break;
-			}
-
-			// 動いているならまだ終わっていない
-			if (!ally->IsStoppedCompletely())
-			{
-				allFinished = false;
-				break;
-			}
-		}
-
-		// 敵も同様チェック
-		if (allFinished)
-		{
-			for (auto& enemy : enemys_)
-			{
-				if (!enemy) continue;
-
-				if (enemy->IsAlive())
-				{
-					allFinished = false;
-					break;
-				}
-
-				if (!enemy->IsDeadFinished())
-				{
-					allFinished = false;
-					break;
-				}
-			}
-		}
-
-		if (allFinished)
-		{
-			waitForAllyActionEnd_ = false;
-			CheckEndCondition();
-		}
-
-		//3回以内に敵が全滅しなかった場合
-		if (resultMenuState_ == RESULT_MENU_STATE::SHOW_RETRY_MENU)
-		{
-			UpdateRetryMenu();
-			return;    // ゲーム本編は止める
-		}
-
-	//	bool allFinished = true;
-
-	//	// --- 味方チェック（ログつき） ---
-	//	for (size_t i = 0; i < Allys_.size(); ++i)
-	//	{
-	//		auto& ally = Allys_[i];
-	//		if (!ally) continue;
-
-	//		bool isAttacking = ally->IsAttacking();               // 追加した関数を使う前提
-	//		bool isStopped = ally->IsStoppedCompletely();
-	//		bool isActionFin = ally->IsActionFinished();          // 既存の関数
-
-	//		// ログ: index, flags
-	//		printfDx("Ally[%d] Attacking=%d Stopped=%d ActionFin=%d\n",
-	//			(int)i, (int)isAttacking, (int)isStopped, (int)isActionFin);
-
-	//		// まだ終わってないなら中断
-	//		if (isAttacking || !isStopped || !isActionFin)
-	//		{
-	//			allFinished = false;
-	//			// どの条件で止まっているか詳細ログ
-	//			if (isAttacking) printfDx(" -> Ally[%d] is still attacking\n", (int)i);
-	//			else if (!isStopped) printfDx(" -> Ally[%d] not stopped\n", (int)i);
-	//			else if (!isActionFin) printfDx(" -> Ally[%d] action not finished\n", (int)i);
-	//			break;
-	//		}
-	//	}
-
-	//	// --- 敵チェック（ログつき） ---
-	//	if (allFinished)
-	//	{
-	//		for (size_t j = 0; j < enemys_.size(); ++j)
-	//		{
-	//			auto& enemy = enemys_[j];
-	//			if (!enemy) continue;
-
-	//			bool alive = enemy->IsAlive();
-	//			bool deadFinished = enemy->IsDeadFinished();
-	//			printfDx("Enemy[%d] Alive=%d DeadFinished=%d\n", (int)j, (int)alive, (int)deadFinished);
-
-	//			if (alive || !deadFinished)
-	//			{
-	//				allFinished = false;
-	//				if (alive) printfDx(" -> Enemy[%d] still alive\n", (int)j);
-	//				else printfDx(" -> Enemy[%d] death anim not finished\n", (int)j);
-	//				break;
-	//			}
-	//		}
-	//	}
-
-	//	if (allFinished)
-	//	{
-	//		printfDx("All finished! Calling CheckEndCondition()\n");
-	//		waitForAllyActionEnd_ = false;
-	//		CheckEndCondition();
-	//	}
-	}
 }
 
 void GameScene::Draw(void)
@@ -444,23 +330,6 @@ void GameScene::Draw(void)
 		return;
 	}
 
-	if (resultMenuState_ == RESULT_MENU_STATE::SHOW_RETRY_MENU)
-	{
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-		DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, GetColor(0, 0, 0), TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-		SetFontSize(DEFAULT_FONT_SIZE * 2.0);
-		DrawString(500, 300, "味方が全て行動しました", GetColor(255, 255, 255));
-
-		// 選択肢
-		SetFontSize(DEFAULT_FONT_SIZE * 1.5);
-		DrawString(520, 380, menuIndex_ == 0 ? "> リトライ" : "  リトライ", menuIndex_ == 0 ? GetColor(255, 255, 0) : GetColor(255, 255, 255));
-		DrawString(520, 420, menuIndex_ == 1 ? "> ゲームオーバー" : "  ゲームオーバー", menuIndex_ == 1 ? GetColor(255, 255, 0) : GetColor(255, 255, 255));
-		SetFontSize(DEFAULT_FONT_SIZE);
-		return;
-	}
-
 	if (isStageMenu_)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
@@ -531,12 +400,6 @@ void GameScene::OnAllyKicked(AllyBase* kickedAlly)
 	mainCamera->SetFollow(&kickedAlly->GetTransform());
 	mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
 
-	kickCount_++;
-
-	if (kickCount_ >= MAX_KICK)
-	{
-		waitForAllyActionEnd_ = true;
-	}
 }
 
 void GameScene::CheckEndCondition(void)
@@ -550,14 +413,6 @@ void GameScene::CheckEndCondition(void)
             isEnemyAlive = true;
             break;
         }
-    }
-
-    if (isEnemyAlive)
-    {
-        // 敵が残っている → リトライ / ゲームオーバー メニューへ
-        resultMenuState_ = RESULT_MENU_STATE::SHOW_RETRY_MENU;
-        menuIndex_ = 0;
-        player_->SetControlEnabled(false);
     }
 }
 

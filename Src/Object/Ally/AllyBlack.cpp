@@ -75,9 +75,8 @@ void AllyBlack::UpdateAttack(void)
 	}
 	
 	//アニメーション終了で次の状態に遷移
-	if (animationController_->IsEnd() || state_ != STATE::ATTACK) {
+	if (animationController_->IsEnd()) {
 		SetActionFinished(true);
-
 		isAttack_ = false;
 		ChangeState(STATE::IDLE);
 

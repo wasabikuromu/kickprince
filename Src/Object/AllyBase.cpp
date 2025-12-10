@@ -109,17 +109,6 @@ void AllyBase::Update(void)
 			}
 		}
 	}
-
-	// ========== Ç±Ç±Ç…ì\ÇÈÅiê‚ëŒÇ…ç≈å„Åj ==========
-	printfDx("Ally STATE=%d  posY=%.2f defY=%.2f vel(%.2f,%.2f,%.2f) grounded=%d stopped=%d actionFin=%d\n",
-		state_,
-		transform_.pos.y,
-		defaultPos_.y,
-		velocity_.x, velocity_.y, velocity_.z,
-		isGrounded_,
-		IsStoppedCompletely(),
-		IsActionFinished()
-	);
 }
 
 #pragma region StateÇ≤Ç∆ÇÃUpdate

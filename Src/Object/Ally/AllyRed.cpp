@@ -67,7 +67,6 @@ void AllyRed::UpdateAttack(void)
 	velocity_.y -= gravity;              //下方向に加速
 	transform_.pos.y += velocity_.y;     //位置に反映
 
-	//地面との接地判定
 	if (transform_.pos.y < defaultPos_.y)
 	{
 		transform_.pos.y = defaultPos_.y;
@@ -75,9 +74,8 @@ void AllyRed::UpdateAttack(void)
 	}
 
 	//アニメーション終了で次の状態に遷移
-	if (animationController_->IsEnd() || state_ != STATE::ATTACK) {
+	if (animationController_->IsEnd()) {
 		SetActionFinished(true);
-
 		isAttack_ = false;
 		ChangeState(STATE::IDLE);
 
