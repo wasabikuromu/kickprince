@@ -7,6 +7,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/SoundManager.h"
 #include "../Scene/GameScene.h"
+#include "../Manager/Camera.h"
 #include "../Scene/TutorialScene.h"
 #include "../Utility/AsoUtility.h"
 #include "Common/AnimationController.h"
@@ -267,10 +268,10 @@ void AllyBase::Damage(int damage,float chargeRate)
 
 		VECTOR dir = VGet(0.0f, 0.0f, 1.0f);
 
-		float speed = 20.0f + (60.0f - 40.0f) * chargeRate;
+		float speed = 17.0f + (60.0f - 40.0f) * chargeRate;
 
 		VECTOR forwardVel = VScale(dir, speed);
-		VECTOR upVel = VGet(0.0f, 30.0f + 50.0f * chargeRate, 0.0f);
+		VECTOR upVel = VGet(0.0f, 30.0f + 35.0f * chargeRate, 0.0f);
 
 		velocity_ = VAdd(forwardVel, upVel);
 		ChangeState(STATE::BLOW);

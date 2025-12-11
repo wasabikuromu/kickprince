@@ -60,6 +60,7 @@ Player::Player(void)
 
 	//移動が可能かどうか
 	canMove_ = true;
+
 	//所持上限かどうか
 	isMax_ = false;
 
@@ -198,56 +199,6 @@ void Player::Draw(void)
 	if (hp_ == 0)DrawBox(BAR_START_X,BAR_START_HY,revivalTimer_+BAR_START_X,BAR_END_HY,red,true);
 	DrawBox(BAR_START_X,BAR_START_WY,BAR_END_X,BAR_END_WY,black,true);
 	DrawBox(BAR_START_X,BAR_START_WY,water_*BAR_POINT+BAR_START_X,BAR_END_WY,blue,true);
-	
-	if (powerUpFlag_)
-	{
-		//アイコン描画
-		DrawRotaGraph(POWER_CX, ICON_CY, ICON_SIZE, 0, imgPowerIcon_, true);
-
-		//タイマー描画（黒い円グラフ）
-		float ratio = static_cast<float>(powerUpCnt_) / POWER_UP_TIME;
-		int filledSegments = static_cast<int>(SEGMENTS * ratio);
-
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, GRAY_ALPHA);
-		for (int i = filledSegments; i < SEGMENTS; ++i)
-		{
-			float angle1 = - (DX_PI_F / 2) - DX_TWO_PI * i / SEGMENTS;
-			float angle2 = - (DX_PI_F / 2) - DX_TWO_PI * (i + 1) / SEGMENTS;
-
-			float x1 = POWER_CX + RADIUS * cosf(angle1);
-			float y1 = TIMER_CY + RADIUS * sinf(angle1);  //timerCy使用
-			float x2 = POWER_CX + RADIUS * cosf(angle2);
-			float y2 = TIMER_CY + RADIUS * sinf(angle2);  //timerCy使用
-
-			DrawTriangle(POWER_CX, TIMER_CY, (int)x1, (int)y1, (int)x2, (int)y2, GetColor(0, 0, 0), true);
-		}
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	}
-
-	if (speedUpFlag_)
-	{
-		//アイコン描画
-		DrawRotaGraph(SPEED_CX, ICON_CY, ICON_SIZE, 0, imgSpeedIcon_, true);
-
-		//タイマー描画（黒い円グラフ）
-		float ratio = static_cast<float>(speedUpCnt_) / SPEED_UP_TIME;
-		int filledSegments = static_cast<int>(SEGMENTS * ratio);
-
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, GRAY_ALPHA);
-		for (int i = filledSegments; i < SEGMENTS; ++i)
-		{
-			float angle1 = - (DX_PI_F / 2) - DX_TWO_PI * i / SEGMENTS;
-			float angle2 = - (DX_PI_F / 2) - DX_TWO_PI * (i + 1) / SEGMENTS;
-
-			float x1 = SPEED_CX + RADIUS * cosf(angle1);
-			float y1 = TIMER_CY + RADIUS * sinf(angle1);  //timerCy使用
-			float x2 = SPEED_CX + RADIUS * cosf(angle2);
-			float y2 = TIMER_CY + RADIUS * sinf(angle2);  //timerCy使用
-
-			DrawTriangle(SPEED_CX, TIMER_CY, (int)x1, (int)y1, (int)x2, (int)y2, GetColor(0, 0, 0), true);
-		}
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	}
 
 #pragma endregion
 }

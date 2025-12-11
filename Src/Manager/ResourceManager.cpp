@@ -34,7 +34,7 @@ void ResourceManager::Init(void)
 	// UI画像系
 	// -----------------------------------------------------------------
 	// タイトル画像
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title/GameTitle.png");
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title/1GameTitle.png");
 	resourcesMap_.emplace(SRC::TITLE, std::move(res));
 
 	// タイトル背景
@@ -104,9 +104,45 @@ void ResourceManager::Init(void)
 		resourcesMap_.emplace(key, std::move(res));
 	}
 
-	// チュートリアルのテキスト背景
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Tutorial/TutorialTextBackGround.png");
-	resourcesMap_.emplace(SRC::TUTORIAL_TEXT_BG, std::move(res));
+	//ポーズ１
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/BackGame.png");
+	resourcesMap_.emplace(SRC::PAUSE_1, std::move(res));
+
+	//ポーズ２
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/OperationManual.png");
+	resourcesMap_.emplace(SRC::PAUSE_2, std::move(res));
+
+	//ポーズ３
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/AllyManual.png");
+	resourcesMap_.emplace(SRC::PAUSE_3, std::move(res));
+
+	//ポーズ４
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/Retry.png");
+	resourcesMap_.emplace(SRC::PAUSE_4, std::move(res));
+
+	//ポーズ５
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/GiveUp.png");
+	resourcesMap_.emplace(SRC::PAUSE_5, std::move(res));
+
+	//ポーズセレクト用１
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/SelectBackGame.png");
+	resourcesMap_.emplace(SRC::SELECT_PAUSE_1, std::move(res));
+
+	//ポーズセレクト用２
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/SelectOperationManual.png");
+	resourcesMap_.emplace(SRC::SELECT_PAUSE_2, std::move(res));
+
+	//ポーズセレクト用３
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/SelectAllyManual.png");
+	resourcesMap_.emplace(SRC::SELECT_PAUSE_3, std::move(res));
+
+	//ポーズセレクト用４
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/SelectRetry.png");
+	resourcesMap_.emplace(SRC::SELECT_PAUSE_4, std::move(res));
+
+	//ポーズセレクト用５
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/SelectGiveUp.png");
+	resourcesMap_.emplace(SRC::SELECT_PAUSE_5, std::move(res));
 
 	// セレクト中
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/SelectUI.png");

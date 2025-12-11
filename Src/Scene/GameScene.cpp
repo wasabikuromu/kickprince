@@ -73,16 +73,35 @@ void GameScene::Init(void)
 	//画像
 	imgOpeGear_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR).handleId_;
 
-	pauseImg_ = LoadGraph("Data/Image/pause.png");
-
 	imgNiceKick_ = resMng_.Load(ResourceManager::SRC::NICE_KICK).handleId_;
 	imgNextStage_ = resMng_.Load(ResourceManager::SRC::NEXT_STAGE).handleId_;
 	imgSelectStage_ = resMng_.Load(ResourceManager::SRC::SELECT_STAGE).handleId_;
 	imgBackTitle_ = resMng_.Load(ResourceManager::SRC::BACK_TITLE).handleId_;
 	imgAbutton_ = resMng_.Load(ResourceManager::SRC::A_BUTTON).handleId_;
 
-	pauseExplainImgs_[0] = resMng_.Load(ResourceManager::SRC::PAUSEOPE).handleId_; // 操作説明
-	pauseExplainImgs_[1] = resMng_.Load(ResourceManager::SRC::PAUSEITEM).handleId_;   // アイテム概要
+	//ポーズ関連
+	pauseMenuImgs[0] = resMng_.Load(ResourceManager::SRC::PAUSE_1).handleId_;
+	pauseMenuImgs[1] = resMng_.Load(ResourceManager::SRC::PAUSE_2).handleId_;
+	pauseMenuImgs[2] = resMng_.Load(ResourceManager::SRC::PAUSE_3).handleId_;
+	pauseMenuImgs[3] = resMng_.Load(ResourceManager::SRC::PAUSE_4).handleId_;
+	pauseMenuImgs[4] = resMng_.Load(ResourceManager::SRC::PAUSE_5).handleId_;
+
+	pauseMenuImgsSelected[0] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_1).handleId_;
+	pauseMenuImgsSelected[1] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_2).handleId_;
+	pauseMenuImgsSelected[2] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_3).handleId_;
+	pauseMenuImgsSelected[3] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_4).handleId_;
+	pauseMenuImgsSelected[4] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_5).handleId_;
+
+	pauseMenuPosY[0] = 350;
+	pauseMenuPosY[1] = 470;
+	pauseMenuPosY[2] = 590;
+	pauseMenuPosY[3] = 710;
+	pauseMenuPosY[4] = 830;
+
+	pauseImg_ = LoadGraph("Data/Image/Pause/Pause.png");
+
+	pauseExplainImgs_[0] = resMng_.Load(ResourceManager::SRC::PAUSEOPE).handleId_;		//操作説明
+	pauseExplainImgs_[1] = resMng_.Load(ResourceManager::SRC::PAUSEITEM).handleId_;		//アイテム概要
 
 	//カウンタ
 	uiFadeStart_ = false;
@@ -100,7 +119,7 @@ void GameScene::Init(void)
 	//カメラのポーズ解除
 	camera_ = SceneManager::GetInstance().GetCamera().lock();
 	if (camera_) {
-		camera_->SetPaused(false); //ここが重要！
+		camera_->SetPaused(false); 
 
 		//ミニマップ用カメラ
 		camera_->SetFollow(&player_->GetTransform());
@@ -112,6 +131,7 @@ void GameScene::Init(void)
 
 	mainCamera->SetFollow(&player_->GetTransform());
 	mainCamera->ChangeMode(Camera::MODE::FOLLOW);
+	mainCamera->SetControlEnabled(true);
 
 	allyLandTimer_ = 0.0f;
 	isKicking_ = false;
@@ -138,7 +158,7 @@ void GameScene::Update(void)
 
 	//右入力で順送り
 	if (ins.IsTrgDown(KEY_INPUT_R) ||
-		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_RIGHT))
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP))
 	{
 		if (!isKicking_)  //通常時
 		{
@@ -282,28 +302,28 @@ void GameScene::Draw(void)
 		DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), black, TRUE);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
+		DrawRotaGraph((Application::SCREEN_SIZE_X) / 2, 100, 1.0, 0.0, pauseImg_, true);
+
 		if (pauseState_ == PauseState::PauseMenu)
 		{
-			DrawRotaGraph((Application::SCREEN_SIZE_X / 2), UI_PAUSE_IMG_HEIGHT, PAUSE_IMG_UI_SIZE, 0, pauseImg_, true);
-			SetFontSize(DEFAULT_FONT_SIZE * 5.0);
+			for (int i = 0; i < PAUSE_MENU_ITEM_COUNT; i++)
+			{
+				//選択中なら黄色
+				int img = (pauseSelectIndex_ % PAUSE_MENU_ITEM_COUNT == i)
+					? pauseMenuImgsSelected[i]
+					: pauseMenuImgs[i];
 
-			DrawString((Application::SCREEN_SIZE_X / 2) - UI_WIDTH_PAUSE_3, UI_HEIGHT_PAUSE_1, "ゲームに戻る", white);
-			if (pauseSelectIndex_ % PAUSE_MENU_ITEM_COUNT == 0)
-				DrawString((Application::SCREEN_SIZE_X / 2) - UI_WIDTH_PAUSE_3, UI_HEIGHT_PAUSE_1, "ゲームに戻る", yellow);
+				//画像のサイズ取得
+				int w, h;
+				GetGraphSize(img, &w, &h);
 
-			DrawString((Application::SCREEN_SIZE_X / 2) - UI_WIDTH_PAUSE_1, UI_HEIGHT_PAUSE_2, "操作説明", white);
-			if (pauseSelectIndex_ % PAUSE_MENU_ITEM_COUNT == 1)
-				DrawString((Application::SCREEN_SIZE_X / 2) - UI_WIDTH_PAUSE_1, UI_HEIGHT_PAUSE_2, "操作説明", yellow);
+				//中央揃え座標計算
+				int drawX = Application::SCREEN_SIZE_X / 2 - w / 2;
+				int drawY = pauseMenuPosY[i];
 
-			DrawString((Application::SCREEN_SIZE_X / 2) - UI_WIDTH_PAUSE_3, UI_HEIGHT_PAUSE_3, "アイテム概要", white);
-			if (pauseSelectIndex_ % PAUSE_MENU_ITEM_COUNT == 2)
-				DrawString((Application::SCREEN_SIZE_X / 2) - UI_WIDTH_PAUSE_3, UI_HEIGHT_PAUSE_3, "アイテム概要", yellow);
-
-			DrawString((Application::SCREEN_SIZE_X / 2) - UI_WIDTH_PAUSE_2, UI_HEIGHT_PAUSE_4, "タイトルへ", white);
-			if (pauseSelectIndex_ % PAUSE_MENU_ITEM_COUNT == 3)
-				DrawString((Application::SCREEN_SIZE_X / 2) - UI_WIDTH_PAUSE_2, UI_HEIGHT_PAUSE_4, "タイトルへ", yellow);
-
-			SetFontSize(DEFAULT_FONT_SIZE);
+				//DrawRotaGraph(drawX, drawY, 1.0, 0.0, img, true);
+				DrawGraph(drawX, drawY, img, true);
+			}
 		}
 		else if (pauseState_ == PauseState::ShowControls) 
 		{
@@ -316,7 +336,7 @@ void GameScene::Draw(void)
 			if (cnt % FLASH * 2.0 <= FLASH)DrawString(BACK_PAUSE_WIDTH, BACK_PAUSE_HEIGHT, "Enterキーで戻る", white);
 			SetFontSize(DEFAULT_FONT_SIZE);
 		}
-		else if (pauseState_ == PauseState::ShowItems) 
+		else if (pauseState_ == PauseState::ShowAllies) 
 		{
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 			DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), white, true);
@@ -568,8 +588,9 @@ bool GameScene::PauseMenu(void)
 	//ポーズ画面種類
 	constexpr int GameBack = 0;
 	constexpr int ShowControls = 1;
-	constexpr int ShowItems = 2;
-	constexpr int TitleBack = 3;
+	constexpr int ShowAllies = 2;
+	constexpr int Retry = 3;
+	constexpr int GiveUp = 4;
 
 	//TABキーでポーズのON/OFF切り替え（Menu中のみ）
 	if (ins.IsTrgDown(KEY_INPUT_TAB)|| 
@@ -608,12 +629,16 @@ bool GameScene::PauseMenu(void)
 				pauseState_ = PauseState::ShowControls; 
 				break;
 
-			case ShowItems:
-				pauseState_ = PauseState::ShowItems; 
+			case ShowAllies:
+				pauseState_ = PauseState::ShowAllies; 
 				break;
 
-			case TitleBack:
-				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+			case Retry:
+				SceneManager::GetInstance().ChangeStageScene(SceneManager::SCENE_ID::GAME, stageNo_);
+				break;
+
+			case GiveUp:
+				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::OVER);
 				break;
 			}
 		}

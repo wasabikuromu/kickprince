@@ -251,13 +251,13 @@ void TitleScene::Draw(void)
 	DrawRotaGraph(IMG_TITLE_WIDTH, IMG_TITLE_HEIGHT, IMG_TITLE_SIZE, 0, imgTitle_, true);
 
 	//ゲームプレイ画像表示
-	DrawGraph(740, 750, imgGameStart_, true);
+	DrawGraph(740, 730, imgGameStart_, true);
 
 	//ルールを見る画像表示
-	DrawGraph(740, 850, imgLookRule_, true);
+	DrawGraph(740, 830, imgLookRule_, true);
 
 	//ゲームを終了画像表示
-	DrawGraph(740, 950, imgGameEnd_, true);
+	DrawGraph(740, 930, imgGameEnd_, true);
 
 	#pragma region		ボタン設定
 

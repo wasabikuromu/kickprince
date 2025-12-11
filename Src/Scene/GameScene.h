@@ -34,7 +34,7 @@ public:
 	{
 		PauseMenu,		//通常のポーズメニュー
 		ShowControls,	//操作説明画面
-		ShowItems		//アイテム概要画面
+		ShowAllies,		//味方説明画面
 	};
 
 	//敵全滅できなかった時
@@ -76,7 +76,7 @@ public:
 	static constexpr float PAUSE_IMG_UI_SIZE = 0.65;	//pauseImg_のサイズ
 
 	//ポーズメニュー関連
-	static constexpr int PAUSE_MENU_ITEM_COUNT = 4;						//ポーズメニューの数
+	static constexpr int PAUSE_MENU_ITEM_COUNT = 5;						//ポーズメニューの数
 	static constexpr int PAUSE_MENU_DOWN = 1;							//下に移動
 	static constexpr int PAUSE_MENU_UP = PAUSE_MENU_ITEM_COUNT - 1;		//上に移動（+3 の代わり）
 
@@ -104,6 +104,7 @@ public:
 	static constexpr int UI_HEIGHT_PAUSE_2 = 470;				//２個目のUIの高さ
 	static constexpr int UI_HEIGHT_PAUSE_3 = 590;				//３個目のUIの高さ
 	static constexpr int UI_HEIGHT_PAUSE_4 = 710;				//４個目のUIの高さ
+	static constexpr int UI_HEIGHT_PAUSE_5 = 830;				//５個目のUIの高さ
 
 	static constexpr int UI_ATTACK_X = 10;						//攻撃の文字のX座標
 	static constexpr int UI_NORMAL_ATTACK_Y = 450;				//通常攻撃のY座標
@@ -194,9 +195,15 @@ private:
 
 	//ポーズ関連
 	PauseState pauseState_ = PauseState::PauseMenu;
-	int  pauseImg_;
-	bool isPaused_;				 //ポーズ中かどうか
-	int pauseSelectIndex_;		 //ポーズメニューの選択項目（上下選択）
+	int  pauseImg_;					//ポーズ画像
+
+	int pauseMenuImgs[PAUSE_MENU_ITEM_COUNT];				//通常の画像
+	int pauseMenuImgsSelected[PAUSE_MENU_ITEM_COUNT];		//選択中の画像
+
+	int pauseMenuPosY[PAUSE_MENU_ITEM_COUNT];				//Y座標位置
+
+	bool isPaused_;					//ポーズ中かどうか
+	int pauseSelectIndex_;			//ポーズメニューの選択項目（上下選択）
 	int pauseExplainImgs_[2];
 
 	//敵全滅不可関連

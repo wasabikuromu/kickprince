@@ -45,7 +45,7 @@ public:
 	static constexpr int IMG_3D_WIDTH = 1700;
 	static constexpr int IMG_3D_HEIGHT = 625;
 
-	static constexpr float IMG_TITLE_SIZE = 2.3; 
+	static constexpr float IMG_TITLE_SIZE = 1.0; 
 	static constexpr int IMG_TITLE_WIDTH = 1100;
 	static constexpr int IMG_TITLE_HEIGHT = 250;
 
