@@ -327,7 +327,7 @@ void GameScene::Draw(void)
 		}
 		else if (pauseState_ == PauseState::ShowControls) 
 		{
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
 			DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), white, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 			DrawGraph(0, 0, pauseExplainImgs_[0], true);
@@ -338,7 +338,7 @@ void GameScene::Draw(void)
 		}
 		else if (pauseState_ == PauseState::ShowAllies) 
 		{
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
 			DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), white, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 			DrawGraph(0, 0, pauseExplainImgs_[1], true);
