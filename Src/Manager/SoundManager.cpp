@@ -61,20 +61,25 @@ void SoundManager::Init(void)
 	res.ChangeMaxVolume(3.0);
 	soundMap_.emplace(SRC::GETWATER_SE, res);
 
-	// アタック1
-	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "AtkSE1.mp3");
+	// プレイヤー攻撃
+	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "PlayerAtk.mp3");
 	res.ChangeMaxVolume(0.8);
-	soundMap_.emplace(SRC::ATK_SE1, res);
+	soundMap_.emplace(SRC::KICK, res);
 
-	// アタック2
-	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "AtkSE2.mp3");
+	// 赤攻撃
+	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "RedAtk.mp3");
 	res.ChangeMaxVolume(0.8);
-	soundMap_.emplace(SRC::ATK_SE2, res);
+	soundMap_.emplace(SRC::RED_ATK, res);
 
-	// アタック3
-	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "AtkSE3.mp3");
-	res.ChangeMaxVolume(0.6);
-	soundMap_.emplace(SRC::ATK_SE3, res);
+	// 青攻撃
+	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "BlueAtk.mp3");
+	res.ChangeMaxVolume(0.8);
+	soundMap_.emplace(SRC::BLUE_ATK, res);
+
+	// 黒攻撃
+	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "BlackAtk.mp3");
+	res.ChangeMaxVolume(0.8);
+	soundMap_.emplace(SRC::BLACK_ATK, res);
 
 	// スピードアップ
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "SpeedUpSE.mp3");

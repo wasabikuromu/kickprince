@@ -190,8 +190,12 @@ void ResourceManager::Init(void)
 
 	// 設定表示
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "UI/OpeGear.png");
-	resourcesMap_.emplace(SRC::OPE_GEAR, std::move(res));
+	resourcesMap_.emplace(SRC::OPE_GEAR_KEYBOARD, std::move(res));
 
+	// 設定表示
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "UI/OpeGearCon.png");
+	resourcesMap_.emplace(SRC::OPE_GEAR_CONTROLLER, std::move(res));
+	
 	// パワーアップ状態アイコン
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Icon/PowerIcon.png");
 	resourcesMap_.emplace(SRC::POWER_UP_ICON, std::move(res));

@@ -16,9 +16,10 @@ public:
 		GAMECLEAR_BGM,	//ゲームクリアBGM
 		LEVEL_UP_SE,	//木のレベルアップSE
 		GETWATER_SE,	//水を得たときのSE
-		ATK_SE1,		//アタックのSE1
-		ATK_SE2,		//アタックのSE2
-		ATK_SE3,		//アタックのSE3
+		KICK,			//蹴り
+		RED_ATK,		//赤攻撃
+		BLUE_ATK,		//青攻撃
+		BLACK_ATK,		//黒攻撃
 		SPEEDUP_SE,		//スピードアップSE
 		POWERUP_SE,		//パワーアップSE
 		MUTEKI_SE,		//木が無敵

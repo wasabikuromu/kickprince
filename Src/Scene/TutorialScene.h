@@ -219,7 +219,7 @@ private:
 	int followAllyIndex_ = -1;
 
 	// İ’èŠJ‚­
-	int imgOpeGear_;
+	int imgOpeGearKey_;
 
 	std::vector<std::shared_ptr<AllyBase>> Allys_;
 	std::vector<std::shared_ptr<EnemyBase>> enemys_;

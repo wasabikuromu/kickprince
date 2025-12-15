@@ -217,7 +217,7 @@ void AllyBase::Draw(void)
 	DrawShadow();
 
 	//デバッグ
-	DrawDebug();
+	//DrawDebug();
 }
 
 void AllyBase::Release(void)
@@ -259,7 +259,6 @@ bool AllyBase::IsBlow(void) const
 void AllyBase::Damage(int damage,float chargeRate)
 {
 	hp_ -= damage;
-	SoundManager::GetInstance().Play(SoundManager::SRC::E_DAMAGE_SE, Sound::TIMES::FORCE_ONCE);
 	isAttack_ = false;
 
 	if (hp_ <= 0)
@@ -268,7 +267,7 @@ void AllyBase::Damage(int damage,float chargeRate)
 
 		VECTOR dir = VGet(0.0f, 0.0f, 1.0f);
 
-		float speed = 17.0f + (60.0f - 40.0f) * chargeRate;
+		float speed = 19.5f + (60.0f - 40.0f) * chargeRate;
 
 		VECTOR forwardVel = VScale(dir, speed);
 		VECTOR upVel = VGet(0.0f, 30.0f + 35.0f * chargeRate, 0.0f);

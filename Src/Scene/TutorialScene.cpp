@@ -32,7 +32,7 @@ TutorialScene::TutorialScene(int stageNo)
 	player_ = nullptr;
 	skyDome_ = nullptr;
 	stage_ = nullptr;
-	imgOpeGear_ = -1;
+	imgOpeGearKey_ = -1;
 }
 
 TutorialScene::~TutorialScene(void)
@@ -71,7 +71,7 @@ void TutorialScene::Init(void)
 	skyDome_->Init();
 
 	//画像
-	imgOpeGear_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR).handleId_;
+	imgOpeGearKey_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR_KEYBOARD).handleId_;
 
 	imgPlayerMove_ = LoadGraph("Data/Image/Tutorial/PlayerMove.png");
 	imgCameraMove_ = LoadGraph("Data/Image/Tutorial/CameraMove.png");
@@ -297,7 +297,7 @@ void TutorialScene::Draw(void)
 	}
 
 	//UI
-	DrawRotaGraph(UI_GEAR, UI_GEAR, IMG_OPEGEAR_UI_SIZE, 0.0, imgOpeGear_, true);
+	DrawRotaGraph(UI_GEAR, UI_GEAR, IMG_OPEGEAR_UI_SIZE, 0.0, imgOpeGearKey_, true);
 
 	//チュートリアル
 	if (showMessage_) {

@@ -177,11 +177,12 @@ private:
 	bool uiFadeStart_ = false;
 	int uiFadeFrame_ = 0;
 
-	//-1‚È‚ç’Ç”ö‚µ‚Ä‚¢‚È‚¢ó‘Ô
+	//‚È‚ç’Ç”ö‚µ‚Ä‚¢‚È‚¢ó‘Ô
 	int followAllyIndex_ = -1; 
 
-	// İ’èŠJ‚­
-	int imgOpeGear_;
+	//İ’èŠJ‚­
+	int imgOpeGearKey_;
+	int imgOpeGearCon_;
 
 	std::vector<std::shared_ptr<AllyBase>> Allys_;
 	std::vector<std::shared_ptr<EnemyBase>> enemys_;

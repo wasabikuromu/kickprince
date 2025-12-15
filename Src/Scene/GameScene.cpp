@@ -32,7 +32,7 @@ GameScene::GameScene(int stageNo)
 	player_ = nullptr;
 	skyDome_ = nullptr;
 	stage_ = nullptr;
-	imgOpeGear_ = -1;
+	imgOpeGearKey_ = -1;
 }
 
 GameScene::~GameScene(void)
@@ -71,7 +71,8 @@ void GameScene::Init(void)
 	skyDome_->Init();
 
 	//画像
-	imgOpeGear_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR).handleId_;
+	imgOpeGearKey_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR_KEYBOARD).handleId_;
+	imgOpeGearCon_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR_CONTROLLER).handleId_;
 
 	imgNiceKick_ = resMng_.Load(ResourceManager::SRC::NICE_KICK).handleId_;
 	imgNextStage_ = resMng_.Load(ResourceManager::SRC::NEXT_STAGE).handleId_;
@@ -280,8 +281,15 @@ void GameScene::Draw(void)
 		enemy->DrawBossHpBar();
 	}
 
-	DrawRotaGraph(UI_GEAR, UI_GEAR, IMG_OPEGEAR_UI_SIZE, 0.0, imgOpeGear_, true);
-
+	if (GetJoypadNum() == 0) 
+	{
+		DrawRotaGraph(UI_GEAR, UI_GEAR, IMG_OPEGEAR_UI_SIZE, 0.0, imgOpeGearKey_, true);
+	}
+	else
+	{
+		DrawRotaGraph(UI_GEAR, UI_GEAR, IMG_OPEGEAR_UI_SIZE, 0.0, imgOpeGearCon_, true);
+	}
+	
 	//入力チェック or 時間経過でフェード開始
 	if (!uiFadeStart_) 
 	{
@@ -383,9 +391,6 @@ void GameScene::Draw(void)
 	}
 
 #pragma region UI
-	SetFontSize(DEFAULT_FONT_SIZE * 2.0);
-	DrawString(UI_ATTACK_X,UI_NORMAL_ATTACK_Y,"E:通常攻撃" , white);
-	SetFontSize(DEFAULT_FONT_SIZE);
 #pragma endregion
 }
 

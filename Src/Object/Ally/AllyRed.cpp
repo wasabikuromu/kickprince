@@ -1,6 +1,7 @@
 #include "AllyRed.h"
 #include "../../Application.h"
 #include "../Common/AnimationController.h"
+#include "../../Manager/SoundManager.h"
 #include "../../Manager/ResourceManager.h"
 #include "../../Utility/AsoUtility.h"
 
@@ -100,6 +101,8 @@ void AllyRed::CollisionAttack(void)
 	//UŒ‚‰Â”\ƒtƒŒ[ƒ€”ÍˆÍ“à ‚©‚Â isAttack_ ‚ª true ‚Ì‚Æ‚«‚Ì‚Ýˆ—
 	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_)
 	{
+		SoundManager::GetInstance().Play(SoundManager::SRC::RED_ATK, Sound::TIMES::FORCE_ONCE);
+
 		for (const auto& enemy : *enemy_)
 		{
 			if (!enemy || !enemy->IsAlive()) continue;

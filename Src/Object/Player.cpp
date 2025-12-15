@@ -185,20 +185,11 @@ void Player::Draw(void)
 {
 	MV1DrawModel(transform_.modelId);	//モデルの描画
 	DrawShadow();						//丸影描画
-	DrawDebug();						//デバッグ用描画
+	//DrawDebug();						//デバッグ用描画
 	DrawGuideLine();					//ガイド線描画
 	DrawChargeGauge();					//ゲージ描画
 
 #pragma region ステータス
-	DrawFormatString(NAME_X,NAME_Y,black,"PLAYER");
-	//枠線
-	DrawBox(FRAME_START_X,FRAME_START_Y,FRAME_END_X,FRAME_END_Y,gray, true);
-	
-	DrawBox(BAR_START_X,BAR_START_HY,BAR_END_X,BAR_END_HY,black,true);
-	if (hp_ != 0)DrawBox(BAR_START_X,BAR_START_HY,hp_*BAR_POINT+BAR_START_X,BAR_END_HY,green,true);
-	if (hp_ == 0)DrawBox(BAR_START_X,BAR_START_HY,revivalTimer_+BAR_START_X,BAR_END_HY,red,true);
-	DrawBox(BAR_START_X,BAR_START_WY,BAR_END_X,BAR_END_WY,black,true);
-	DrawBox(BAR_START_X,BAR_START_WY,water_*BAR_POINT+BAR_START_X,BAR_END_WY,blue,true);
 
 #pragma endregion
 }
@@ -948,7 +939,7 @@ void Player::ProcessAttack(void)
 		float chargeRate = chargeTime_ / maxChargeTime_;
 		CollisionAttack(chargeRate);
 
-		SoundManager::GetInstance().Play(SoundManager::SRC::ATK_SE1, Sound::TIMES::FORCE_ONCE);
+		SoundManager::GetInstance().Play(SoundManager::SRC::KICK, Sound::TIMES::FORCE_ONCE);
 	}
 }
 

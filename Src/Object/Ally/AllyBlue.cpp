@@ -1,6 +1,7 @@
 #include "AllyBlue.h"
 #include "../../Application.h"
 #include "../Common/AnimationController.h"
+#include "../../Manager/SoundManager.h"
 #include "../../Manager/ResourceManager.h"
 #include "../../Utility/AsoUtility.h"
 
@@ -70,6 +71,7 @@ void AllyBule::UpdateIdle(void)
 		{
 			transform_.pos.y = defaultPos_.y;
 			velocity_.y = 0.0f;
+			initFall_ = false;
 		}
 	}
 
@@ -152,6 +154,11 @@ void AllyBule::CollisionAttack(void)
 	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
 	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;
 	
+	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END)
+	{
+		SoundManager::GetInstance().Play(SoundManager::SRC::BLUE_ATK, Sound::TIMES::FORCE_ONCE);
+	}
+
 	//エネミーとの衝突判定
 	//攻撃可能フレーム範囲内 かつ isAttack_ が true のときのみ処理
 	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_)

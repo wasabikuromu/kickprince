@@ -16,8 +16,8 @@ public:
 	static constexpr float ATTACK_RADIUS_SIZE = 30.0f;		//UŒ‚”ÍˆÍ
 
 	//UŒ‚”»’èƒtƒŒ[ƒ€
-	const float ATTACK_START = 40.0f;
-	const float ATTACK_END = 50.0f;
+	const float ATTACK_START = 30.0f;
+	const float ATTACK_END = 40.0f;
 
 	//UŒ‚—Í
 	const int ATTACK_POWER = 4;
