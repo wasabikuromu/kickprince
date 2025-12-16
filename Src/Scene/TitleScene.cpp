@@ -19,7 +19,7 @@ TitleScene::TitleScene(void)
 	imgUDCursor_ = -1;
 
 	animationControllerPlayer_ = nullptr;
-	animationControllerEnemy_ = nullptr;
+	animationControllerRed_ = nullptr;
 	endLoadFlame_ = true;
 }
 
@@ -132,9 +132,9 @@ void TitleScene::NewFunction()
 
 	//アニメーション
 	//-------------------------------------------------------------------------
-	animationControllerEnemy_ = std::make_unique<AnimationController>(enemy_.modelId);
-	animationControllerEnemy_->Add(0, Application::PATH_MODEL + "Enemy/Boss/Boss.mv1", ANIMATION_TIME, 2);
-	animationControllerEnemy_->Play(0, true);
+	animationControllerRed_ = std::make_unique<AnimationController>(enemy_.modelId);
+	animationControllerRed_->Add(0, Application::PATH_MODEL + "Enemy/Boss/Boss.mv1", ANIMATION_TIME, 2);
+	animationControllerRed_->Play(0, true);
 	//-------------------------------------------------------------------------
 }
 
@@ -234,7 +234,7 @@ void TitleScene::Update(void)
 		animationControllerRedAlly_->Update();
 		animationControllerBlueAlly_->Update();
 		animationControllerBlackAlly_->Update();
-		animationControllerEnemy_->Update();
+		animationControllerRed_->Update();
 	}
 }
 

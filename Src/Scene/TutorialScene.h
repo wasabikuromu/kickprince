@@ -220,6 +220,7 @@ private:
 
 	// 設定開く
 	int imgOpeGearKey_;
+	int imgOpeGearCon_;
 
 	std::vector<std::shared_ptr<AllyBase>> Allys_;
 	std::vector<std::shared_ptr<EnemyBase>> enemys_;
@@ -242,7 +243,7 @@ private:
 
 	bool isPaused_;					//ポーズ中かどうか
 	int pauseSelectIndex_;			//ポーズメニューの選択項目（上下選択）
-	int pauseExplainImgs_[2];
+	int pauseExplainImgs_[3];
 
 	int imgAbutton_;
 	int imgEnter_;

@@ -8,6 +8,7 @@ void StageSelectScene::Init(void)
     selectIndex_ = 0;
     //画像
     imgPlzSelectStage_ = resMng_.Load(ResourceManager::SRC::PLZ_SELECT_STAGE).handleId_;
+    imgBackGround_ = LoadGraph("Data/Image/SeleStageGame.png");
     imgStage1_ = resMng_.Load(ResourceManager::SRC::STAGE_1).handleId_;
     imgStage2_ = resMng_.Load(ResourceManager::SRC::STAGE_2).handleId_;
     imgStage3_ = resMng_.Load(ResourceManager::SRC::STAGE_3).handleId_;
@@ -41,6 +42,8 @@ void StageSelectScene::Update(void)
 
 void StageSelectScene::Draw(void)
 {
+    DrawGraph(0, 0, imgBackGround_, true);
+
     DrawGraph(230, 0, imgPlzSelectStage_, true);
 
     // ステージ座標配列

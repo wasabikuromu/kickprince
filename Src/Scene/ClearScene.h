@@ -20,6 +20,11 @@ private:
 
 	static constexpr float VALUE_TWO = 2.0f;
 
+	static constexpr VECTOR PLAYER_POS = { 120.0f, -300.0f, 0.0f };
+	static constexpr VECTOR PLAYER_SIZE = { 0.018f, 0.018f, 0.018f };
+
+	static constexpr float ANIM_SPEED = 30.0f;
+
 	// アニメーション用定数
 	static constexpr int MESSAGE_Y = 800;
 	static constexpr int MASK_SPEED = 5;
@@ -39,9 +44,13 @@ private:
 	static constexpr int ALPHA_MAX = 255;
 
 	// 敵の初期設定
-	static constexpr VECTOR ENEMY_INIT_POS = { -490.0f, -600.0f, 50.0f };
-	static constexpr VECTOR ENEMY_INIT_SCL = { 1.3f, 1.3f, 1.3f };
-	static constexpr float ENEMY_INIT_ROT_Y_DEG = -20.0f;
+	static constexpr VECTOR RED_ALLY_INIT_POS = { -490.0f, -200.0f, 50.0f };
+	static constexpr VECTOR BLUE_ALLY_INIT_POS = { -290.0f, -200.0f, 50.0f };
+	static constexpr VECTOR BLACK_ALLY_INIT_POS = { -90.0f, -200.0f, 50.0f };
+
+	static constexpr VECTOR ALLY_INIT_SCL = { 0.8f, 0.8f, 0.8f };
+
+	static constexpr float ALLY_INIT_ROT_Y_DEG = -20.0f;
 
 	// Clear画像
 	static constexpr int CLEAR_IMG_Y = 200;
@@ -83,13 +92,23 @@ private:
 	bool isPressKeyAnimStart_;	
 	bool isPressKeyAnimEnd_;	// アニメーション完了フラグ
 
-	// 敵キャラクター
-	Transform ally_;
+	//味方キャラクター
+	Transform redAlly_;
+	Transform blueAlly_;
+	Transform blackAlly_;
 
-	// 敵のアニメーション
-	std::unique_ptr<AnimationController> animationControllerEnemy_;
+	//プレイヤーキャラクター
+	Transform player_;
 
-	// アニメーション終わり
+	//敵のアニメーション
+	std::unique_ptr<AnimationController> animationControllerRed_;
+	std::unique_ptr<AnimationController> animationControllerBlue_;
+	std::unique_ptr<AnimationController> animationControllerBlack_;
+
+	//プレイヤーのアニメーション
+	std::unique_ptr<AnimationController> animationControllerPlayer_;
+
+	//アニメーション終わり
 	bool isAnimEnd_;
 
 	// -------------------------------------

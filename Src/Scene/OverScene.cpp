@@ -61,14 +61,12 @@ void OverScene::Init(void)
 	// 画像読み込み
 	imgGameOver_ = resMng_.Load(ResourceManager::SRC::GAMEOVER).handleId_;
 	imgDieTree_ = resMng_.Load(ResourceManager::SRC::DIETREE).handleId_;
-	imgCursor_[0] = LoadGraph("Data/Image/Over/1player1.png");
-	imgCursor_[1] = LoadGraph("Data/Image/Over/1player2.png");
-	imgLightCircle_ = resMng_.Load(ResourceManager::SRC::LIGHT).handleId_;  // 作成した光画像を読み込む
+	imgLightCircle_ = resMng_.Load(ResourceManager::SRC::LIGHT).handleId_;
 
-	// 画像の横幅（例）
-	const int massageX = Application::SCREEN_SIZE_X / VALUE_TWO - MASSAGE_X_OFFSET;
-	maskLeftX_ = massageX;                          // 黒帯は最初は画像全体を覆う
-	maskRightX_ = massageX + maskWidthMax_;
+	imgReplay_ = LoadGraph("Data/Image/GameOver/Replay.png");
+	imgSelectReplay_ = LoadGraph("Data/Image/GameOver/SelectRePlay.png");
+	imgBackTitle_ = LoadGraph("Data/Image/GameOver/BackTitle.png");
+	imgSelectBackTitle_ = LoadGraph("Data/Image/GameOver/SelectBackTitle.png");
 
 	selectedIndex_ = 0;
 
@@ -86,9 +84,9 @@ void OverScene::Init(void)
 	player_.Update();
 
 	// アニメーションの設定
-	std::string path = Application::PATH_MODEL + "Player/";
+	std::string path = Application::PATH_MODEL + "NPlayer/";
 	animationController_ = std::make_unique<AnimationController>(player_.modelId);
-	animationController_->Add(0, path + "Sword And Shield Death.mv1", ANIM_SPEED);
+	animationController_->Add(0, path + "PPlayer.mv1", ANIM_SPEED,6);
 	animationController_->Play(0);
 
 	// 定点カメラ
@@ -104,9 +102,7 @@ void OverScene::Update(void)
 
 	cheackCounter_++;
 
-	//if (ins.IsTrgDown(KEY_INPUT_TAB))SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
-
-	if (isMenuActive_)
+	if (cheackCounter_ >= MENU_SELECT_TIME)
 	{
 		if (ins.IsTrgDown(KEY_INPUT_UP) || ins.IsTrgDown(KEY_INPUT_DOWN)||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP)||
@@ -117,7 +113,7 @@ void OverScene::Update(void)
 		if (ins.IsTrgDown(KEY_INPUT_RETURN)||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
 			if (selectedIndex_ == 0) {
-				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::STAGE_SELECT);
 			}
 			else {
 				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
@@ -125,19 +121,9 @@ void OverScene::Update(void)
 		}
 	}
 
-	// 一定時間がたてば強制的にタイトルに
+	//一定時間がたてば強制的にタイトルに
 	if (cheackCounter_ >= FORCE_TITLE_TIME) {
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
-	}
-
-	// 黒帯の左端を右へスライド（文字が左から見える）
-	if (maskLeftX_ < maskRightX_)
-	{
-		maskLeftX_ += revealSpeed_;
-		if (maskLeftX_ >= maskRightX_) {
-			maskLeftX_ = maskRightX_;
-			isMenuActive_ = true; // ← ここで初めて true にする
-		}
 	}
 
 	animationController_->Update();
@@ -146,10 +132,10 @@ void OverScene::Update(void)
 void OverScene::Draw(void)
 {
 	// 背景真っ黒
-	DrawBox(0,0,Application::SCREEN_SIZE_X,Application::SCREEN_SIZE_Y,0x0,true);
+	DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, black, true);
 
 	// ゲームオーバー画像
-	DrawGraph(Application::SCREEN_SIZE_X/ VALUE_TWO - GAMEOVER_IMG_X_OFFSET, GAMEOVER_IMG_Y,imgGameOver_,true);
+	DrawGraph(Application::SCREEN_SIZE_X / VALUE_TWO - GAMEOVER_IMG_X_OFFSET, GAMEOVER_IMG_Y, imgGameOver_, true);
 
 	// プレイヤーモデル描画
 	MV1DrawModel(player_.modelId);
@@ -164,8 +150,8 @@ void OverScene::Draw(void)
 		int w, h;
 		GetGraphSize(imgLightCircle_, &w, &h);
 
-		float scaleX = LIGHT_SCALE_X;  // 横伸ばし
-		float scaleY = LIGHT_SCALE_Y; // 縦伸ばし
+		float scaleX = LIGHT_SCALE_X;
+		float scaleY = LIGHT_SCALE_Y;
 
 		int drawW = static_cast<int>(w * scaleX);
 		int drawH = static_cast<int>(h * scaleY);
@@ -183,30 +169,20 @@ void OverScene::Draw(void)
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
-	if (isMenuActive_)
+	if (cheackCounter_ >= MENU_SELECT_TIME)
 	{
 		if (selectedIndex_ %2 == 1)
 		{
-			SetFontSize(MENU_FONT_SIZE);
-			DrawString(MENU_POS_X, MENU_PLAY_Y, "もう一度プレイ", white);
-			DrawString(MENU_POS_X, MENU_TITLE_Y, "タイトルに戻る", yellow);
+			DrawGraph(MENU_POS_X, MENU_PLAY_Y, imgReplay_, true);
+			DrawGraph(MENU_POS_X, MENU_TITLE_Y, imgSelectBackTitle_, true);
 		}
 		else
 		{
 			SetFontSize(MENU_FONT_SIZE);
-			DrawString(MENU_POS_X, MENU_PLAY_Y, "もう一度プレイ", yellow);
-			DrawString(MENU_POS_X, MENU_TITLE_Y, "タイトルに戻る", white);
+			DrawGraph(MENU_POS_X, MENU_PLAY_Y, imgSelectReplay_, true);
+			DrawGraph(MENU_POS_X, MENU_TITLE_Y, imgBackTitle_, true);
 		}
 	}
-
-	// 画像描画
-	SetFontSize(STORY_FONT_SIZE);
-	DrawString(Application::SCREEN_SIZE_X/ VALUE_TWO - STORY_X_OFFSET, STORY_Y,"ユグドラシルは死んでしまった…",white,true);
-	SetFontSize(DEFAULT_FONT_SIZE);
-
-	// 黒帯描画（maskLeftX_ は初期値 msgX + imgW から 徐々に msgX へ移動する想定）
-	DrawBox(BLACK_BOX_X1 +(cnt * BLACK_BOX_SLIDE_SPEED),
-		BLACK_BOX_Y1, BLACK_BOX_X2, BLACK_BOX_Y2, black,true);
 }
 
 void OverScene::Release(void)

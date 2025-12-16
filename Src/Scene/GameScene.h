@@ -205,7 +205,7 @@ private:
 
 	bool isPaused_;					//ポーズ中かどうか
 	int pauseSelectIndex_;			//ポーズメニューの選択項目（上下選択）
-	int pauseExplainImgs_[2];
+	int pauseExplainImgs_[3];
 
 	//敵全滅不可関連
 	RESULT_MENU_STATE resultMenuState_ = RESULT_MENU_STATE::NONE;

@@ -101,8 +101,9 @@ void GameScene::Init(void)
 
 	pauseImg_ = LoadGraph("Data/Image/Pause/Pause.png");
 
-	pauseExplainImgs_[0] = resMng_.Load(ResourceManager::SRC::PAUSEOPE).handleId_;		//操作説明
-	pauseExplainImgs_[1] = resMng_.Load(ResourceManager::SRC::PAUSEITEM).handleId_;		//アイテム概要
+	pauseExplainImgs_[0] = resMng_.Load(ResourceManager::SRC::PAUSEOPE1).handleId_;		//操作説明
+	pauseExplainImgs_[1] = resMng_.Load(ResourceManager::SRC::PAUSEOPE2).handleId_;		//操作説明
+	pauseExplainImgs_[2] = resMng_.Load(ResourceManager::SRC::PAUSEALLY).handleId_;		//アイテム概要
 
 	//カウンタ
 	uiFadeStart_ = false;
@@ -338,22 +339,21 @@ void GameScene::Draw(void)
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
 			DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), white, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-			DrawGraph(0, 0, pauseExplainImgs_[0], true);
-			SetFontSize(DEFAULT_FONT_SIZE * 2.5);
-			DrawString(BACK_PAUSE_WIDTH, BACK_PAUSE_HEIGHT,"Enterキーで戻る", yellow);
-			if (cnt % FLASH * 2.0 <= FLASH)DrawString(BACK_PAUSE_WIDTH, BACK_PAUSE_HEIGHT, "Enterキーで戻る", white);
-			SetFontSize(DEFAULT_FONT_SIZE);
+			if (GetJoypadNum() == 0) 
+			{
+				DrawGraph(0, 0, pauseExplainImgs_[1], true);
+			}
+			else
+			{
+				DrawGraph(0, 0, pauseExplainImgs_[0], true);
+			}
 		}
 		else if (pauseState_ == PauseState::ShowAllies) 
 		{
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
 			DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), white, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-			DrawGraph(0, 0, pauseExplainImgs_[1], true);
-			SetFontSize(DEFAULT_FONT_SIZE * 2.5);
-			DrawString(BACK_PAUSE_WIDTH, BACK_PAUSE_HEIGHT, "Enterキーで戻る", yellow);
-			if (cnt % FLASH * 2.0 <= FLASH)DrawString(BACK_PAUSE_WIDTH, BACK_PAUSE_HEIGHT, "Enterキーで戻る", white);
-			SetFontSize(DEFAULT_FONT_SIZE);
+			DrawGraph(0, 0, pauseExplainImgs_[2], true);
 		}
 		return;
 	}

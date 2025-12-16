@@ -19,6 +19,7 @@ private:
 
     //‰æ‘œ
     int imgPlzSelectStage_;
+    int imgBackGround_;
     int imgStage1_;
     int imgStage2_;
     int imgStage3_;

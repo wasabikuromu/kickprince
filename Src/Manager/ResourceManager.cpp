@@ -180,13 +180,17 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Operation.png");
 	resourcesMap_.emplace(SRC::OPERATION, std::move(res));
 
-	// ポーズの操作
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "PauseOpe.png");
-	resourcesMap_.emplace(SRC::PAUSEOPE, std::move(res));
+	// ポーズの操作1
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/1OperationManual.png");
+	resourcesMap_.emplace(SRC::PAUSEOPE1, std::move(res));
+
+	// ポーズの操作2
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Pause/2OperationManual.png");
+	resourcesMap_.emplace(SRC::PAUSEOPE2, std::move(res));
 
 	// ポーズの味方説明
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "AllyLook.png");
-	resourcesMap_.emplace(SRC::PAUSEITEM, std::move(res));
+	resourcesMap_.emplace(SRC::PAUSEALLY, std::move(res));
 
 	// 設定表示
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "UI/OpeGear.png");

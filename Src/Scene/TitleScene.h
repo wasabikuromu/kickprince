@@ -57,7 +57,7 @@ public:
 	static constexpr int BASE_Y = 450;
 	static constexpr int BUTTON_OFFSET = 120;
 
-	static constexpr int CURSOR_WIDTH = 700;
+	static constexpr int CURSOR_WIDTH = 710;
 	static constexpr int CURSOR_HEIGHT = 800;
 
 	static constexpr int INDEX = 100;
@@ -135,10 +135,10 @@ private:
 	const float rightLimit_ = 1000.0f;
 
 	// 修了確認用
-	bool isConfirmingExit_ = false;			// ← 終了確認中かどうか
-	int confirmIndex_ = 1;					// ← 0: はい, 1: いいえ
-	int confirmAnimFrame_ = 0;				// 表示アニメーション用フレーム
-	const int CONFIRM_ANIM_DURATION = 20;	// アニメーション時間
+	bool isConfirmingExit_ = false;		
+	int confirmIndex_ = 1;				
+	int confirmAnimFrame_ = 0;				
+	const int CONFIRM_ANIM_DURATION = 20;
 
 	//アニメーション
 	Transform player_;	//プレイヤー
@@ -152,7 +152,7 @@ private:
 	std::unique_ptr<AnimationController> animationControllerRedAlly_;
 	std::unique_ptr<AnimationController> animationControllerBlueAlly_;
 	std::unique_ptr<AnimationController> animationControllerBlackAlly_;
-	std::unique_ptr<AnimationController> animationControllerEnemy_;
+	std::unique_ptr<AnimationController> animationControllerRed_;
 
 	bool endLoadFlame_;
 };
