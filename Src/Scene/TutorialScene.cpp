@@ -593,6 +593,7 @@ bool TutorialScene::PauseMenu(void)
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			switch (pauseSelectIndex_)
 			{
 			case GameBack:
@@ -728,6 +729,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)){
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_02_MESSAGE;
 		}
 		break;
@@ -738,6 +740,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)){
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_03_MESSAGE;
 		}
 		break;
@@ -748,6 +751,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_04_MESSAGE;
 		}
 		break;
@@ -758,6 +762,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_05_MESSAGE;
 		}
 		break;
@@ -768,6 +773,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_06_MESSAGE;
 		}
 		break;
@@ -778,6 +784,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_07_MESSAGE;
 		}
 		break;
@@ -788,6 +795,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_08_MESSAGE;
 		}
 		break;
@@ -798,6 +806,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_09_MESSAGE;
 		}
 		break;
@@ -808,6 +817,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_10_MESSAGE;
 		}
 		break;
@@ -818,6 +828,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			player_->SetControlEnabled(true);
 			cam.SetControlEnabled(false);
 			moveStartPos_ = player_->GetTransform().pos;
@@ -851,6 +862,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_12_MESSAGE;
 		}
 		break;
@@ -861,6 +873,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_13_MESSAGE;
 		}
 		break;
@@ -871,6 +884,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			cameraStartRotX_ = cam.GetRotX();
 			cameraStartRotY_ = cam.GetRotY();
 
@@ -902,6 +916,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_15_MESSAGE;
 		}
 		break;
@@ -912,6 +927,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_16_MESSAGE;
 		}
 		break;
@@ -922,6 +938,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_17_MESSAGE;
 		}
 		break;
@@ -932,6 +949,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_18_MESSAGE;
 		}
 		break;
@@ -942,6 +960,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_19_MESSAGE;
 		}
 		break;
@@ -952,6 +971,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_20_MESSAGE;
 		}
 		break;
@@ -962,6 +982,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_21_MESSAGE;
 		}
 		break;
@@ -972,6 +993,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_22_MESSAGE;
 		}
 		break;
@@ -982,6 +1004,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_23_MESSAGE;
 		}
 		break;
@@ -992,6 +1015,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_24_MESSAGE;
 		}
 		break;
@@ -1002,6 +1026,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_25_MESSAGE;
 		}
 		break;
@@ -1012,6 +1037,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_26_MESSAGE;
 		}
 		break;
@@ -1022,6 +1048,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_27_MESSAGE;
 		}
 		break;
@@ -1032,6 +1059,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_28_MESSAGE;
 		}
 		break;
@@ -1042,6 +1070,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_29_MESSAGE;
 		}
 		break;
@@ -1052,6 +1081,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_30_MESSAGE;
 		}
 		break;
@@ -1062,6 +1092,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_31_MESSAGE;
 		}
 		break;
@@ -1072,6 +1103,7 @@ void TutorialScene::RunTutorial(void)
 		player_->SetAttackEnabled(false);
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::WAIT_ATTACK;
 		}
 		break;
@@ -1094,6 +1126,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_33_MESSAGE;
 		}
 		break;
@@ -1104,6 +1137,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_34_MESSAGE;
 		}
 		break;
@@ -1114,6 +1148,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::STEP_35_MESSAGE;
 		}
 		break;
@@ -1124,6 +1159,7 @@ void TutorialScene::RunTutorial(void)
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			step_ = TutorialStep::END;
 		}
 		break;

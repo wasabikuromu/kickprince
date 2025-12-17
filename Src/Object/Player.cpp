@@ -469,7 +469,7 @@ void Player::DrawChargeGauge()
 
 	int filledH = (int)(innerHeight * rate);
 
-	// ----------- ① filled 部分（カラーグラデーション）-----------
+	//① filled 部分（カラーグラデーション）
 	for (int i = 0; i < filledH; i++)
 	{
 		float w = bottomWidth + slope * i;

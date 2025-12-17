@@ -98,7 +98,6 @@ void AllyRed::CollisionAttack(void)
 	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;
 
 	//エネミーとの衝突判定
-	//攻撃可能フレーム範囲内 かつ isAttack_ が true のときのみ処理
 	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_)
 	{
 		SoundManager::GetInstance().Play(SoundManager::SRC::RED_ATK, Sound::TIMES::FORCE_ONCE);

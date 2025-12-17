@@ -1,4 +1,5 @@
 #include "StageSelectScene.h"
+#include "../Manager/SoundManager.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
 #include <DxLib.h>
@@ -33,6 +34,7 @@ void StageSelectScene::Update(void)
     if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
         ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
     {
+        SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
         SceneManager::GetInstance().ChangeStageScene(
             SceneManager::SCENE_ID::GAME,
             selectIndex_ + 1

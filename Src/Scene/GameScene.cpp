@@ -623,6 +623,7 @@ bool GameScene::PauseMenu(void)
 		if (ins.IsTrgDown(KEY_INPUT_RETURN)||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			switch (pauseSelectIndex_)
 			{
 			case GameBack:
@@ -679,6 +680,7 @@ bool GameScene::StageClearMenu(void)
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
 			switch (stageSelectIndex_)
 			{
 			case NextStage:
