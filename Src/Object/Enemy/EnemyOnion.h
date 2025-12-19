@@ -5,7 +5,7 @@ class EnemyOnion : public EnemyBase
 {
 public:
 
-	static constexpr int HP = 2;
+	static constexpr int HP = 5;
 
 	EnemyOnion();
 

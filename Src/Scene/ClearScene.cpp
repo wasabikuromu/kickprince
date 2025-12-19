@@ -16,8 +16,6 @@ ClearScene::ClearScene(void)
 	imgBackGameClaer_ = -1;
 	imgClearWolrd_ = -1;
 	imgReplay_ = -1;
-	imgReturn_ = -1;
-	imgPressKey_ = -1;
 
 	cheackCounter_ = 0;
 
@@ -38,10 +36,14 @@ void ClearScene::Init(void)
 	imgBackGameClaer_ = resMng_.Load(ResourceManager::SRC::BACK_GAMECLEAR).handleId_;
 	imgClearWolrd_ = resMng_.Load(ResourceManager::SRC::CLEARWOLEDBORN).handleId_;
 	imgReplay_ = resMng_.Load(ResourceManager::SRC::REPLAY).handleId_;
-	imgReturn_ = resMng_.Load(ResourceManager::SRC::GOTITLE).handleId_;
-	imgPressKey_ = resMng_.Load(ResourceManager::SRC::PRESS_KEY).handleId_;
+
+	imgReplay_ = LoadGraph("Data/Image/GameOver/Replay.png");
+	imgSelectReplay_ = LoadGraph("Data/Image/GameOver/SelectRePlay.png");
+	imgBackTitle_ = LoadGraph("Data/Image/GameOver/BackTitle.png");
+	imgSelectBackTitle_ = LoadGraph("Data/Image/GameOver/SelectBackTitle.png");
 
 	cheackCounter_ = 0;
+	selectedIndex_ = 0;
 
 	// 音楽
 	SoundManager::GetInstance().Play(SoundManager::SRC::GAMECLEAR_BGM, Sound::TIMES::LOOP);
@@ -127,6 +129,7 @@ void ClearScene::Init(void)
 
 void ClearScene::Update(void)
 {
+	InputManager& ins = InputManager::GetInstance();
 	cheackCounter_++;
 
 	// アニメーション更新
@@ -148,11 +151,25 @@ void ClearScene::Update(void)
 		isPressKeyAnimStart_ = true;
 	}
 
-	// 入力受付（アニメーション後）
-	if (isAnimEnd_ && CheckHitKeyAll() > 0) {
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
-		// 音楽
-		SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
+	if (cheackCounter_ >= MENU_SELECT_TIME)
+	{
+		if (ins.IsTrgDown(KEY_INPUT_UP) || ins.IsTrgDown(KEY_INPUT_DOWN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
+			selectedIndex_ = 1 - selectedIndex_;
+		}
+
+		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
+			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE, Sound::TIMES::ONCE);
+			if (selectedIndex_ == 0) {
+				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::STAGE_SELECT);
+			}
+			else {
+				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+			}
+		}
 	}
 
 	// 強制遷移
@@ -188,16 +205,27 @@ void ClearScene::Draw(void)
 		);
 	}
 
+	if (cheackCounter_ >= MENU_SELECT_TIME)
+	{
+		if (selectedIndex_ % 2 == 1)
+		{
+			DrawGraph(MENU_POS_X, MENU_PLAY_Y, imgReplay_, true);
+			DrawGraph(MENU_POS_X, MENU_TITLE_Y, imgSelectBackTitle_, true);
+		}
+		else
+		{
+			SetFontSize(MENU_FONT_SIZE);
+			DrawGraph(MENU_POS_X, MENU_PLAY_Y, imgSelectReplay_, true);
+			DrawGraph(MENU_POS_X, MENU_TITLE_Y, imgBackTitle_, true);
+		}
+	}
+
 	//モデル
 	MV1DrawModel(redAlly_.modelId);
 	MV1DrawModel(blueAlly_.modelId);
 	MV1DrawModel(blackAlly_.modelId);
 
 	MV1DrawModel(player_.modelId);
-
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, pressKeyAlpha_);
-	DrawGraph(0, pressKeyY_, imgPressKey_, true);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
 void ClearScene::Release(void)
@@ -206,8 +234,7 @@ void ClearScene::Release(void)
 	DeleteGraph(imgBackGameClaer_);
 	DeleteGraph(imgClearWolrd_);
 	DeleteGraph(imgReplay_);
-	DeleteGraph(imgReturn_);
-	DeleteGraph(imgPressKey_);
+
 
 	SoundManager::GetInstance().Stop(SoundManager::SRC::GAMECLEAR_BGM);
 }

@@ -18,7 +18,7 @@ public:
 	const float ATTACK_END = 35.0f;
 
 	//çUåÇóÕ
-	const int ATTACK_POWER = 1;
+	const int ATTACK_POWER = 5;
 
 	AllyRed();
 

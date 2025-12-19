@@ -232,9 +232,17 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Over/Over.png");
 	resourcesMap_.emplace(SRC::GAMEOVER, std::move(res));
 
-	// ユグドラシルは死んでしまった…
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Over/DieTree.png");
-	resourcesMap_.emplace(SRC::DIETREE, std::move(res));
+	// 本当に終了しますか？
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "End.png");
+	resourcesMap_.emplace(SRC::CONFIRM_END, std::move(res));
+
+	// はい
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Yes.png");
+	resourcesMap_.emplace(SRC::YES, std::move(res));
+
+	// いいえ
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "No.png");
+	resourcesMap_.emplace(SRC::NO, std::move(res));
 
 	// はい選択中
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectYes.png");

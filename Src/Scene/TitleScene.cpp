@@ -1,4 +1,3 @@
-#include <string>
 #include <DxLib.h>
 #include "../Application.h"
 #include "../Utility/AsoUtility.h"
@@ -41,11 +40,11 @@ void TitleScene::Init(void)
 	imgLookRule_ = resMng_.Load(ResourceManager::SRC::LOOK_RULE).handleId_;		//ルールを見る
 	imgAbutton_ = resMng_.Load(ResourceManager::SRC::A_BUTTON).handleId_;		//Aボタン
 	imgConfirmEnd_ = resMng_.Load(ResourceManager::SRC::CONFIRM_END).handleId_;	//本当に終了しますか？画像
+
 	imgYes_ = resMng_.Load(ResourceManager::SRC::YES).handleId_;				//はい画像
 	imgNo_ = resMng_.Load(ResourceManager::SRC::NO).handleId_;					//いいえ画像
 	imgYesSel_ = resMng_.Load(ResourceManager::SRC::SELECT_YES).handleId_;		//選択中はい画像
 	imgNoSel_ = resMng_.Load(ResourceManager::SRC::SELECT_NO).handleId_;		//選択中いいえ画像
-
 
 	selectedIndex_ = 0;
 
@@ -159,7 +158,8 @@ void TitleScene::Update(void)
 				|| ins.IsTrgDown(KEY_INPUT_RIGHT)
 				|| ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_RIGHT)
 				|| ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_LEFT)) {
-				confirmIndex_ = 1 - confirmIndex_; // 「はい」「いいえ」切替
+				SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
+				confirmIndex_ = 1 - confirmIndex_;
 			}
 			if (ins.IsTrgDown(KEY_INPUT_RETURN)||
 				ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
@@ -186,10 +186,12 @@ void TitleScene::Update(void)
 	// === メニュー選択操作 ===
 	if (ins.IsTrgDown(KEY_INPUT_DOWN)||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN)) {
+		SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
 		selectedIndex_ = (selectedIndex_ + 1) % MENU_SELECT;
 	}
 	else if (ins.IsTrgDown(KEY_INPUT_UP)||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP)) {
+		SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
 		selectedIndex_ = (selectedIndex_ + 2) % MENU_SELECT;
 	}
 
@@ -322,29 +324,25 @@ void TitleScene::Draw(void)
 		float t = static_cast<float>(confirmAnimFrame_) / CONFIRM_ANIM_DURATION;
 		if (t > 1.0f) t = 1.0f;
 
-		int alpha = static_cast<int>(GRAY_ALPHA * t);  // 背景透明度
+		int alpha = static_cast<int>(GRAY_ALPHA * t);
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-		DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, black, TRUE);
+		DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, black, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-		// ウィンドウ背景画像がある場合はここに描画（省略可）
-
-		// 「本当に終了しますか？」画像描画
-		SetFontSize(DEFAULT_FONT_SIZE * 7.8125);
-		DrawString(END_STRING_WIDTH, END_STRING_HEIGHT, "本当に終了しますか？", white);
+		DrawGraph(END_STRING_WIDTH, END_STRING_HEIGHT, imgConfirmEnd_, true);
 
 		// 選択中で画像を切り替え
-		if(confirmIndex_==0)
+		if (confirmIndex_ == 0)
 		{
-			SetFontSize(DEFAULT_FONT_SIZE * 8.125);
-			DrawString(YES_STRING_WIDTH, YES_STRING_HEIGHT, "はい", yellow);
-			DrawString(Application::SCREEN_SIZE_X / 2 + 130, Application::SCREEN_SIZE_Y / 2 + 100, "いいえ", white);
+			//はい選択中
+			DrawGraph(YES_STRING_WIDTH, YES_STRING_HEIGHT, imgYesSel_, true);
+			DrawGraph(NO_STRING_WIDTH, NO_STRING_HEIGHT, imgNo_, true);
 		}
 		else
 		{
-			SetFontSize(DEFAULT_FONT_SIZE * 8.125);
-			DrawString(YES_STRING_WIDTH, YES_STRING_HEIGHT, "はい", white);
-			DrawString(NO_STRING_WIDTH, NO_STRING_HEIGHT, "いいえ", yellow);
+			//いいえ選択中
+			DrawGraph(YES_STRING_WIDTH, YES_STRING_HEIGHT, imgYes_, true);
+			DrawGraph(NO_STRING_WIDTH, NO_STRING_HEIGHT, imgNoSel_, true);
 		}
 	}
 }

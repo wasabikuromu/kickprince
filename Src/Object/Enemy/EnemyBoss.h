@@ -6,7 +6,7 @@ class EnemyBoss : public EnemyBase
 public:
 
 	//ボスの最大HP
-	static constexpr int BOSS_MAX_HP = 10;
+	static constexpr int BOSS_MAX_HP = 15;
 
 	// HPバー表示
 	static constexpr int BOSS_HP_BAR_WIDTH = 600;

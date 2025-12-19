@@ -193,9 +193,8 @@ void TutorialScene::Update(void)
 
 	if (PauseMenu()) return;
 
-	//‰E“ü—Í‚Å‡‘—‚è
 	if (ins.IsTrgDown(KEY_INPUT_R) ||
-		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_RIGHT))
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP))
 	{
 		if (!isKicking_)  //’ÊíŽž
 		{
@@ -572,6 +571,7 @@ bool TutorialScene::PauseMenu(void)
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::MENU)
 		&& pauseState_ == PauseState::PauseMenu)
 	{
+		SoundManager::GetInstance().Play(SoundManager::SRC::PAUSE_SE, Sound::TIMES::ONCE);
 		isPaused_ = !isPaused_;
 		pauseSelectIndex_ = 0;
 		mainCamera->SetPaused(isPaused_);
@@ -584,12 +584,19 @@ bool TutorialScene::PauseMenu(void)
 	{
 		if (ins.IsTrgDown(KEY_INPUT_DOWN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
+		{
+			SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
 			pauseSelectIndex_ = (pauseSelectIndex_ + PAUSE_MENU_DOWN) % PAUSE_MENU_ITEM_COUNT;
+		}
+			
 
 		if (ins.IsTrgDown(KEY_INPUT_UP) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP))
+		{
+			SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
 			pauseSelectIndex_ = (pauseSelectIndex_ + PAUSE_MENU_UP) % PAUSE_MENU_ITEM_COUNT;
-
+		}
+			
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{

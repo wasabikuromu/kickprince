@@ -102,30 +102,6 @@ void EnemyBase::UpdatePlay(void)
 	Collision();
 }
 
-//void EnemyBase::UpdateAttack(void)
-//{
-//	animationController_->Play((int)ANIM_TYPE::ATTACK, false);
-//
-//	// 攻撃タイミング
-//	if (!isAttack_ && isAttack_P)
-//	{
-//		isAttack_ = true; // 多重ヒット防止用フラグ
-//		isAttack_P = false;
-//	}
-//	else if (!isAttack_ && isAttack_T)
-//	{
-//		isAttack_ = true;
-//		isAttack_T = false;
-//	}
-//
-//	 //アニメーション終了で次の状態に遷移
-//	if (animationController_->IsEnd() || state_ != STATE::ATTACK) {
-//		isAttack_ = false;
-//		//CollisionAttack();
-//		ChangeState(STATE::IDLE);
-//	}
-//}
-
 void EnemyBase::UpdateDamage(void)
 {
 	animationController_->Play((int)ANIM_TYPE::DAMAGE, false);
@@ -168,11 +144,52 @@ void EnemyBase::Draw(void)
 
 	MV1DrawModel(transform_.modelId);
 
+	//DrawHpBar();
+
 	//デッバグ
 	//DrawDebug();
 
-	// 視野範囲の描画
-	//DrawDebugSearchRange();
+}
+
+void EnemyBase::DrawHpBar(void)
+{
+	VECTOR headPos = GetTransform().pos;
+	headPos.y += 400.0f;
+
+	VECTOR screen = ConvWorldPosToScreenPos(headPos);
+	if (screen.z < 0.0f) return;
+
+	const int BAR_W = 120;
+	const int BAR_H = 16;
+
+	int x = (int)screen.x - BAR_W / 2;
+	int y = (int)screen.y - 10;
+
+	// 枠（黒）
+	DrawBox(
+		x - 1, y - 1,
+		x + BAR_W + 1, y + BAR_H + 1,
+		GetColor(0, 0, 0),
+		false
+	);
+
+	float rate = 1.0f;
+	// 中身（緑）
+	DrawBox(
+		x, y,
+		x + (int)(BAR_W * rate),
+		y + BAR_H,
+		GetColor(0, 255, 0),
+		true
+	);
+
+	// 分割線（黒）
+	const int DIV = 5;
+	for (int i = 1; i < DIV; i++)
+	{
+		int lx = x + BAR_W * i / DIV;
+		DrawLine(lx, y, lx, y + BAR_H, GetColor(0, 0, 0));
+	}
 }
 
 void EnemyBase::Release(void)
@@ -221,13 +238,6 @@ void EnemyBase::Damage(int damage)
 	{
 		ChangeState(STATE::DAMAGE);
 	}
-
-	if (damage == 1)is1damage=true;
-	if (damage == 2)is2damage=true;
-	if (damage == 4)is4damage=true;
-	if (damage == 8)is8damage=true;
-	if (damage == 16)is16damage=true;
-	if (damage == 32)is32damage=true;
 }
 
 #pragma region コリジョン
@@ -265,67 +275,6 @@ bool EnemyBase::IsDeadFinished(void)
 }
 #pragma endregion
 
-//void EnemyBase::AttackCollisionPos(void)
-//{
-//	//プレイヤーとの衝突判定
-//	// 攻撃の方向（エネミー）
-//	VECTOR forward = transform_.quaRot.GetForward();
-//	// 攻撃の開始位置と終了位置
-//	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
-//	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;  // 攻撃の高さ調整
-//
-//	//プレイヤーを見る
-//	EnemyToPlayer();
-//}
-//
-//void EnemyBase::EnemyToPlayer(void)
-//{
-//	//プレイヤーの当たり判定とサイズ
-//	playerCenter_ = player_->GetCollisionPos();
-//	playerRadius_ = player_->GetCollisionRadius();
-//
-//	if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
-//			&& player_->pstate_ != Player::PlayerState::DOWN)
-//	{
-//		isAttack_P = true;
-//		ChangeState(STATE::ATTACK);
-//	}
-//	else if (!AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, playerCenter_, playerRadius_)
-//		|| player_->pstate_ == Player::PlayerState::DOWN)
-//	{
-//		ChangeState(STATE::PLAY);
-//	}
-//}
-//
-//void EnemyBase::CollisionAttack(void)
-//{
-//	//プレイヤーの当たり判定とサイズ
-//	playerCenter_ = player_->GetCollisionPos();
-//	playerRadius_ = player_->GetCollisionRadius();
-//
-//	if(AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_,playerCenter_, playerRadius_))
-//	{
-//		player_->Damage(attackPow_);
-//	}
-//
-//	for (const auto& ally : *ally_)
-//	{
-//		if (!ally || !ally->IsAlive()) continue;
-//
-//		//敵の当たり判定とサイズ
-//		VECTOR allyPos = ally->GetCollisionPos();
-//		float allyRadius = ally->GetCollisionRadius();
-//
-//		//球体同士の当たり判定
-//		if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, allyPos, allyRadius))
-//		{
-//			//ally_->Damage(attackPow_);
-//			//1体のみヒット
-//			break;
-//		}
-//	}
-//}
-
 void EnemyBase::SetGameScene(GameScene* gscene)
 {
 	gScene_ = gscene;
@@ -354,6 +303,7 @@ void EnemyBase::ChangeStateNone(void)
 
 void EnemyBase::ChangeStateIdle(void)
 {
+	animationController_->Play((int)ANIM_TYPE::IDLE, true);
 	stateUpdate_ = std::bind(&EnemyBase::UpdateIdle, this);
 }
 void EnemyBase::ChangeStatePlay(void)
@@ -361,13 +311,9 @@ void EnemyBase::ChangeStatePlay(void)
 	stateUpdate_ = std::bind(&EnemyBase::UpdatePlay, this);
 }
 
-//void EnemyBase::ChangeStateAttack(void)
-//{
-//	stateUpdate_ = std::bind(&EnemyBase::UpdateAttack, this);
-//}
-
 void EnemyBase::ChangeStateDamage(void)
 {
+	animationController_->Play((int)ANIM_TYPE::DAMAGE, false);
 	stateUpdate_ = std::bind(&EnemyBase::UpdateDamage, this);
 }
 
@@ -401,7 +347,7 @@ void EnemyBase::DrawDebug(void)
 
 	// キャラ基本情報
 	//-------------------------------------------------------
-	//// キャラ座標
+	// キャラ座標
 	v = transform_.pos;
 	DrawFormatString(20, 120, white, "キャラ座標 ： (%0.2f, %0.2f, %0.2f)",v.x, v.y, v.z);
 

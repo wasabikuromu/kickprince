@@ -9,28 +9,31 @@ public:
 	//リソース名
 	enum class SRC
 	{
-		TITLE_BGM,		//タイトルシーンのBGM
-		DEMO_BGM,		//でもシーンのBGM
-		GAME_BGM,		//ゲームシーンのBGM
-		GAMEOVER_BGM,	//ゲームオーバーBGM
-		GAMECLEAR_BGM,	//ゲームクリアBGM
-		LEVEL_UP_SE,	//木のレベルアップSE
-		GETWATER_SE,	//水を得たときのSE
-		KICK,			//蹴り
-		RED_ATK,		//赤攻撃
-		BLUE_ATK,		//青攻撃
-		BLACK_ATK,		//黒攻撃
-		SPEEDUP_SE,		//スピードアップSE
-		POWERUP_SE,		//パワーアップSE
-		MUTEKI_SE,		//木が無敵
-		HEAL_SE,		//回復SE
-		E_DOWN_SE,		//敵死亡SE
-		P_DOWN_SE,		//プレイヤー死亡SE
-		P_DAMAGE_SE,	//プレイヤーダメージSE
-		T_DAMAGE_SE,	//木がダメージSE
-		E_DAMAGE_SE,	//敵がダメージSE
-		SET_SE,			//決定のSE
-		WARNING_SE,		//警告音SE
+		TITLE_BGM,			//タイトルシーンのBGM
+		DEMO_BGM,			//チュートリアルシーンのBGM
+		STAGE_SELECT_BGM,	//ステージセレクトのBGM
+		GAME_BGM,			//ゲームシーンのBGM
+		GAMEOVER_BGM,		//ゲームオーバーBGM
+		GAMECLEAR_BGM,		//ゲームクリアBGM
+		LEVEL_UP_SE,		//木のレベルアップSE
+		GETWATER_SE,		//水を得たときのSE
+		KICK,				//蹴り
+		RED_ATK,			//赤攻撃
+		BLUE_ATK,			//青攻撃
+		BLACK_ATK,			//黒攻撃
+		SPEEDUP_SE,			//スピードアップSE
+		POWERUP_SE,			//パワーアップSE
+		MUTEKI_SE,			//木が無敵
+		HEAL_SE,			//回復SE
+		E_DOWN_SE,			//敵死亡SE
+		P_DOWN_SE,			//プレイヤー死亡SE
+		P_DAMAGE_SE,		//プレイヤーダメージSE
+		T_DAMAGE_SE,		//木がダメージSE
+		E_DAMAGE_SE,		//敵がダメージSE
+		SET_SE,				//決定のSE
+		PAUSE_SE,			//ポーズ時のSE
+		CURSOR_MOVE_SE,		//カーソル移動のSE
+		WARNING_SE,			//警告音SE
 	};
 
 	// 明示的にインステンスを生成する

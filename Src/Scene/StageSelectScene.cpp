@@ -16,6 +16,9 @@ void StageSelectScene::Init(void)
     imgStage4_ = resMng_.Load(ResourceManager::SRC::STAGE_4).handleId_;
     imgStage5_ = resMng_.Load(ResourceManager::SRC::STAGE_5).handleId_;
     imgSelectUI_ = resMng_.Load(ResourceManager::SRC::SELECT_UI).handleId_;
+
+    //‰¹Šy
+    SoundManager::GetInstance().Play(SoundManager::SRC::STAGE_SELECT_BGM, Sound::TIMES::LOOP);
 }
 
 void StageSelectScene::Update(void)
@@ -24,12 +27,18 @@ void StageSelectScene::Update(void)
 
     if (ins.IsTrgDown(KEY_INPUT_DOWN) ||
         ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
+    {
+        SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
         selectIndex_ = (selectIndex_ + 1) % maxStage_;
-
+    }
+       
     if (ins.IsTrgDown(KEY_INPUT_UP) ||
         ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP))
+    {
+        SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
         selectIndex_ = (selectIndex_ - 1 + maxStage_) % maxStage_;
-
+    }
+        
     //Œˆ’è
     if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
         ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
@@ -72,4 +81,5 @@ void StageSelectScene::Draw(void)
 
 void StageSelectScene::Release(void)
 {
+    SoundManager::GetInstance().Stop(SoundManager::SRC::STAGE_SELECT_BGM);
 }

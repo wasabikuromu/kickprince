@@ -23,7 +23,7 @@ private:
 	static constexpr VECTOR PLAYER_POS = { 120.0f, -300.0f, 0.0f };
 	static constexpr VECTOR PLAYER_SIZE = { 0.018f, 0.018f, 0.018f };
 
-	static constexpr float ANIM_SPEED = 30.0f;
+	static constexpr float ANIM_SPEED = 32.0f;
 
 	// アニメーション用定数
 	static constexpr int MESSAGE_Y = 800;
@@ -37,11 +37,18 @@ private:
 	static constexpr int PRESS_KEY_FADE_SPEED = 5;
 	static constexpr float ENEMY_FLOAT_SPEED_Y = 4.0f;
 
-	// 強制遷移までの時間
+	//時間制御
+	static constexpr int MENU_SELECT_TIME = 420;
 	static constexpr int AUTO_RETURN_FRAME = 3600;
 
 	// アルファ値の最大値
 	static constexpr int ALPHA_MAX = 255;
+
+	//メニュー文字
+	static constexpr int MENU_FONT_SIZE = 55;
+	static constexpr int MENU_PLAY_Y = 800;
+	static constexpr int MENU_TITLE_Y = 890;
+	static constexpr int MENU_POS_X = 1470;
 
 	// 敵の初期設定
 	static constexpr VECTOR RED_ALLY_INIT_POS = { -490.0f, -200.0f, 50.0f };
@@ -68,9 +75,14 @@ private:
 	int imgClear_;
 	int imgBackGameClaer_;
 	int imgClearWolrd_;
+
 	int imgReplay_;
-	int imgReturn_;
-	int imgPressKey_;
+	int imgSelectReplay_;
+	int imgBackTitle_;
+	int imgSelectBackTitle_;
+
+	// メニュー
+	int selectedIndex_;       //選択中のメニューインデックス
 
 	// カウンター
 	int cheackCounter_;

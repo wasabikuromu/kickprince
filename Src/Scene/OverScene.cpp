@@ -43,9 +43,6 @@ OverScene::OverScene(void)
 	selectedIndex_ = 0;
 	isMenuActive_ = false;
 
-	maskLeftX_ = 0;
-	maskRightX_ = 0;
-
 	cheackCounter_ = 0;
 }
 
@@ -60,7 +57,6 @@ void OverScene::Init(void)
 
 	// âÊëúì«Ç›çûÇ›
 	imgGameOver_ = resMng_.Load(ResourceManager::SRC::GAMEOVER).handleId_;
-	imgDieTree_ = resMng_.Load(ResourceManager::SRC::DIETREE).handleId_;
 	imgLightCircle_ = resMng_.Load(ResourceManager::SRC::LIGHT).handleId_;
 
 	imgReplay_ = LoadGraph("Data/Image/GameOver/Replay.png");
@@ -107,11 +103,13 @@ void OverScene::Update(void)
 		if (ins.IsTrgDown(KEY_INPUT_UP) || ins.IsTrgDown(KEY_INPUT_DOWN)||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP)||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
 			selectedIndex_ = 1 - selectedIndex_;
 		}
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN)||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN)) {
+			SoundManager::GetInstance().Play(SoundManager::SRC::SET_SE , Sound::TIMES::ONCE);
 			if (selectedIndex_ == 0) {
 				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::STAGE_SELECT);
 			}

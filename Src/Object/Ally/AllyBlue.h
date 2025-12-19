@@ -20,7 +20,7 @@ public:
 	const float ATTACK_END = 40.0f;
 
 	//çUåÇóÕ
-	const int ATTACK_POWER = 4;
+	const int ATTACK_POWER = 5;
 
 	AllyBule();
 

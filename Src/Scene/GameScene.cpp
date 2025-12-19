@@ -158,7 +158,6 @@ void GameScene::Update(void)
 
 	if (PauseMenu()) return;
 
-	//右入力で順送り
 	if (ins.IsTrgDown(KEY_INPUT_R) ||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP))
 	{
@@ -444,7 +443,7 @@ void GameScene::CheckEndCondition(void)
 void GameScene::UpdateRetryMenu(void)
 {
 	InputManager& ins = InputManager::GetInstance();
-	// 矢印キーで選択
+	//矢印キーで選択
 	if (ins.IsTrgDown(KEY_INPUT_DOWN) ||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
 	{
@@ -453,7 +452,7 @@ void GameScene::UpdateRetryMenu(void)
 	if (ins.IsTrgDown(KEY_INPUT_UP) ||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP))
 	{
-		menuIndex_ = (menuIndex_ + 2 - 1) % 2; // (menuIndex_ - 1 + 2) % 2
+		menuIndex_ = (menuIndex_ + 2 - 1) % 2;
 	}
 
 	// 決定キー
@@ -565,8 +564,10 @@ void GameScene::EnemyCreate(void)
 	};
 
 	enemySpawnTable_[2] = {
-		{ VGet(X_ENEMY_POS + 200, Y_ENEMY_POS, 1500), 1 },
-		{ VGet(X_ENEMY_POS - 200, Y_ENEMY_POS, 1500), 1 },
+		{ VGet(X_ENEMY_POS + 170, Y_ENEMY_POS, 1500), 1 },
+		{ VGet(X_ENEMY_POS - 170, Y_ENEMY_POS, 1500), 1 },
+		{ VGet(X_ENEMY_POS + 220, Y_ENEMY_POS, 1750), 1 },
+		{ VGet(X_ENEMY_POS - 220, Y_ENEMY_POS, 1750), 1 },
 	};
 
 	enemySpawnTable_[3] = {
@@ -580,8 +581,8 @@ void GameScene::EnemyCreate(void)
 	};
 
 	enemySpawnTable_[5] = {
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 1500), 0 },
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 2500), 0 },
+		{ VGet(X_ENEMY_POS + 170, Y_ENEMY_POS, 1500), 1 },
+		{ VGet(X_ENEMY_POS - 170, Y_ENEMY_POS, 1500), 1 },
 		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 3500), 3 },
 	};
 }
@@ -602,6 +603,7 @@ bool GameScene::PauseMenu(void)
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::MENU)
 		&& pauseState_ == PauseState::PauseMenu)
 	{
+		SoundManager::GetInstance().Play(SoundManager::SRC::PAUSE_SE, Sound::TIMES::ONCE);
 		isPaused_ = !isPaused_;
 		pauseSelectIndex_ = 0;
 		mainCamera->SetPaused(isPaused_);
@@ -612,13 +614,19 @@ bool GameScene::PauseMenu(void)
 
 	if (pauseState_ == PauseState::PauseMenu)
 	{
-		if (ins.IsTrgDown(KEY_INPUT_DOWN)||
-			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
+		if (ins.IsTrgDown(KEY_INPUT_DOWN) ||
+		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
+		{
+			SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
 			pauseSelectIndex_ = (pauseSelectIndex_ + PAUSE_MENU_DOWN) % PAUSE_MENU_ITEM_COUNT;
+		}
 
-		if (ins.IsTrgDown(KEY_INPUT_UP)||
+		if (ins.IsTrgDown(KEY_INPUT_UP) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP))
+		{
+			SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
 			pauseSelectIndex_ = (pauseSelectIndex_ + PAUSE_MENU_UP) % PAUSE_MENU_ITEM_COUNT;
+		}
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN)||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
@@ -671,11 +679,17 @@ bool GameScene::StageClearMenu(void)
 	{
 		if (ins.IsTrgDown(KEY_INPUT_DOWN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
+		{
+			SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
 			stageSelectIndex_ = (stageSelectIndex_ + 1) % 3;
+		}
 
 		if (ins.IsTrgDown(KEY_INPUT_UP) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP))
+		{
+			SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
 			stageSelectIndex_ = (stageSelectIndex_ + 3 - 1) % 3;
+		}
 
 		if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 			ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))

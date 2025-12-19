@@ -28,7 +28,7 @@ void SoundManager::Init(void)
 
 	// タイトル
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "TitleBGM.mp3");
-	res.ChangeMaxVolume(0.7);
+	res.ChangeMaxVolume(0.5);
 	soundMap_.emplace(SRC::TITLE_BGM, res);
 
 	//デモ
@@ -36,9 +36,14 @@ void SoundManager::Init(void)
 	res.ChangeMaxVolume(0.7);
 	soundMap_.emplace(SRC::DEMO_BGM, res);
 
+	// ステージセレクト
+	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "StageSelectBGM.mp3");
+	res.ChangeMaxVolume(0.7);
+	soundMap_.emplace(SRC::STAGE_SELECT_BGM, res);
+
 	// ゲーム
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "GameBGM.mp3");
-	res.ChangeMaxVolume(0.55);
+	res.ChangeMaxVolume(0.45);
 	soundMap_.emplace(SRC::GAME_BGM, res);
 
 	// ゲームオーバー
@@ -130,6 +135,16 @@ void SoundManager::Init(void)
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "SetSE.mp3");
 	res.ChangeMaxVolume(0.5);
 	soundMap_.emplace(SRC::SET_SE, res);
+
+	// ポーズ
+	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "PauseSE.mp3");
+	res.ChangeMaxVolume(0.5);
+	soundMap_.emplace(SRC::PAUSE_SE, res);
+
+	// カーソル
+	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "CursorMove.mp3");
+	res.ChangeMaxVolume(0.8);
+	soundMap_.emplace(SRC::CURSOR_MOVE_SE, res);
 
 	// 警告
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "WarningSE.mp3");

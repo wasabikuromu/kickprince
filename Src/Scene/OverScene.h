@@ -69,7 +69,6 @@ private:
 	// 画像
 	int imgGameOver_;
 	int imgCursor_[2];
-	int imgDieTree_;
 	int imgLightCircle_;
 	int imgReplay_;
 	int imgSelectReplay_;
@@ -77,12 +76,8 @@ private:
 	int imgSelectBackTitle_;
 
 	// メニュー
-	int selectedIndex_;       // 選択中のメニューインデックス
+	int selectedIndex_;       //選択中のメニューインデックス
 	bool isMenuActive_;
-
-	// 死んでしまった…
-	int maskLeftX_;   // 黒帯の左端X座標
-	int maskRightX_;  // 黒帯の右端X座標（固定）
 
 	// カウンター
 	int cheackCounter_;

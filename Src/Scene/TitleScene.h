@@ -70,13 +70,13 @@ public:
 	static constexpr int TEXT_HEIGHT_2 = 530;
 	static constexpr int TEXT_HEIGHT_3 = 640;
 
-	static constexpr int END_STRING_WIDTH = 360;
-	static constexpr int END_STRING_HEIGHT = 280;
+	static constexpr int END_STRING_WIDTH = 400;
+	static constexpr int END_STRING_HEIGHT = 120;
 
-	static constexpr int YES_STRING_WIDTH = 560;
+	static constexpr int YES_STRING_WIDTH = 220;
 	static constexpr int YES_STRING_HEIGHT = 640;
 
-	static constexpr int NO_STRING_WIDTH = 1090;
+	static constexpr int NO_STRING_WIDTH = 990;
 	static constexpr int NO_STRING_HEIGHT = 640;
 
 	static constexpr float BLINK_SPEED = 0.003f;
@@ -118,6 +118,7 @@ private:
 	int imgNo_;
 	int imgYesSel_;
 	int imgNoSel_;
+	int imgEnd_;
 	int imgAbutton_;
 	int imgP2_[2];
 

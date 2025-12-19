@@ -99,6 +99,7 @@ public:
 	virtual void SetParam(void){};		// パラメータ設定(純粋仮想関数)
 	virtual void Update(void);			// 更新処理(毎フレーム実行)
 	virtual void Draw(void);			// 描画処理(毎フレーム実行)
+	virtual void DrawHpBar(void);		//HPバー
 	virtual void DrawBossHpBar(void){};	//ボスのHPバー
 	virtual void Release(void);			// 解放処理(最後の１回のみ実行)
 
@@ -167,6 +168,7 @@ protected:
 	VECTOR attackCollisionPos_; //紫の球体の移動後座標
 
 	int hp_;	// 体力
+	int maxHp_;
 	int attackPow_; //攻撃力
 
 	bool isAlive_;	// 生存判定

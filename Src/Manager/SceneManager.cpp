@@ -4,7 +4,6 @@
 #include "../Common/Fader.h"
 #include "../Manager/GravityManager.h"
 #include "../Scene/TitleScene.h"
-#include "../Scene/DemoScene.h"
 #include "../Scene/TutorialScene.h"
 #include "../Scene/StageSelectScene.h"
 #include "../Scene/GameScene.h"
@@ -263,12 +262,6 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	{
 	case SCENE_ID::TITLE:
 		scene_ = std::make_unique<TitleScene>();
-		ChangeFont("PixelMplus10");
-		SetFontSize(16);
-		break;
-	case SCENE_ID::DEMO:
-		scene_ = std::make_unique<DemoScene>();
-		SetFontSize(55);
 		break;
 	case SCENE_ID::TUTORIAL:
 		scene_ = std::make_unique<TutorialScene>();

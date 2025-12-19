@@ -5,7 +5,7 @@ class EnemyVirus : public EnemyBase
 {
 public:
 
-	static constexpr int HP = 1;
+	static constexpr int HP = 2;
 
 	EnemyVirus();
 
