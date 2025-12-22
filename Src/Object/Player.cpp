@@ -25,6 +25,10 @@ Player::Player(void)
 	effectSmokeResId_ = -1;
 	effectSmokePleyId_ = -1;
 
+	//チャージエフェクト
+	effectChargeResId_ = -1;
+	effectChargePlayId_ = -1;
+
 	//衝突チェック
 	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
 	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
@@ -113,6 +117,10 @@ void Player::Init(void)
 	//回復エフェクト
 	effectHealResId_ = ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::EFF_HEAL).handleId_;
+
+	//チャージエフェクト
+	effectChargeResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::EFF_CHARGE).handleId_;
 
 	//アニメーションの設定
 	InitAnimation();
@@ -319,17 +327,8 @@ void Player::UpdatePlay(void)
 		transform_.quaRot, moveRot, 0.2f
 	);
 
-	//重力方向に沿って回転させる
-	//transform_.quaRot = grvMng_.GetTransform().quaRot;
-	//transform_.quaRot = transform_.quaRot.Mult(playerRotY_);
-
 	//歩きエフェクト
 	EffectFootSmoke();
-
-	////エフェクトの位置
-	//SetPosPlayingEffekseer3DEffect(effectPowerPleyId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
-	//SetPosPlayingEffekseer3DEffect(effectSpeedPleyId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
-	//SetPosPlayingEffekseer3DEffect(effectHealPleyId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
 }
 
 void Player::DrawShadow(void)
@@ -858,7 +857,7 @@ void Player::ProcessAttack(void)
 	if (isAttack_)
 	{
 		attackTimer_ += scnMng_.GetDeltaTime();
-
+	
 		if (attackTimer_ >= attackDuration_)
 		{
 			// 攻撃アニメ終了
@@ -886,6 +885,7 @@ void Player::ProcessAttack(void)
 		isChargeIncreasing_ = true;
 		chargeTime_ = 0.0f;
 		animationController_->Play((int)ANIM_TYPE::IDLE, true);
+
 	}
 
 
@@ -894,6 +894,8 @@ void Player::ProcessAttack(void)
 	//============================================================
 	if (isCharging_)
 	{
+		//チャージ！
+		EffectCharge();
 		float dt = scnMng_.GetDeltaTime();
 
 		if (isChargeIncreasing_)
@@ -1170,4 +1172,17 @@ void Player::EffectHeal(void)
 
 	//エフェクトの大きさ
 	SetScalePlayingEffekseer3DEffect(effectHealPleyId_, scale, scale, scale);
+}
+
+void Player::EffectCharge(void)
+{
+	//エフェクト再生
+	effectChargePlayId_ = PlayEffekseer3DEffect(effectChargeResId_);
+
+	//エフェクトの大きさ
+	SetScalePlayingEffekseer3DEffect(effectChargePlayId_, 
+		(chargeTime_ + 2.0f) * 10.0f, 10.0f, (chargeTime_ + 2.0f) * 10.0f);
+
+	//エフェクトの位置
+	SetPosPlayingEffekseer3DEffect(effectChargePlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
 }

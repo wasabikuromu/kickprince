@@ -284,6 +284,7 @@ private:
 	void EffectPower(void);			//パワーアップエフェクト
 	void EffectSpeed(void);			//スピードアップエフェクト
 	void EffectHeal(void);			//回復エフェクト
+	void EffectCharge(void);		//キックチャージ
 
 	//移動関連
 	VECTOR moveDir_;				//移動方向
@@ -356,6 +357,10 @@ private:
 	float stepHeal_;
 	int effectHealResId_;
 	int effectHealPleyId_;
+
+	//
+	int effectChargeResId_;
+	int effectChargePlayId_;
 
 	//ポインタ
 	const std::vector<std::shared_ptr<AllyBase>>* ally_;

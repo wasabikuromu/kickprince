@@ -28,7 +28,6 @@ public:
 		E_DOWN_SE,			//敵死亡SE
 		P_DOWN_SE,			//プレイヤー死亡SE
 		P_DAMAGE_SE,		//プレイヤーダメージSE
-		T_DAMAGE_SE,		//木がダメージSE
 		E_DAMAGE_SE,		//敵がダメージSE
 		SET_SE,				//決定のSE
 		PAUSE_SE,			//ポーズ時のSE

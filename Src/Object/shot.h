@@ -8,7 +8,7 @@ class EnemyBase; // ‘O•ûéŒ¾
 class Shot
 {
 public:
-    static constexpr float DEFAULT_RADIUS = 70.0f;      //’e‚Ì”¼Œa
+    static constexpr float DEFAULT_RADIUS = 150.0f;      //’e‚Ì”¼Œa
     static constexpr float DEFAULT_SPEED = 40.0f;       //’e‘¬
     static constexpr float MAX_DISTANCE = 5000.0f;      //Á‚¦‚é‹——£
 

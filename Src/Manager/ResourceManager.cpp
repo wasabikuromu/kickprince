@@ -368,6 +368,23 @@ void ResourceManager::Init(void)
 	//âÒïú
 	res = std::make_unique<RES>(RES_T::EFFEKSEER, PATH_EFF + "HealEffect.efkefc");
 	resourcesMap_.emplace(SRC::EFF_HEAL, std::move(res));
+
+	//É`ÉÉÅ[ÉW
+	res = std::make_unique<RES>(RES_T::EFFEKSEER, PATH_EFF + "Charge.efkefc");
+	resourcesMap_.emplace(SRC::EFF_CHARGE, std::move(res));
+
+	//ê‘
+	res = std::make_unique<RES>(RES_T::EFFEKSEER, PATH_EFF + "Slash.efkefc");
+	resourcesMap_.emplace(SRC::EFF_RED_ATK, std::move(res));
+
+	//ê¬
+	res = std::make_unique<RES>(RES_T::EFFEKSEER, PATH_EFF + "Laser.efkefc");
+	resourcesMap_.emplace(SRC::EFF_BLUE_ATK, std::move(res));
+
+	//çï
+	res = std::make_unique<RES>(RES_T::EFFEKSEER, PATH_EFF + "HighKick.efkefc");
+	resourcesMap_.emplace(SRC::EFF_BLACK_ATK, std::move(res));
+	
 }
 
 void ResourceManager::Release(void)

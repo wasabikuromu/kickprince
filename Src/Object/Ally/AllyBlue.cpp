@@ -1,3 +1,4 @@
+#include <EffekseerForDXLib.h>
 #include "AllyBlue.h"
 #include "../../Application.h"
 #include "../Common/AnimationController.h"
@@ -35,10 +36,14 @@ void AllyBule::SetParam(void)
 	// モデルデータをいくつもメモリ上に存在させない
 	transform_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ALLY_BLUE));
 
-	transform_.scl = { ALLY_SIZE,ALLY_SIZE,ALLY_SIZE };				// 大きさの設定
+	transform_.scl = { ALLY_SIZE,ALLY_SIZE,ALLY_SIZE };
 	transform_.quaRotLocal = Quaternion::Euler(AsoUtility::Deg2RadF(0.0f)
-		, AsoUtility::Deg2RadF(DEGREE), 0.0f);//クォータニオンをいじると向きが変わる
-	transform_.dir = { AsoUtility::VECTOR_ZERO };						// 右方向に移動する
+		, AsoUtility::Deg2RadF(DEGREE), 0.0f);
+	transform_.dir = { AsoUtility::VECTOR_ZERO };
+
+	//チャージエフェクト
+	effectAttackResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::EFF_BLUE_ATK).handleId_;
 
 	speed_ = SPEED;		// 移動スピード
 
@@ -55,6 +60,22 @@ void AllyBule::SetParam(void)
 
 	// 初期状態
 	ChangeState(STATE::IDLE);
+}
+
+void AllyBule::EffectAttack(void)
+{
+	//エフェクト再生
+	effectAttackPlayId_ = PlayEffekseer3DEffect(effectAttackResId_);
+
+	//エフェクトの大きさ
+	SetScalePlayingEffekseer3DEffect(effectAttackPlayId_, 100.0f, 100.0f, 100.0f);
+
+	//エフェクトの位置
+	SetPosPlayingEffekseer3DEffect(effectAttackPlayId_,
+		transform_.pos.x, transform_.pos.y + 75.0f, transform_.pos.z + 20.0f);
+
+	//エフェクトの回転
+	SetRotationPlayingEffekseer3DEffect(effectAttackPlayId_, 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f);
 }
 
 void AllyBule::UpdateIdle(void)
@@ -163,6 +184,8 @@ void AllyBule::CollisionAttack(void)
 	//攻撃可能フレーム範囲内 かつ isAttack_ が true のときのみ処理
 	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_)
 	{
+		//EffectAttack();
+
 		for (const auto& enemy : *enemy_)
 		{
 			if (!enemy || !enemy->IsAlive()) continue;

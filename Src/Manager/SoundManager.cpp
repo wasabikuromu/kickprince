@@ -56,16 +56,6 @@ void SoundManager::Init(void)
 	res.ChangeMaxVolume(0.8);
 	soundMap_.emplace(SRC::GAMECLEAR_BGM, res);
 
-	// レベルアップ
-	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "LevelUpSE.mp3");
-	res.ChangeMaxVolume(0.8);
-	soundMap_.emplace(SRC::LEVEL_UP_SE, res);
-
-	// 水ゲット
-	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "GetWeterSE.mp3");
-	res.ChangeMaxVolume(3.0);
-	soundMap_.emplace(SRC::GETWATER_SE, res);
-
 	// プレイヤー攻撃
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "PlayerAtk.mp3");
 	res.ChangeMaxVolume(0.8);
@@ -78,33 +68,13 @@ void SoundManager::Init(void)
 
 	// 青攻撃
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "BlueAtk.mp3");
-	res.ChangeMaxVolume(0.8);
+	res.ChangeMaxVolume(0.55);
 	soundMap_.emplace(SRC::BLUE_ATK, res);
 
 	// 黒攻撃
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "BlackAtk.mp3");
-	res.ChangeMaxVolume(0.8);
+	res.ChangeMaxVolume(0.7);
 	soundMap_.emplace(SRC::BLACK_ATK, res);
-
-	// スピードアップ
-	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "SpeedUpSE.mp3");
-	res.ChangeMaxVolume(0.8);
-	soundMap_.emplace(SRC::SPEEDUP_SE, res);
-
-	// パワーアップ
-	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "PowerUpSE.mp3");
-	res.ChangeMaxVolume(0.8);
-	soundMap_.emplace(SRC::POWERUP_SE, res);
-
-	// 木が無敵
-	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "MutekiSE.mp3");
-	res.ChangeMaxVolume(0.8);
-	soundMap_.emplace(SRC::MUTEKI_SE, res);
-
-	// 回復
-	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "HealSE.mp3");
-	res.ChangeMaxVolume(0.8);
-	soundMap_.emplace(SRC::HEAL_SE, res);
 
 	// 敵死亡
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "EDownSE.mp3");
@@ -120,11 +90,6 @@ void SoundManager::Init(void)
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "PDamageSE.mp3");
 	res.ChangeMaxVolume(1.0);
 	soundMap_.emplace(SRC::P_DAMAGE_SE, res);
-
-	// 木ダメージ
-	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "TDamageSE.mp3");
-	res.ChangeMaxVolume(0.8);
-	soundMap_.emplace(SRC::T_DAMAGE_SE, res);
 
 	// 敵ダメージ
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "EDamageSE.mp3");
@@ -150,7 +115,6 @@ void SoundManager::Init(void)
 	res = Sound(Sound::TYPE::SOUND_2D, Application::PATH_SOUND + "WarningSE.mp3");
 	res.ChangeMaxVolume(1.5);
 	soundMap_.emplace(SRC::WARNING_SE, res);
-
 }
 
 void SoundManager::Release(void)

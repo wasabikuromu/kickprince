@@ -28,6 +28,9 @@ public:
 	// パラメータ設定(純粋仮想関数)
 	void SetParam(void) override;
 
+	//エフェクト
+	void EffectAttack(void) override;
+
 protected:
 
 	void UpdateAttack(void) override;

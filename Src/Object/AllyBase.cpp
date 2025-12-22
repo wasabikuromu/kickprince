@@ -47,6 +47,10 @@ AllyBase::AllyBase()
 	//衝突チェック
 	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
 	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
+
+	//エフェクト
+	effectAttackResId_ = -1;
+	effectAttackResId_ = -1;
 }
 
 AllyBase::~AllyBase(void)
@@ -210,8 +214,8 @@ void AllyBase::Draw(void)
 	//モデル反映
 	MV1SetScale(transform_.modelId, transform_.scl);
 	MV1SetPosition(transform_.modelId, transform_.pos);
-
 	MV1DrawModel(transform_.modelId);
+
 	DrawDamage();
 
 	DrawShadow();

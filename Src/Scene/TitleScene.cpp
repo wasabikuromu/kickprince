@@ -52,6 +52,7 @@ void TitleScene::Init(void)
 
 	// ‰¹Šy
 	SoundManager::GetInstance().Play(SoundManager::SRC::TITLE_BGM, Sound::TIMES::LOOP);
+
 	player_.SetModel(resMng_.Load(ResourceManager::SRC::PLAYER).handleId_);
 	redAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_RED).handleId_);
 	blueAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_BLUE).handleId_);

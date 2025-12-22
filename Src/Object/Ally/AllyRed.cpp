@@ -1,3 +1,4 @@
+#include <EffekseerForDXLib.h>
 #include "AllyRed.h"
 #include "../../Application.h"
 #include "../Common/AnimationController.h"
@@ -33,12 +34,18 @@ void AllyRed::SetParam(void)
 	//モデルデータをいくつもメモリ上に存在させない
 	transform_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ALLY_RED));
 
-	transform_.scl = { ALLY_SIZE,ALLY_SIZE,ALLY_SIZE };				// 大きさの設定
+	transform_.scl = { ALLY_SIZE,ALLY_SIZE,ALLY_SIZE };
+
 	transform_.quaRotLocal = Quaternion::Euler(AsoUtility::Deg2RadF(0.0f)
-			,AsoUtility::Deg2RadF(DEGREE), 0.0f);//クォータニオンをいじると向きが変わる
-	transform_.dir = { AsoUtility::VECTOR_ZERO };						// 右方向に移動する
+			,AsoUtility::Deg2RadF(DEGREE), 0.0f);
+
+	transform_.dir = { AsoUtility::VECTOR_ZERO };
 
 	attackPow_ = ATTACK_POWER;
+
+	//チャージエフェクト
+	effectAttackResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::EFF_RED_ATK).handleId_;
 
 	speed_ = SPEED;		//移動スピード
 
@@ -53,6 +60,19 @@ void AllyRed::SetParam(void)
 
 	// 初期状態
 	ChangeState(STATE::IDLE);
+}
+
+void AllyRed::EffectAttack(void)
+{
+	//エフェクト再生
+	effectAttackPlayId_ = PlayEffekseer3DEffect(effectAttackResId_);
+
+	//エフェクトの大きさ
+	SetScalePlayingEffekseer3DEffect(effectAttackPlayId_, 50.0f, 50.0f, 50.0f);
+
+	//エフェクトの位置
+	SetPosPlayingEffekseer3DEffect(effectAttackPlayId_,
+		transform_.pos.x, transform_.pos.y + 130.0f, transform_.pos.z + 200.0f);
 }
 
 void AllyRed::UpdateAttack(void)
@@ -100,8 +120,8 @@ void AllyRed::CollisionAttack(void)
 	//エネミーとの衝突判定
 	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_)
 	{
+		EffectAttack();
 		SoundManager::GetInstance().Play(SoundManager::SRC::RED_ATK, Sound::TIMES::FORCE_ONCE);
-
 		for (const auto& enemy : *enemy_)
 		{
 			if (!enemy || !enemy->IsAlive()) continue;

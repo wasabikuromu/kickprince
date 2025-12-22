@@ -1,3 +1,4 @@
+#include <EffekseerForDXLib.h>
 #include "AllyBlack.h"
 #include "../../Application.h"
 #include "../Common/AnimationController.h"
@@ -38,6 +39,10 @@ void AllyBlack::SetParam(void)
 		,AsoUtility::Deg2RadF(DEGREE), 0.0f);//クォータニオンをいじると向きが変わる
 	transform_.dir = { AsoUtility::VECTOR_ZERO };						// 右方向に移動する
 
+	//チャージエフェクト
+	effectAttackResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::EFF_BLACK_ATK).handleId_;
+
 	speed_ = SPEED;		// 移動スピード
 
 	attackPow_ = ATTACK_POWER;
@@ -53,6 +58,19 @@ void AllyBlack::SetParam(void)
 
 	// 初期状態
 	ChangeState(STATE::IDLE);
+}
+
+void AllyBlack::EffectAttack(void)
+{
+	//エフェクト再生
+	effectAttackPlayId_ = PlayEffekseer3DEffect(effectAttackResId_);
+
+	//エフェクトの大きさ
+	SetScalePlayingEffekseer3DEffect(effectAttackPlayId_, 30.0f, 30.0f, 30.0f);
+
+	//エフェクトの位置
+	SetPosPlayingEffekseer3DEffect(effectAttackPlayId_,
+		transform_.pos.x, transform_.pos.y + 130.0f, transform_.pos.z + 200.0f);
 }
 
 void AllyBlack::UpdateAttack(void)
@@ -102,6 +120,7 @@ void AllyBlack::CollisionAttack(void)
 	//攻撃可能フレーム範囲内 かつ isAttack_ が true のときのみ処理
 	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_)
 	{
+		EffectAttack();
 		SoundManager::GetInstance().Play(SoundManager::SRC::BLACK_ATK, Sound::TIMES::FORCE_ONCE);
 
 		for (const auto& enemy : *enemy_)

@@ -21,12 +21,13 @@ void Shot::Update()
 
 void Shot::Draw()
 {
-    SetDrawBlendMode(DX_BLENDMODE_ADD, 255);
+    SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 
-    unsigned int color = GetColor(100, 200, 255);
-    DrawSphere3D(pos_, radius_, 16, color, TRUE, true);
+    unsigned int color = GetColor(0, 255, 255);
 
-    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+    DrawSphere3D(pos_, radius_, 16, color, true, true);
+
+    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 }
 
 bool Shot::CheckCollision(EnemyBase* enemy)

@@ -142,6 +142,8 @@ public:
 	virtual void DrawBossHpBar(void){};	//ボスのHPバー
 	virtual void Release(void);			//解放処理(最後の１回のみ実行)
 
+	virtual void EffectAttack(void) {};			//キックチャージ
+
 	//球の生成
 	virtual void DrawShots(void);
 
@@ -224,6 +226,10 @@ protected:
 
 	int hp_;	// 体力
 	int attackPow_; //攻撃力
+
+	//エフェクト
+	int effectAttackResId_;
+	int effectAttackPlayId_;
 
 	VECTOR jumpPow_;
 

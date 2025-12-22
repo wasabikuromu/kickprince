@@ -154,7 +154,11 @@ public:
 		TREE_RANGE,
 		EFF_POWER,
 		EFF_SPEED,
-		EFF_HEAL
+		EFF_HEAL,
+		EFF_CHARGE,
+		EFF_RED_ATK,
+		EFF_BLUE_ATK,
+		EFF_BLACK_ATK,
 	};
 
 	// 明示的にインステンスを生成する

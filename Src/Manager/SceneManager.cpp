@@ -58,34 +58,31 @@ void SceneManager::Init(void)
 
 void SceneManager::Init3D(void)
 {
-
 	// 背景色設定
 	SetBackgroundColor(0, 139, 139);
 
-	// Zバッファを有効にする
+	//Zバッファを有効にする
 	SetUseZBuffer3D(true);
 
-	// Zバッファへの書き込みを有効にする
+	//Zバッファへの書き込みを有効にする
 	SetWriteZBuffer3D(true);
 
-	// バックカリングを有効にする
+	//バックカリングを有効にする
 	SetUseBackCulling(true);
 
-	// ライトの設定
+	//ライトの設定
 	SetUseLighting(true);
 	
-	// ライトの設定
+	//ライトの設定
 	ChangeLightTypeDir({0.3f,-3.0f,0.3f});
 
 	//環境光
 	SetGlobalAmbientLight(GetColorF(0.3f, 0.3f, 0.3f, 1.0f));
 
-
-	// フォグ設定
+	//フォグ設定
 	SetFogEnable(true);
 	SetFogColor(5, 5, 5);
 	SetFogStartEnd(10000.0f, 20000.0f);
-
 }
 
 void SceneManager::Update(void)
