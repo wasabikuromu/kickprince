@@ -14,34 +14,31 @@ class AllyBase;
 class EnemyBase : public ActorBase
 {
 public:
-	//ダメージ関連
-	static constexpr float D_CNT = 120;
-	static constexpr float D_POS = 100;
 
 	//デバッグ &　汎用
-	static constexpr float ZERO = 0.0f;	//初期化の値用
+	static constexpr float ZERO = 0.0f;					//初期化の値用
 	static constexpr float VALUE_ONE = 1.0f;
 	static constexpr float VALUE_TWO = 2.0f;
 	static constexpr int  VALUE_SIXTY = 60;
 
-	//敵の範囲用
-	static constexpr float VIEW_RANGE = 500.0f;	// 視野の広さ
-	static constexpr float VIEW_ANGLE = 15.0f;	// 視野角
+	//敵の共通用球体座標
+	static constexpr float COLLOSION_RADIUS = 250.0f;
 
-	// 攻撃の位置オフセット
-	static constexpr float ATTACK_FORWARD_OFFSET = 55.0f;	// 前方向
-	static constexpr float ATTACK_HEIGHT_OFFSET = 100.0f;	// 高さ
+	//攻撃の位置オフセット
+	static constexpr float ATTACK_FORWARD_OFFSET = 55.0f;	//前方向
+	static constexpr float ATTACK_HEIGHT_OFFSET = 100.0f;	//高さ
 
-	static constexpr float ATTACK_RADIUS_SIZE = 35.0f;	// 攻撃範囲
+	static constexpr float ATTACK_RADIUS_SIZE = 35.0f;		//攻撃範囲
 
-	//ランダムの数値
-	const int RANDOM_VALUE = 1;
+	//アニメーションスピード
+	static constexpr float ANIM_SPEED = 20.0f;
 
-	// 原点復帰時の最小移動距離（移動制御）
-	static constexpr float MIN_MOVE_DISTANCE = 0.01f;
-
-	//原点の位置
-	static constexpr VECTOR ORIGIN = { 0.0f, 0.0f, 0.0f };
+	//アニメーション番号
+	static constexpr int   ANIM_IDLE_INDEX = 0;
+	static constexpr int   ANIM_RUN_INDEX = 1;
+	static constexpr int   ANIM_ATTACK_INDEX = 2;
+	static constexpr int   ANIM_DAMAGE_INDEX = 3;
+	static constexpr int   ANIM_DEATH_INDEX = 4;
 	
 	//色
 	int white = 0xffffff; //白
@@ -56,11 +53,7 @@ public:
 	enum class TYPE
 	{
 		DOG,	//犬
-		SABO,	//サボテン
-		MIMIC,	//ミミック
-		MUSH,	//キノコ
 		ONION,	//玉ねぎ
-		TOGE,	//トゲゾー
 		VIRUS,	//ウィルス
 		BOSS,	//ボス
 		MAX
@@ -94,31 +87,30 @@ public:
 	EnemyBase();	// コンストラクタ
 	virtual ~EnemyBase(void);	// デストラクタ
 
-	virtual void Init(void);			// 初期処理(最初の１回のみ実行)
+	virtual void Init(void);			//初期処理(最初の１回のみ実行)
 	virtual void InitAnimation(void) {};//アニメーションロード用
-	virtual void SetParam(void){};		// パラメータ設定(純粋仮想関数)
-	virtual void Update(void);			// 更新処理(毎フレーム実行)
-	virtual void Draw(void);			// 描画処理(毎フレーム実行)
-	virtual void DrawHpBar(void);		//HPバー
+	virtual void SetParam(void){};		//パラメータ設定(純粋仮想関数)
+	virtual void Update(void);			//更新処理(毎フレーム実行)
+	virtual void Draw(void);			//描画処理(毎フレーム実行)
 	virtual void DrawBossHpBar(void){};	//ボスのHPバー
-	virtual void Release(void);			// 解放処理(最後の１回のみ実行)
+	virtual void Release(void);			//解放処理(最後の１回のみ実行)
 
-	void SetPos(VECTOR pos);	// 座標の設定
-	STATE GetState(void);		// 状態獲得
+	void SetPos(VECTOR pos);	//座標の設定
+	STATE GetState(void);		//状態獲得
 
-	bool IsAlive(void);			// 生存判定
-	void SetAlive(bool alive);	// 生存判定
+	bool IsAlive(void);			//生存判定
+	void SetAlive(bool alive);	//生存判定
 
-	void Damage(int damage);	// ダメージを受ける
+	void Damage(int damage);	//ダメージを受ける
 
 	TYPE GetEnemyType(void) const;
 	TYPE enemyType_;	//敵のタイプ
 
-	void SetCollisionPos(const VECTOR collision);//衝突判定用の球体
-	VECTOR GetCollisionPos(void)const;	// 衝突用の中心座標の取得
-	float GetCollisionRadius(void);		// 衝突用の球体半径の取得
+	void SetCollisionPos(const VECTOR collision);	//衝突判定用の球体
+	VECTOR GetCollisionPos(void)const;				//衝突用の中心座標の取得
+	float GetCollisionRadius(void);					//衝突用の球体半径の取得
 
-	bool IsDeadFinished(void);			//完全死亡？
+	bool IsDeadFinished(void);			//完全死亡
 
 	void SetGameScene(GameScene* gscene);
 	void SetTutorialScene(TutorialScene* tscene);
@@ -129,19 +121,6 @@ public:
 	void SetAlly(const std::vector<std::shared_ptr<AllyBase>>* ally);
 
 protected:
-	bool is1damage;
-	bool is2damage;
-	bool is4damage;
-	bool is8damage;
-	bool is16damage;
-	bool is32damage;
-
-	int d1img_;
-	int d2img_;
-	int d4img_;
-	int d8img_;
-	int d16img_;
-	int d32img_;
 
 	int dCount;
 
@@ -153,78 +132,51 @@ protected:
 	GameScene* gScene_;
 	TutorialScene* tScene_;
 
-	std::unique_ptr<AnimationController> animationController_;	// アニメーション
+	std::unique_ptr<AnimationController> animationController_;	//アニメーション
 	
-	std::map<STATE, std::function<void(void)>> stateChanges_;	// 状態管理(状態遷移時初期処理)
-	std::function<void(void)> stateUpdate_;						// 状態管理(更新ステップ)
+	std::map<STATE, std::function<void(void)>> stateChanges_;	//状態管理(状態遷移時初期処理)
+	std::function<void(void)> stateUpdate_;						//状態管理(更新ステップ)
 
-	float speed_;	// 移動速度
+	float speed_;		//移動速度
 	
-	VECTOR movePow_;	// 移動量
-	VECTOR movedPos_;	// 移動後の座標
-	VECTOR moveDiff_;	// フレームごとの移動値
+	VECTOR movePow_;	//移動量
+	VECTOR movedPos_;	//移動後の座標
+	VECTOR moveDiff_;	//フレームごとの移動値
 
 	VECTOR collisionPos_;		//赤い球体の移動後座標
 	VECTOR attackCollisionPos_; //紫の球体の移動後座標
 
-	int hp_;	// 体力
-	int maxHp_;
+	int hp_;		//体力
 	int attackPow_; //攻撃力
 
-	bool isAlive_;	// 生存判定
+	bool isAlive_;				//生存判定
 	bool isAttack_ = false;		//攻撃判定
-	bool isAttack_P = false;	//攻撃判定
-	bool isAttack_T = false;	//攻撃判定
 
-	STATE state_;	//状態管理
-	ANIM_TYPE animtype_; // アニメーションのタイプ確認用
+	STATE state_;			//状態管理
+	ANIM_TYPE animtype_;	//アニメーションのタイプ確認用
 
-	float collisionRadius_;		// 衝突判定用の球体半径
-	VECTOR collisionLocalPos_;	// 衝突判定用の球体中心の調整座標
+	float collisionRadius_;				//衝突判定用の球体半径
+	VECTOR collisionLocalPos_;			//衝突判定用の球体中心の調整座標
 
-	float attackCollisionRadius_;	 // 攻撃判定用と攻撃範囲の球体半径
-	VECTOR attackCollisionLocalPos_; // 攻撃判定用と攻撃範囲の調整座標
-
-	VECTOR playerCenter_;	//プレイヤーの球体の座標を取得
-	float playerRadius_;	//プレイヤーの球体の半径を取得
-	VECTOR p_Diff_;			//プレイヤーの位置差分
-	float p_Dis_;			//プレイヤーまでの距離
-	float p_RadiusSum_;		//プレイヤーとの衝突半径の合計
-
-	VECTOR allyCenter_;	//プレイヤーの球体の座標を取得
-	float allyRadius_;	//プレイヤーの球体の半径を取得
-
-	VECTOR treeCenter_;		//木の球体の座標を取得
-	float treeRadius_;		//木の球体の半径を取得
-	VECTOR t_Diff_;			//木の位置差分
-	float t_Dis_;			//木までの距離
-	float t_RadiusSum_;		//木との衝突半径の合計
+	float attackCollisionRadius_;		//攻撃判定用と攻撃範囲の球体半径
+	VECTOR attackCollisionLocalPos_;	//攻撃判定用と攻撃範囲の調整座標
 
 	//更新系
 	void UpdateNone(void){};			//更新ステップ
 	virtual void UpdateIdle(void);		//待機状態の更新
 	virtual void UpdatePlay(void);		//移動時の更新処理
-	//virtual void UpdateAttack(void);	//アタック時の更新処理
 	virtual void UpdateDamage(void);	//ダメージ時の更新処理
 	virtual void UpdateDeath(void);		//死んだ時の更新処理
 	virtual void UpdateDeadEnd(void);	//完全死亡
 
-	//void ChasePlayer(void);			//プレイヤーを追いかける
-
-	////攻撃関係
-	//void AttackCollisionPos(void);	//攻撃用関数
-	//void EnemyToPlayer(void);		//敵がプレイヤー攻撃
-	//void CollisionAttack(void);	//攻撃が当たったか確認する
-
-	// 状態遷移
+	//状態遷移
 	void ChangeState(STATE state);
 	void ChangeStateNone(void);
 	void ChangeStateIdle(void);
 	void ChangeStatePlay(void);
-	//void ChangeStateAttack(void);
 	void ChangeStateDamage(void);
 	void ChangeStateDeath(void);
 	void ChangeStateDeadEnd(void);
 
-	void Collision(void);	// 衝突判定
+	void Collision(void);	//衝突判定
 };

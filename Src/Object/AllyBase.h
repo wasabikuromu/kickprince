@@ -15,25 +15,12 @@ class Capsule;
 class AllyBase : public ActorBase
 {
 public:
+	//味方の大きさ
 	static constexpr float ALLY_SIZE = 0.7f;
 
-	//ダメージ関連
-	static constexpr float DAMAGE_CNT = 120;
-	static constexpr float DAMAGE_POS = 100;
-	static constexpr float DAMAGE_IMG_SCL = 0.5f;
-	static constexpr int VALUE_DAMAGE_1 = 1;
-	static constexpr int VALUE_DAMAGE_2 = 2;
-	static constexpr int VALUE_DAMAGE_4 = 4;
-	static constexpr int VALUE_DAMAGE_8 = 8;
-	static constexpr int VALUE_DAMAGE_16 = 16;
-	static constexpr int VALUE_DAMAGE_32 = 32;
-	static constexpr int VALUE_DAMAGE_64 = 64;
-
 	//デバッグ &　汎用
-	static constexpr float VALUE_ZERO = 0.0f;	//初期化の値用
-	static constexpr float VALUE_ONE = 1.0f;
 	static constexpr float VALUE_TWO = 2.0f;
-	static constexpr int  VALUE_SIXTY = 60;
+	static constexpr float VALUE_SIXTY = 60.0f;
 
 	//影の大きさ
 	static constexpr float ALLY_SHADOW_SIZE = 100.0f;
@@ -43,41 +30,42 @@ public:
 	static constexpr float SHADOW_UV_SCALE = 2.0f;				//UV計算用
 	static constexpr float SHADOW_UV_CENTER = 0.5f;
 
-	static constexpr VECTOR CAPSULE_TOP = { 0.0f, 30.0f, 0.0f };	//カプセルの頂点
-	static constexpr VECTOR CAPSULE_BOTTOM = { 0.0f,  -100.0f, 0.0f };//カプセルの足元
-	static constexpr float CAPSULE_RADIUS = 20.0f;					//カプセルの半径
-	static constexpr float COLLISION_RADIUS = 100.0f;				//衝突判定の半径
+	static constexpr VECTOR CAPSULE_TOP = { 0.0f, 30.0f, 0.0f };		//カプセルの頂点
+	static constexpr VECTOR CAPSULE_BOTTOM = { 0.0f,  -100.0f, 0.0f };	//カプセルの足元
+	static constexpr float CAPSULE_RADIUS = 20.0f;						//カプセルの半径
+	static constexpr float COLLISION_RADIUS = 100.0f;					//衝突判定の半径
+
+	static constexpr float GROUND_CHECK_DISTANCE = 10.0f;			//地面チェック用パワー
+	static constexpr float GRAVITY_ALIGN_DOT_THRESHOLD = 0.9f;		//地面の閾値
+	static constexpr int MAX_PENETRATION_RESOLVE_ITERATIONS = 10;	//衝突試行回数
+
+	//色MAX値
+	static constexpr int MAX_COLOR = 255;
+
+	//重力
+	static constexpr float GRAVITY = 9.8f;
 
 	//向き
 	static constexpr float DEGREE = 180.0f;
 
-	//敵の範囲用
-	static constexpr float VIEW_RANGE = 500.0f;	// 視野の広さ
-	static constexpr float VIEW_ANGLE = 15.0f;	// 視野角
+	//停止許容
+	static constexpr float STOP_VELOCITY_EPSILON = 0.01f;
 
-	//敵の共通用球体座標
+	//ふっとびスピード
+	static constexpr float FLY_SPEED = 40.0f;
+
+	//ふっとびパワー
+	static constexpr float POWER = 65.0f;
+
+	//味方の共通用球体座標
 	static constexpr float COLLOSION_RADIUS = 300.0f;
 	static constexpr VECTOR COLLISION_POS = { 0.0f, 150.0f, 0.0f };
 	
 	//攻撃の位置オフセット
 	static constexpr float ATTACK_FORWARD_OFFSET = 55.0f;	// 前方向
 	static constexpr float ATTACK_HEIGHT_OFFSET = 100.0f;	// 高さ
-	//static constexpr float ATTACK_RADIUS_SIZE = 50.0f;	// 攻撃範囲
 
-	//ドロップアイテムのサイズと距離しきい値
-	static constexpr float DROP_SCALE_SMALL = 0.1f;
-	static constexpr float DROP_SCALE_MEDIUM = 0.15f;
-	static constexpr float DROP_SCALE_LARGE = 0.2f;
-	static constexpr float DROP_DISTANCE_MEDIUM = 3000.0f;
-	static constexpr float DROP_DISTANCE_LARGE = 6000.0f;
-
-	//ランダムの数値
-	const int RANDOM_VALUE = 1;
-
-	//原点復帰時の最小移動距離（移動制御）
-	static constexpr float MIN_MOVE_DISTANCE = 0.01f;
-
-	//アニメーション関係
+	//アニメーションスピード
 	static constexpr float ANIM_SPEED = 25.0f;
 
 	//アニメーション番号
@@ -88,6 +76,12 @@ public:
 	static constexpr int   ANIM_ATTACK_INDEX = 4;
 	static constexpr int   ANIM_SKY_INDEX = 5;
 	static constexpr int   ANIM_ROLL_INDEX = 6;
+
+	//アニメーション後の重力
+	static constexpr float ANIMATION_OUT_GRAVITY = 0.15f;
+
+	//カメラ復帰
+	static constexpr float RETURN_CAMERA_TIME = 2.0f;
 
 	//色
 	int white = 0xffffff; //白
@@ -179,10 +173,10 @@ public:
 
 	bool IsAttacking(void) const;
 
-	//攻撃終了？
+	//攻撃終了
 	bool IsActionFinished(void) const;
 	
-	//完全停止？
+	//完全停止
 	bool IsStoppedCompletely(void) const;
 
 	void SetActionFinished(bool finished);

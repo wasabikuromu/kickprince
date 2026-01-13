@@ -24,7 +24,7 @@ EnemyBase::EnemyBase()
 
 	attackPow_ = VALUE_ONE;	//攻撃力
 
-	// 状態管理
+	//状態管理
 	stateChanges_.emplace(
 		STATE::NONE, std::bind(&EnemyBase::ChangeStateNone, this));
 	stateChanges_.emplace(
@@ -37,13 +37,6 @@ EnemyBase::EnemyBase()
 		STATE::DEATH, std::bind(&EnemyBase::ChangeStateDeath, this));
 	stateChanges_.emplace(
 		STATE::DEAD_END, std::bind(&EnemyBase::ChangeStateDeadEnd, this));
-
-	is1damage = false;
-	is2damage = false;
-	is4damage = false;
-	is8damage = false;
-	is16damage = false;
-	is32damage = false;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -73,7 +66,7 @@ void EnemyBase::Update(void)
 	//アニメーション再生
 	animationController_->Update();
 
-	// 更新ステップ
+	//更新ステップ
 	if (stateUpdate_)
 	{
 		stateUpdate_();
@@ -87,7 +80,7 @@ void EnemyBase::UpdateIdle(void)
 	animationController_->Play((int)ANIM_TYPE::IDLE, false);
 	if (animationController_->IsEnd() || state_ != STATE::IDLE)
 	{
-		//AttackCollisionPos();
+		
 	}
 }
 
@@ -98,7 +91,7 @@ void EnemyBase::UpdatePlay(void)
 		return;
 	}
 
-	// 衝突判定
+	//衝突判定
 	Collision();
 }
 
@@ -138,58 +131,13 @@ void EnemyBase::Draw(void)
 
 	Collision();
 
-	// モデル反映
+	//モデル反映
 	MV1SetScale(transform_.modelId, transform_.scl);
 	MV1SetPosition(transform_.modelId, transform_.pos);
 
 	MV1DrawModel(transform_.modelId);
 
-	//DrawHpBar();
-
-	//デッバグ
 	//DrawDebug();
-
-}
-
-void EnemyBase::DrawHpBar(void)
-{
-	VECTOR headPos = GetTransform().pos;
-	headPos.y += 400.0f;
-
-	VECTOR screen = ConvWorldPosToScreenPos(headPos);
-	if (screen.z < 0.0f) return;
-
-	const int BAR_W = 120;
-	const int BAR_H = 16;
-
-	int x = (int)screen.x - BAR_W / 2;
-	int y = (int)screen.y - 10;
-
-	// 枠（黒）
-	DrawBox(
-		x - 1, y - 1,
-		x + BAR_W + 1, y + BAR_H + 1,
-		GetColor(0, 0, 0),
-		false
-	);
-
-	float rate = 1.0f;
-	// 中身（緑）
-	DrawBox(
-		x, y,
-		x + (int)(BAR_W * rate),
-		y + BAR_H,
-		GetColor(0, 255, 0),
-		true
-	);
-
-	// 分割線（黒）
-	const int DIV = 5;
-	for (int i = 1; i < DIV; i++)
-	{
-		int lx = x + BAR_W * i / DIV;
-		DrawLine(lx, y, lx, y + BAR_H, GetColor(0, 0, 0));
-	}
 }
 
 void EnemyBase::Release(void)
@@ -244,10 +192,10 @@ void EnemyBase::Damage(int damage)
 
 void EnemyBase::Collision(void)
 {
-	// 現在座標を起点に移動後座標を決める
+	//現在座標を起点に移動後座標を決める
 	movedPos_ = VAdd(transform_.pos, movePow_);
 
-	// 移動
+	//移動
 	moveDiff_ = VSub(movedPos_, transform_.pos);
 	transform_.pos = movedPos_;
 
@@ -289,10 +237,10 @@ void EnemyBase::SetTutorialScene(TutorialScene* tscene)
 
 void EnemyBase::ChangeState(STATE state)
 {
-	// 状態変更
+	//状態変更
 	state_ = state;
 
-	// 各状態遷移の初期処理
+	//各状態遷移の初期処理
 	stateChanges_[state_]();
 }
 

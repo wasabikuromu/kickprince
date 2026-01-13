@@ -23,7 +23,7 @@ AllyBase::AllyBase()
 	gScene_(nullptr),
 	enemy_(nullptr),
 	movePow_(AsoUtility::VECTOR_ZERO),
-	isBlowedEnd_(false),   // 初期値
+	isBlowedEnd_(false),
 	initFall_(false)
 {
 	animationController_ = nullptr;
@@ -104,7 +104,7 @@ void AllyBase::Update(void)
 	//カメラ復帰
 	if (shouldReturnCamera_)
 	{
-		returnCameraTimer_ -= 1.0f / 60.0f; // 毎フレーム60FPS基準
+		returnCameraTimer_ -= 1.0f / VALUE_SIXTY;
 		if (returnCameraTimer_ <= 0.0f)
 		{
 			shouldReturnCamera_ = false;
@@ -147,9 +147,6 @@ void AllyBase::UpdatePlay(void)
 
 	//衝突判定
 	Collision();
-
-	//重力による移動量
-	//CalcGravityPow();
 }
 
 void AllyBase::UpdateAttack(void)
@@ -160,21 +157,21 @@ void AllyBase::UpdateBlow(void)
 {    
 	auto& ins = InputManager::GetInstance();
 
-	// 吹っ飛びアニメ（飛んでる間ずっと再生）
+	//吹っ飛びアニメ（飛んでる間ずっと再生）
 	animationController_->Play((int)ANIM_TYPE::SKY, true);
 
-	// 重力
-	velocity_.y -= 9.8f * 0.1f;
+	//重力
+	velocity_.y -= GRAVITY * 0.1f;
 
-	// 移動
+	//移動
 	transform_.pos = VAdd(transform_.pos, velocity_);
 
-	// 攻撃ボタンが押されたら攻撃に移行
+	//攻撃ボタンが押されたら攻撃に移行
 	if (CheckHitKey(KEY_INPUT_SPACE)||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
 		TriggerAttackWhileBlow();
-		return; // 状態切り替え後にこれ以上処理しない
+		return;
 	}
 
 	if (transform_.pos.y < defaultPos_.y && velocity_.y < 0)
@@ -189,7 +186,7 @@ void AllyBase::UpdateBlow(void)
 		ChangeState(STATE::IDLE);
 
 		shouldReturnCamera_ = true;
-		returnCameraTimer_ = 2.0f;
+		returnCameraTimer_ = RETURN_CAMERA_TIME;
 	}
 }
 
@@ -220,7 +217,6 @@ void AllyBase::Draw(void)
 
 	DrawShadow();
 
-	//デバッグ
 	//DrawDebug();
 }
 
@@ -271,10 +267,10 @@ void AllyBase::Damage(int damage,float chargeRate)
 
 		VECTOR dir = VGet(0.0f, 0.0f, 1.0f);
 
-		float speed = 19.5f + (60.0f - 40.0f) * chargeRate;
+		float speed = FLY_SPEED * chargeRate;
 
 		VECTOR forwardVel = VScale(dir, speed);
-		VECTOR upVel = VGet(0.0f, 30.0f + 35.0f * chargeRate, 0.0f);
+		VECTOR upVel = VGet(0.0f, POWER * chargeRate, 0.0f);
 
 		velocity_ = VAdd(forwardVel, upVel);
 		ChangeState(STATE::BLOW);
@@ -310,9 +306,6 @@ void AllyBase::Collision(void)
 
 void AllyBase::CollisionGravity(void)
 {
-	//ジャンプ量を加算
-	movedPos_ = VAdd(movedPos_, jumpPow_);
-
 	//重力方向
 	VECTOR dirGravity = grvMng_.GetDirGravity();
 
@@ -322,13 +315,14 @@ void AllyBase::CollisionGravity(void)
 	//重力の強さ
 	float gravityPow = grvMng_.GetPower();
 
-	float checkPow = 10.0f;
+	//ジャンプ量を加算
+	movedPos_ = VAdd(movedPos_, jumpPow_);
 
 	gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
 
-	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
+	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, GROUND_CHECK_DISTANCE * VALUE_TWO));
 
-	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
+	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, GROUND_CHECK_DISTANCE));
 
 	for (const auto c : colliders_)
 	{
@@ -336,17 +330,9 @@ void AllyBase::CollisionGravity(void)
 		auto hit = MV1CollCheck_Line(
 			c.lock()->modelId_, -1, gravHitPosUp_, gravHitPosDown_);
 
-		//if(hit.HitFlag > 0)
-		if (hit.HitFlag > 0 && VDot(dirGravity, jumpPow_) > 0.9f)
+		if (hit.HitFlag > 0 && VDot(dirGravity, jumpPow_) > GRAVITY_ALIGN_DOT_THRESHOLD)
 		{
-			//衝突地点から、少し上に移動
-
-			//地面と衝突している
-
-			//movedPos_に押し戻し座標を設定
-			//押し戻し座標については、dxlib のhit構造体の中にヒントアリ
-			//衝突地点情報が格納されている
-			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
+			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, VALUE_TWO));
 		}
 	}
 }
@@ -372,7 +358,7 @@ void AllyBase::CollisionCapsule(void)
 			//地面と異なり、衝突回避位置が不明なため、何度か移動させる
 			//この時、移動させる方向は、移動前座標に向いた方向であったり、
 			//衝突したポリゴンの法線方向だったりする
-			for (int tryCnt = 0; tryCnt < 10; tryCnt++)
+			for (int tryCnt = 0; tryCnt < MAX_PENETRATION_RESOLVE_ITERATIONS; tryCnt++)
 			{
 				//再度、モデル全体と衝突検出するには、効率が悪過ぎるので、
 				//最初の衝突判定で検出した衝突ポリゴン1枚と衝突判定を取る
@@ -403,14 +389,13 @@ void AllyBase::TriggerAttackWhileBlow(void)
 		//吹っ飛び中の上昇を打ち切る
 		if (velocity_.y > 0.0f)
 		{
-			velocity_.y = 0.0f; // 上方向の力を完全にカット
+			velocity_.y = 0.0f;
 		}
 
 		//攻撃状態へ
 		ChangeState(STATE::ATTACK);
 
 		//攻撃モーションやSEなど
-		//SoundManager::GetInstance().Play(SoundManager::SRC::E_ATTACK_SE, Sound::TIMES::FORCE_ONCE);
 		animationController_->Play((int)ANIM_TYPE::ATTACK, false);
 		isAttack_ = true;
 	}
@@ -418,23 +403,20 @@ void AllyBase::TriggerAttackWhileBlow(void)
 
 void AllyBase::CalcGravityPow(void)
 {
-	// 重力方向
+	//重力方向
 	VECTOR dirGravity = grvMng_.GetDirGravity();
 
-	// 重力の強さ
+	//重力の強さ
 	float gravityPow = grvMng_.GetPower();
 
-	// 重力
-	// 重力を作る
-	// メンバ変数 jumpPow_ に重力計算を行う(加速度)
+	//重力
 	VECTOR gravity = VScale(dirGravity, gravityPow);
 	jumpPow_ = VAdd(jumpPow_, gravity);
 
-	// 内積
+	//内積
 	float dot = VDot(dirGravity, jumpPow_);
 	if (dot >= 0.0f)
 	{
-		// 重力方向と反対方向(マイナス)でなければ、ジャンプ力を無くす
 		jumpPow_ = gravity;
 	}
 }
@@ -472,7 +454,7 @@ void AllyBase::DrawShadow(void)
 			VAdd(transform_.pos, VGet(0.0f, -ALLY_SHADOW_HEIGHT, 0.0f)), ALLY_SHADOW_SIZE);
 
 		//頂点データで変化が無い部分をセット
-		Vertex[0].dif = GetColorU8(255, 255, 255, 255);
+		Vertex[0].dif = GetColorU8(MAX_COLOR, MAX_COLOR, MAX_COLOR, MAX_COLOR);
 		Vertex[0].spc = GetColorU8(0, 0, 0, 0);
 		Vertex[0].su = 0.0f;
 		Vertex[0].sv = 0.0f;
@@ -532,7 +514,6 @@ void AllyBase::DrawShadow(void)
 
 void AllyBase::DrawShots(void)
 {
-
 }
 
 void AllyBase::SetCollisionPos(const VECTOR collision)
@@ -640,8 +621,8 @@ bool AllyBase::IsStoppedCompletely(void) const
 	if (!isGrounded_)
 		return false;
 
-	return fabs(velocity_.x) < 0.01f &&
-		fabs(velocity_.z) < 0.01f;
+	return fabs(velocity_.x) < STOP_VELOCITY_EPSILON &&
+		fabs(velocity_.z) < STOP_VELOCITY_EPSILON;
 }
 
 void AllyBase::SetActionFinished(bool finished)

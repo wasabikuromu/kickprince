@@ -6,59 +6,55 @@
 #include "../../Manager/ResourceManager.h"
 #include "../../Utility/AsoUtility.h"
 
-
-
 AllyBule::AllyBule() :AllyBase()
 {
 }
 
 void AllyBule::InitAnimation(void)
 {
-
 	std::string path = Application::PATH_MODEL + "Ally/BuleAlly.mv1";
 
 	animationController_ = std::make_unique<AnimationController>(transform_.modelId);
 
-	animationController_->Add((int)ANIM_TYPE::NONE, path, ANIM_SPEED, ANIM_T_POSE_INDEX);
-	animationController_->Add((int)ANIM_TYPE::IDLE, path, ANIM_SPEED, ANIM_IDLE_INDEX);
-	animationController_->Add((int)ANIM_TYPE::WALK, path, ANIM_SPEED, ANIM_RUN_INDEX);
-	animationController_->Add((int)ANIM_TYPE::RUN, path, ANIM_SPEED, ANIM_RUN_INDEX);
-	animationController_->Add((int)ANIM_TYPE::ATTACK, path, ANIM_SPEED, ANIM_ATTACK_INDEX);
-	animationController_->Add((int)ANIM_TYPE::SKY, path, ANIM_SPEED, ANIM_SKY_INDEX);
-	animationController_->Add((int)ANIM_TYPE::ROLL, path, ANIM_SPEED, ANIM_ROLL_INDEX);
+	animationController_->Add((int)ANIM_TYPE::NONE,		path, ANIM_SPEED, ANIM_T_POSE_INDEX);
+	animationController_->Add((int)ANIM_TYPE::IDLE,		path, ANIM_SPEED, ANIM_IDLE_INDEX);
+	animationController_->Add((int)ANIM_TYPE::WALK,		path, ANIM_SPEED, ANIM_WALK_INDEX);
+	animationController_->Add((int)ANIM_TYPE::RUN,		path, ANIM_SPEED, ANIM_RUN_INDEX);
+	animationController_->Add((int)ANIM_TYPE::ATTACK,	path, ANIM_SPEED, ANIM_ATTACK_INDEX);
+	animationController_->Add((int)ANIM_TYPE::SKY,		path, ANIM_SPEED, ANIM_SKY_INDEX);
+	animationController_->Add((int)ANIM_TYPE::ROLL,		path, ANIM_SPEED, ANIM_ROLL_INDEX);
 
 	animationController_->Play((int)ANIM_TYPE::RUN);
 }
 
 void AllyBule::SetParam(void)
 {
-	// 使用メモリ容量と読み込み時間の削減のため
-	// モデルデータをいくつもメモリ上に存在させない
 	transform_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ALLY_BLUE));
 
 	transform_.scl = { ALLY_SIZE,ALLY_SIZE,ALLY_SIZE };
+
 	transform_.quaRotLocal = Quaternion::Euler(AsoUtility::Deg2RadF(0.0f)
 		, AsoUtility::Deg2RadF(DEGREE), 0.0f);
+
 	transform_.dir = { AsoUtility::VECTOR_ZERO };
 
 	//チャージエフェクト
-	effectAttackResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::EFF_BLUE_ATK).handleId_;
+	effectAttackResId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::EFF_BLUE_ATK).handleId_;
 
-	speed_ = SPEED;		// 移動スピード
+	hp_ = HP;
+
+	speed_ = SPEED;
 
 	attackPow_ = ATTACK_POWER;
 
-	isAlive_ = true;	// 初期は生存状態
+	isAlive_ = true;
 
-	hp_ = HP;	// HPの設定
+	collisionRadius_ = COLLOSION_RADIUS;				//衝突判定用の球体半径
+	collisionLocalPos_ = COLLISION_POS;					//衝突判定用の球体中心の調整座標
 
-	collisionRadius_ = COLLOSION_RADIUS;	// 衝突判定用の球体半径
-	collisionLocalPos_ = COLLISION_POS;	// 衝突判定用の球体中心の調整座標
+	attackCollisionRadius_ = ATTACK_RADIUS_SIZE;		//攻撃判定用と攻撃範囲の球体半径
 
-	attackCollisionRadius_ = ATTACK_RADIUS_SIZE;		// 攻撃判定用と攻撃範囲の球体半径
-
-	// 初期状態
+	//初期状態
 	ChangeState(STATE::IDLE);
 }
 
@@ -68,14 +64,14 @@ void AllyBule::EffectAttack(void)
 	effectAttackPlayId_ = PlayEffekseer3DEffect(effectAttackResId_);
 
 	//エフェクトの大きさ
-	SetScalePlayingEffekseer3DEffect(effectAttackPlayId_, 100.0f, 100.0f, 100.0f);
+	SetScalePlayingEffekseer3DEffect(effectAttackPlayId_, EFFECT_SIZE, EFFECT_SIZE, EFFECT_SIZE);
 
 	//エフェクトの位置
 	SetPosPlayingEffekseer3DEffect(effectAttackPlayId_,
-		transform_.pos.x, transform_.pos.y + 75.0f, transform_.pos.z + 20.0f);
+		transform_.pos.x, transform_.pos.y + EFFECT_Y_OFFSET, transform_.pos.z + EFFECT_Z_OFFSET);
 
 	//エフェクトの回転
-	SetRotationPlayingEffekseer3DEffect(effectAttackPlayId_, 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f);
+	SetRotationPlayingEffekseer3DEffect(effectAttackPlayId_, 0.0f, AsoUtility::Deg2RadF(DEGREE), 0.0f);
 }
 
 void AllyBule::UpdateIdle(void)
@@ -83,11 +79,10 @@ void AllyBule::UpdateIdle(void)
 	//攻撃後の落下処理
 	if (initFall_)
 	{
-		const float gravity = 0.3f;
-		velocity_.y -= gravity;
+		velocity_.y -= ANIMATION_OUT_GRAVITY;
 		transform_.pos.y += velocity_.y;
 
-		// 地面まで落下
+		//地面まで落下
 		if (transform_.pos.y <= defaultPos_.y)
 		{
 			transform_.pos.y = defaultPos_.y;
@@ -96,7 +91,7 @@ void AllyBule::UpdateIdle(void)
 		}
 	}
 
-	// Idle中のアニメーション（再生中に落下がないときは普通に待機）
+	//Idle中のアニメーション
 	if (!initFall_)
 	{
 		animationController_->Play((int)ANIM_TYPE::IDLE);
@@ -159,7 +154,7 @@ void AllyBule::UpdateAttack(void)
 		ChangeState(STATE::IDLE);
 
 		shouldReturnCamera_ = true;
-		returnCameraTimer_ = 2.0f;
+		returnCameraTimer_ = RETURN_CAMERA_TIME;
 	}
 }
 
@@ -181,7 +176,6 @@ void AllyBule::CollisionAttack(void)
 	}
 
 	//エネミーとの衝突判定
-	//攻撃可能フレーム範囲内 かつ isAttack_ が true のときのみ処理
 	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_)
 	{
 		//EffectAttack();
@@ -196,13 +190,13 @@ void AllyBule::CollisionAttack(void)
 			if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
 			{
 				enemy->Damage(attackPow_);
-				isAttack_ = false;  // 1回だけにする
+				isAttack_ = false;
 				break;
 			}
 		}
 	}
 
-	// 攻撃が終わったら次回用にリセット
+	//攻撃が終わったら次回用にリセット
 	if (anim.step > ATTACK_END) 
 	{
 		isAttack_ = true;

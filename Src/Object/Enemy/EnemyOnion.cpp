@@ -14,43 +14,38 @@ void EnemyOnion::InitAnimation(void)
 
 	animationController_ = std::make_unique<AnimationController>(transform_.modelId);
 
-	animationController_->Add((int)ANIM_TYPE::IDLE, path, 20.0f, 0);
-	animationController_->Add((int)ANIM_TYPE::RUN, path, 20.0f, 1);
-	animationController_->Add((int)ANIM_TYPE::ATTACK, path, 20.0f, 2);
-	animationController_->Add((int)ANIM_TYPE::DAMAGE, path, 20.0f, 3);
-	animationController_->Add((int)ANIM_TYPE::DEATH, path, 20.0f, 4);
+	animationController_->Add((int)ANIM_TYPE::IDLE,		path, ANIM_SPEED, ANIM_IDLE_INDEX);
+	animationController_->Add((int)ANIM_TYPE::RUN,		path, ANIM_SPEED, ANIM_RUN_INDEX);
+	animationController_->Add((int)ANIM_TYPE::ATTACK,	path, ANIM_SPEED, ANIM_ATTACK_INDEX);
+	animationController_->Add((int)ANIM_TYPE::DAMAGE,	path, ANIM_SPEED, ANIM_DAMAGE_INDEX);
+	animationController_->Add((int)ANIM_TYPE::DEATH,	path, ANIM_SPEED, ANIM_DEATH_INDEX);
 
 	animationController_->Play((int)ANIM_TYPE::RUN);
 }
 
 void EnemyOnion::SetParam(void)
 {
-	//使用メモリ容量と読み込み時間の削減のため
-	//モデルデータをいくつもメモリ上に存在させない
 	transform_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::ONION));
 
-	//大きさの設定
-	transform_.scl = { 2.5f, 2.5f, 2.5f };
+	transform_.scl = { ONION_SIZE, ONION_SIZE, ONION_SIZE };
 
-	//クォータニオン(向き)
 	transform_.quaRotLocal = Quaternion::Euler(AsoUtility::Deg2RadF(0.0f), AsoUtility::Deg2RadF(0.0f), 0.0f);
 
-	//方向
-	transform_.dir = { AsoUtility::VECTOR_ZERO };						
+	transform_.dir = { AsoUtility::VECTOR_ZERO };	
 
-	speed_ = 0.0f;		//移動スピード
+	hp_ = HP;
 
-	isAlive_ = true;	// 初期は生存状態
+	speed_ = 0.0f;
 
-	hp_ = HP;	// HPの設定
+	isAlive_ = true;
 
-	collisionRadius_ = 250.0f;	//衝突判定用の球体半径
-	collisionLocalPos_ = { 0.0f,60.0f, 0.0f };		//衝突判定用の球体中心の調整座標
+	collisionRadius_ = COLLOSION_RADIUS;			//衝突判定用の球体半径
+	collisionLocalPos_ = COLLISION_POS;				//衝突判定用の球体中心の調整座標
 
-	attackCollisionRadius_ = ATTACK_RADIUS_SIZE;		// 攻撃判定用と攻撃範囲の球体半径
+	attackCollisionRadius_ = ATTACK_RADIUS_SIZE;	//攻撃判定用と攻撃範囲の球体半径
 
 	enemyType_ = TYPE::ONION;
 
-	// 初期状態
+	//初期状態
 	ChangeState(STATE::PLAY);
 }

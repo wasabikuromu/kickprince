@@ -14,37 +14,35 @@ void EnemyBoss::InitAnimation(void)
 
 	animationController_ = std::make_unique<AnimationController>(transform_.modelId);
 
-	animationController_->Add((int)ANIM_TYPE::IDLE,		path, 20.0f, 2);
-	animationController_->Add((int)ANIM_TYPE::RUN,		path, 20.0f, 4);
-	animationController_->Add((int)ANIM_TYPE::ATTACK,	path, 10.0f, 0);
-	animationController_->Add((int)ANIM_TYPE::DEATH,	path, 20.0f, 1);
+	animationController_->Add((int)ANIM_TYPE::IDLE,		path, ANIM_SPEED, BOSS_ANIM_IDLE_INDEX);
+	animationController_->Add((int)ANIM_TYPE::RUN,		path, ANIM_SPEED, BOSS_ANIM_RUN_INDEX);
+	animationController_->Add((int)ANIM_TYPE::ATTACK,	path, ANIM_SPEED, BOSS_ANIM_ATTACK_INDEX);
+	animationController_->Add((int)ANIM_TYPE::DEATH,	path, ANIM_SPEED, BOSS_ANIM_DEATH_INDEX);
 
 	animationController_->Play((int)ANIM_TYPE::RUN);
 }
 
 void EnemyBoss::SetParam(void)
 {
-	//使用メモリ容量と読み込み時間の削減のため
-	//モデルデータをいくつもメモリ上に存在させない
 	transform_.SetModel(ResourceManager::GetInstance().LoadModelDuplicate(ResourceManager::SRC::BOSS));
 
-	transform_.scl = { 0.8f, 0.8f, 0.8f };						// 大きさの設定
+	transform_.scl = { DOG_SIZE, DOG_SIZE, DOG_SIZE };
+
 	transform_.quaRotLocal = Quaternion::Euler(AsoUtility::Deg2RadF(0.0f)
-		, AsoUtility::Deg2RadF(0.0f), 0.0f);//クォータニオンをいじると向きが変わる
-	transform_.dir = { 0.0f, 0.0f, 0.0f };						// 右方向に移動する
+		,AsoUtility::Deg2RadF(0.0f), 0.0f);
 
-	speed_ = 0.0f;		//移動スピード
+	transform_.dir = { 0.0f, 0.0f, 0.0f };						
 
-	isAlive_ = true;	//初期は生存状態
+	hp_ = BOSS_MAX_HP;
 
-	hp_ = BOSS_MAX_HP;	//HPの設定
+	speed_ = 0.0f;		
 
-	attackPow_ = 3;
+	isAlive_ = true;	
 
-	collisionRadius_ = 500.0f;						//衝突判定用の球体半径
-	collisionLocalPos_ = { 0.0f, 300.0f, 0.0f };	//衝突判定用の球体中心の調整座標
+	collisionRadius_ = COLLOSION_RADIUS;			//衝突判定用の球体半径
+	collisionLocalPos_ = COLLISION_POS;				//衝突判定用の球体中心の調整座標
 
-	attackCollisionRadius_ = 500.0f;				//攻撃判定用と攻撃範囲の球体半径
+	attackCollisionRadius_ = COLLOSION_RADIUS;		//攻撃判定用と攻撃範囲の球体半径
 
 	enemyType_ = TYPE::BOSS;
 
@@ -59,23 +57,23 @@ void EnemyBoss::DrawBossHpBar(void)
 		return;
 	}
 
-	int barX = (Application::SCREEN_SIZE_X - BOSS_HP_BAR_WIDTH) / 2; // 中央X
-	int barY = BOSS_HP_BAR_Y; // 上から80px
+	int barX = (Application::SCREEN_SIZE_X - BOSS_HP_BAR_WIDTH) / 2;
+	int barY = BOSS_HP_BAR_Y;
 
 	float hpRate = static_cast<float>(hp_) / BOSS_MAX_HP;
 	int hpDrawWidth = static_cast<int>(BOSS_HP_BAR_WIDTH * hpRate);
 
-	// ラベル
+	//ラベル
 	SetFontSize(55);
-	DrawFormatString(barX + BOSS_LABEL_OFFSET_X, barY + BOSS_LABEL_OFFSET_Y, GetColor(255, 255, 255), "BOSS");
+	DrawFormatString(barX + BOSS_LABEL_OFFSET_X, barY + BOSS_LABEL_OFFSET_Y, GetColor(0,0,0), "BOSS");
 	SetFontSize(16);
 
-	// 背景バー（黒）
-	DrawBox(barX, barY, barX + BOSS_HP_BAR_WIDTH, barY + BOSS_HP_BAR_HEIGHT, GetColor(0, 0, 0), TRUE);
+	//背景バー（黒）
+	DrawBox(barX, barY, barX + BOSS_HP_BAR_WIDTH, barY + BOSS_HP_BAR_HEIGHT, black, true);
 
-	// HPバー（赤）
-	DrawBox(barX, barY, barX + hpDrawWidth, barY + BOSS_HP_BAR_HEIGHT, GetColor(255, 0, 0), TRUE);
+	//HPバー（赤）
+	DrawBox(barX, barY, barX + hpDrawWidth, barY + BOSS_HP_BAR_HEIGHT, red, true);
 
-	// 枠線（白）
-	DrawBox(barX, barY, barX + BOSS_HP_BAR_WIDTH, barY + BOSS_HP_BAR_HEIGHT, GetColor(255, 255, 255), FALSE);
+	//枠線（白）
+	DrawBox(barX, barY, barX + BOSS_HP_BAR_WIDTH, barY + BOSS_HP_BAR_HEIGHT, white, false);
 }
