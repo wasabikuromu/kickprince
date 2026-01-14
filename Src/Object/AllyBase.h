@@ -40,7 +40,7 @@ public:
 	static constexpr int MAX_PENETRATION_RESOLVE_ITERATIONS = 10;	//衝突試行回数
 
 	//色MAX値
-	static constexpr int MAX_COLOR = 255;
+	static constexpr int MAX_ALPHA = 255;
 
 	//重力
 	static constexpr float GRAVITY = 9.8f;

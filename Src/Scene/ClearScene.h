@@ -9,8 +9,8 @@ class SceneManager;
 class ClearScene : public SceneBase
 {
 public:
-	ClearScene(void);	// コンストラクタ
-	~ClearScene(void);	// デストラクタ
+	ClearScene(void);	//コンストラクタ
+	~ClearScene(void);	//デストラクタ
 
 	void Init(void) override;
 	void Update(void) override;
@@ -20,58 +20,47 @@ private:
 
 	static constexpr float VALUE_TWO = 2.0f;
 
-	static constexpr VECTOR PLAYER_POS = { 120.0f, -300.0f, 0.0f };
-	static constexpr VECTOR PLAYER_SIZE = { 0.018f, 0.018f, 0.018f };
+	//プレイヤー
+	static constexpr VECTOR PLAYER_POS = { 120.0f, -300.0f, 0.0f };		//プレイヤーの位置
+	static constexpr VECTOR PLAYER_SIZE = { 0.018f, 0.018f, 0.018f };	//プレイヤーの大きさ
 
-	static constexpr float ANIM_SPEED = 32.0f;
+	//味方
+	static constexpr VECTOR RED_ALLY_INIT_POS = { -490.0f, -200.0f, 50.0f };		//赤味方の位置
+	static constexpr VECTOR BLUE_ALLY_INIT_POS = { -290.0f, -200.0f, 50.0f };		//青味方の位置
+	static constexpr VECTOR BLACK_ALLY_INIT_POS = { -90.0f, -200.0f, 50.0f };		//黒味方の位置
 
-	// アニメーション用定数
-	static constexpr int MESSAGE_Y = 800;
-	static constexpr int MASK_SPEED = 5;
+	static constexpr float ALLY_ROT = 90.0f;										//味方の角度
+	static constexpr float ALLY_INIT_ROT_Y_DEG = -20.0f;							//味方の角度
+
+	static constexpr VECTOR ALLY_INIT_SCL = { 0.8f, 0.8f, 0.8f };					//味方のサイズ
+
+	//アニメーション用定数
 	static constexpr int FADE_SPEED = 2;
-
-	// PressKey アニメーション用
-	static constexpr int PRESS_KEY_OFFSET_Y = 100;   // 画面下からの開始オフセット
-	static constexpr int PRESS_KEY_TARGET_Y = 600;
-	static constexpr int PRESS_KEY_SLIDE_SPEED = 6;
-	static constexpr int PRESS_KEY_FADE_SPEED = 5;
-	static constexpr float ENEMY_FLOAT_SPEED_Y = 4.0f;
+	static constexpr float ANIM_SPEED = 32.0f;
+	static constexpr int ANIM_NUM = 5;
 
 	//時間制御
 	static constexpr int MENU_SELECT_TIME = 420;
 	static constexpr int AUTO_RETURN_FRAME = 3600;
 
-	// アルファ値の最大値
+	//アルファ値の最大値
 	static constexpr int ALPHA_MAX = 255;
 
 	//メニュー文字
-	static constexpr int MENU_FONT_SIZE = 55;
 	static constexpr int MENU_PLAY_Y = 800;
 	static constexpr int MENU_TITLE_Y = 890;
 	static constexpr int MENU_POS_X = 1470;
 
-	// 敵の初期設定
-	static constexpr VECTOR RED_ALLY_INIT_POS = { -490.0f, -200.0f, 50.0f };
-	static constexpr VECTOR BLUE_ALLY_INIT_POS = { -290.0f, -200.0f, 50.0f };
-	static constexpr VECTOR BLACK_ALLY_INIT_POS = { -90.0f, -200.0f, 50.0f };
-
-	static constexpr VECTOR ALLY_INIT_SCL = { 0.8f, 0.8f, 0.8f };
-
-	static constexpr float ALLY_INIT_ROT_Y_DEG = -20.0f;
-
-	// Clear画像
+	//Clear画像
 	static constexpr int CLEAR_IMG_Y = 200;
 	static constexpr float CLEAR_IMG_SCALE = 1.3f;
 
-	// メッセージ
+	//メッセージ
 	static constexpr int MESSAGE_FONT_SIZE = 128;
-	static constexpr int MESSAGE_X_OFFSET = 5; // 文字列調整の係数
+	static constexpr int MESSAGE_X_OFFSET = 5;
 	static constexpr float MESSAGE_X_SCALE = 5.5f;
 
-	// フォント戻すサイズ
-	static constexpr int FONT_SIZE_DEFAULT = 16;
-
-	// 画像
+	//画像
 	int imgClear_;
 	int imgBackGameClaer_;
 	int imgClearWolrd_;
@@ -81,28 +70,16 @@ private:
 	int imgBackTitle_;
 	int imgSelectBackTitle_;
 
-	// メニュー
+	//メニュー
 	int selectedIndex_;       //選択中のメニューインデックス
 
-	// カウンター
+	//カウンター
 	int cheackCounter_;
 
-	// アニメーション用
-	// -------------------------------------
-	int maskLeftX_;
-	int messageX_, messageY_;
-	int imgW_, imgH_;
-	int maskSpeed_;
-
-	int clearAlpha_;     // 透明度（0～255）
-	int fadeSpeed_;      // フェードインの速度
-
-	// imgPressKey_に使用するアニメーション
-	int pressKeyY_;				// 表示Y座標（初期は画面外）
-	int targetPressKeyY_;		// 最終的な表示位置
-	int pressKeyAlpha_;			// フェードインの透明度
-	bool isPressKeyAnimStart_;	
-	bool isPressKeyAnimEnd_;	// アニメーション完了フラグ
+	//アニメーション用
+	//-------------------------------------
+	int clearAlpha_;     //透明度
+	int fadeSpeed_;      //フェードインの速度
 
 	//味方キャラクター
 	Transform redAlly_;
@@ -123,5 +100,5 @@ private:
 	//アニメーション終わり
 	bool isAnimEnd_;
 
-	// -------------------------------------
+	//-------------------------------------
 };

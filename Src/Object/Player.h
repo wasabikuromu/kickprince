@@ -14,6 +14,11 @@ class Capsule;
 class Player : public ActorBase
 {
 public:
+
+	//デバッグ &　汎用
+	static constexpr float VALUE_TWO = 2.0f;
+	static constexpr float VALUE_SIXTY = 60.0f;
+
 	//プレイヤー
 	static constexpr VECTOR PLAYER_POS = { -82.0f,170.0f, -1950.0f };	//初期位置
 	static constexpr VECTOR CAPSULE_TOP = { 0.0f, 110.0f, 0.0f };		//カプセルの頂点
@@ -58,24 +63,18 @@ public:
 	static constexpr float TERM_FOOT_SMOKE = 0.3f;		//煙エフェクト発生間隔
 	static constexpr float FOOT_SMOKE_SCALE = 5.0f;		//煙エフェクトのスケール
 
+	//チャージエフェクト
+	static constexpr float CHARGE_EFFECT_BASE = 2.0f;
+	static constexpr float CHARGE_EFFECT_SCALE = 10.0f;
+	static constexpr float CHARGE_EFFECT_Y_SCALE = 10.0f;
+
 	//ステ関連
 	static constexpr int HP = 10;
-	static constexpr int D_COUNT = 600;
-	static constexpr int WATER_MAX = 10;
 
-	//水のサイズ
-	static constexpr float WATER_SCALE_BIG = 0.2f;
-	static constexpr float WATER_SCALE_MID = 0.15f;
-	static constexpr int WATER_SMALL = 1;
-	static constexpr int WATER_MID = 2;
-	static constexpr int WATER_BIG = 3;
-
-	//ステータスアップ
-	static constexpr int POWER_UP_TIME = 1200;			//パワーアップ時間
-	static constexpr int SPEED_UP_TIME = 1200;			//スピードアップ時間
-	static constexpr int EX_TIME = 10000;				//無敵時間
-	static constexpr float STATUS_UP = 2.0f;			//ステータス変更用の値
-	static constexpr float STATUS_EFFECT_SCALE = 20.0f;	//ステータスアップエフェクトのスケール
+	//地面との判定
+	static constexpr float GROUND_CHECK_DISTANCE = 10.0f;			//地面チェック用パワー
+	static constexpr float GRAVITY_ALIGN_DOT_THRESHOLD = 0.9f;		//地面の閾値
+	static constexpr int MAX_PENETRATION_RESOLVE_ITERATIONS = 10;	//衝突試行回数
 
 	//攻撃
 	static constexpr int NORMAL_ATTACK = 2;				//通常攻撃
@@ -86,20 +85,11 @@ public:
 	const float ATTACK_START = 15.0f;
 	const float ATTACK_END = 20.0f;
 
-	//ステータス関連
-	static constexpr int NAME_X = 55;										//名前の位置X
-	static constexpr int NAME_Y = Application::SCREEN_SIZE_Y - 95;			//名前の位置Y
-	static constexpr int FRAME_START_X = 47;								//枠の最初X
-	static constexpr int FRAME_START_Y = Application::SCREEN_SIZE_Y - 78;	//枠の最初Y
-	static constexpr int FRAME_END_X = 653;									//枠の最後X
-	static constexpr int FRAME_END_Y = Application::SCREEN_SIZE_Y - 37;		//枠の最後Y
-	static constexpr int BAR_START_X = 50;									//バーの最初X
-	static constexpr int BAR_START_HY = Application::SCREEN_SIZE_Y - 75;	//バーの最初体力Y
-	static constexpr int BAR_START_WY = Application::SCREEN_SIZE_Y - 50;	//バーの最初水Y
-	static constexpr int BAR_END_X = 650;									//バーの最後X
-	static constexpr int BAR_END_HY = Application::SCREEN_SIZE_Y - 55;		//バーの最後体力Y
-	static constexpr int BAR_END_WY = Application::SCREEN_SIZE_Y - 40;		//バーの最後水Y
-	static constexpr int BAR_POINT = 60;									//バーの数値
+	//移動制限
+	static constexpr float FIELDXMIN = -1100.0f;
+	static constexpr float FIELDXMAX = 900.0f;
+	static constexpr float FIELDZMIN = -2100.0f;
+	static constexpr float FIELDZMAX = -1350.0f;
 
 	//色
 	int white = 0xffffff; //白
@@ -112,24 +102,7 @@ public:
 	int gray = 0xaaaaaa;  //灰
 
 	//色MAX値
-	static constexpr int MAX_COLOR = 255;
-
-	//ステータス関連
-	static constexpr float ICON_SIZE = 1.3;
-	static constexpr int ICON_CY_HEIGHT = 115;
-
-	static constexpr int GRAY_ALPHA = 180;
-
-	static constexpr int ICON_CY = 965;
-	static constexpr int TIMER_CY = 967;
-
-	static constexpr float RADIUS = 32.0f;
-	static constexpr int SEGMENTS = 60;
-
-	static constexpr int POWER_CX = 150;
-	static constexpr int SPEED_CX = 225;
-	static constexpr int ROT_ATK_CX = 450;
-
+	static constexpr int MAX_ALPHA = 255;
 
 	//状態
 	enum class STATE
@@ -198,10 +171,6 @@ public:
 	const std::vector<std::shared_ptr<AllyBase>>& GetEnemyCollision(void) const;
 	
 	void Damage(int damage);	//ダメージ
-	void PowerUp(void);			//パワーアップ
-	void SpeedUp(void);			//スピードアップ
-	void Heal(void);			//回復
-	void Muteki(void);			//無敵
 
 	bool IsPreparingAttack(void) const;		//攻撃準中か
 	bool IsKickReleased(void) const;		//攻撃後か
@@ -267,22 +236,9 @@ private:
 
 	//モーション終了
 	bool IsEndLandingA(void);		// アタック終了
-	bool IsExAttackReady() const;	// 回転斬りリセット
-
-	//ステータス変化管理
-	void PowerUpTimer(void);		//パワーアップの制限時間
-	void SpeedUpTimer(void);		//スピードアップの制限時間
-
-	//復活処理
-	void StartRevival();
-	void Revival();
-	float revivalTimer_;			//復活までの時間
 
 	//エフェクト
 	void EffectFootSmoke(void);		//足煙エフェクト
-	void EffectPower(void);			//パワーアップエフェクト
-	void EffectSpeed(void);			//スピードアップエフェクト
-	void EffectHeal(void);			//回復エフェクト
 	void EffectCharge(void);		//キックチャージ
 
 	//移動関連
@@ -295,7 +251,7 @@ private:
 	float stepRotTime_;				//回転補間の進行を管理するタイマー(残り時間)
 	void CalcGravityPow(void);		//移動量の計算
 
-	//操作可能？
+	//操作可能
 	bool controlEnabled_ = true;
 
 	//回転
@@ -306,34 +262,16 @@ private:
 
 	//ステータス値
 	int hp_;		//プレイヤーの体力
-	int water_;		//水の所持量
 
 	//攻撃力
 	int normalAttack_;	//2ダメージ
-	int slashAttack_;	//1ダメージ
-	int exrAttack_;		//2ダメージ
-
-	//アイテム効果
-	bool powerUpFlag_;	//パワーが上がったている間treu
-	bool speedUpFlag_;	//スピードが上がったている間treu
-	int powerUpCnt_;	//2パワーアップの時間(20秒)
-	int speedUpCnt_;	//スピードアップの時間(20秒)
-	bool invincible_;	// 無敵状態
-
-	//水の所持上限
-	bool isMax_;
 
 	//攻撃フラグ
 	bool isAttack_;		//縦斬り
 	float attackTimer_ = 0.0f;
 	float attackDuration_ = 1.6f; // 攻撃アニメの長さ（調整可）
-	int exTimer_;		//クールタイム 10秒（ミリ秒）
-	int lastExTime_;	//exが解放されたらすぐに使えるようにする
 	
 	//アイコンUI
-	int imgPowerIcon_;			//パワー
-	int imgSpeedIcon_;			//スピード
-	int imgRotateAttackIcon_;	//回転切り
 	int imgGaugeFrame_;			//ゲージの枠
 
 	//丸影
@@ -344,20 +282,7 @@ private:
 	int effectSmokeResId_;
 	int effectSmokePleyId_;
 
-	//パワーアップエフェクト
-	int effectPowerResId_;
-	int effectPowerPleyId_;
-
-	//スピードアップエフェクト
-	int effectSpeedResId_;
-	int effectSpeedPleyId_;
-
-	//回復エフェクト
-	float stepHeal_;
-	int effectHealResId_;
-	int effectHealPleyId_;
-
-	//
+	//チャージエフェクト
 	int effectChargeResId_;
 	int effectChargePlayId_;
 

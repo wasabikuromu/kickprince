@@ -74,10 +74,15 @@ void TutorialScene::Init(void)
 	imgOpeGearKey_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR_KEYBOARD).handleId_;
 	imgOpeGearCon_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR_CONTROLLER).handleId_;
 
+	//操作説明
 	imgPlayerMove_ = LoadGraph("Data/Image/Tutorial/PlayerMove.png");
 	imgCameraMove_ = LoadGraph("Data/Image/Tutorial/CameraMove.png");
 	imgAttack_ = LoadGraph("Data/Image/Tutorial/Attack.png");
 
+	//ポーズ画像
+	pauseImg_ = LoadGraph("Data/Image/Pause/Pause.png");
+
+	//UI
 	imgAbutton_ = resMng_.Load(ResourceManager::SRC::A_BUTTON).handleId_;
 	imgEnter_ = resMng_.Load(ResourceManager::SRC::ENTER).handleId_;
 
@@ -125,23 +130,22 @@ void TutorialScene::Init(void)
 	pauseMenuImgs[3] = resMng_.Load(ResourceManager::SRC::PAUSE_4).handleId_;
 	pauseMenuImgs[4] = resMng_.Load(ResourceManager::SRC::PAUSE_5).handleId_;
 
+	//ポーズ種類
 	pauseMenuImgsSelected[0] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_1).handleId_;
 	pauseMenuImgsSelected[1] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_2).handleId_;
 	pauseMenuImgsSelected[2] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_3).handleId_;
 	pauseMenuImgsSelected[3] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_4).handleId_;
 	pauseMenuImgsSelected[4] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_5).handleId_;
 
-	pauseMenuPosY[0] = 350;
-	pauseMenuPosY[1] = 470;
-	pauseMenuPosY[2] = 590;
-	pauseMenuPosY[3] = 710;
-	pauseMenuPosY[4] = 830;
-
-	pauseImg_ = LoadGraph("Data/Image/Pause/Pause.png");
-
 	pauseExplainImgs_[0] = resMng_.Load(ResourceManager::SRC::PAUSEOPE1).handleId_;		//操作説明
 	pauseExplainImgs_[1] = resMng_.Load(ResourceManager::SRC::PAUSEOPE2).handleId_;		//操作説明
-	pauseExplainImgs_[2] = resMng_.Load(ResourceManager::SRC::PAUSEALLY).handleId_;		//アイテム概要
+	pauseExplainImgs_[2] = resMng_.Load(ResourceManager::SRC::PAUSEALLY).handleId_;		//味方説明
+
+	pauseMenuPosY[0] = UI_HEIGHT_PAUSE_1;
+	pauseMenuPosY[1] = UI_HEIGHT_PAUSE_2;
+	pauseMenuPosY[2] = UI_HEIGHT_PAUSE_3;
+	pauseMenuPosY[3] = UI_HEIGHT_PAUSE_4;
+	pauseMenuPosY[4] = UI_HEIGHT_PAUSE_5;
 
 	//カウンタ
 	uiFadeStart_ = false;
@@ -155,7 +159,7 @@ void TutorialScene::Init(void)
 	//カメラのポーズ解除
 	camera_ = SceneManager::GetInstance().GetCamera().lock();
 	if (camera_) {
-		camera_->SetPaused(false); //ここが重要！
+		camera_->SetPaused(false);
 
 		//ミニマップ用カメラ
 		camera_->SetFollow(&player_->GetTransform());
@@ -178,7 +182,7 @@ void TutorialScene::Init(void)
 
 	step_ = TutorialStep::STEP_01_MESSAGE;
 
-	// まずすべての操作を禁止
+	//まずすべての操作を禁止
 	player_->SetControlEnabled(false);
 	mainCamera->SetControlEnabled(false);
 }
@@ -189,14 +193,14 @@ void TutorialScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 
 	//簡易deltaTime(60FPS想定）
-	const float deltaTime = 1.0f / 60.0f;
+	const float deltaTime = 1.0f / DELTA_TIME;
 
 	if (PauseMenu()) return;
 
 	if (ins.IsTrgDown(KEY_INPUT_R) ||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP))
 	{
-		if (!isKicking_)  //通常時
+		if (!isKicking_)
 		{
 			switch (cameraMode)
 			{
@@ -214,7 +218,7 @@ void TutorialScene::Update(void)
 				break;
 			}
 		}
-		else  //味方が飛んでいる間
+		else
 		{
 			switch (cameraMode)
 			{
@@ -282,7 +286,7 @@ void TutorialScene::Draw(void)
 	for (auto ally : Allys_)
 	{
 		ally->Draw();
-		ally->DrawShots(); //ショットだけ別描画関数を呼ぶ
+		ally->DrawShots();
 	}
 
 	for (auto enemy : enemys_)
@@ -306,56 +310,80 @@ void TutorialScene::Draw(void)
 		DrawRotaGraph(UI_GEAR, UI_GEAR, IMG_OPEGEAR_UI_SIZE, 0.0, imgOpeGearCon_, true);
 	}
 
-	//チュートリアル
-	if (showMessage_) {
-		DrawGraph(1050, 30, imgCurrentMessage_, true);
+	//UIレイアウト
+	static constexpr int MESSAGE_POS_X = 1050;				//メッセージのX
+	static constexpr int MESSAGE_POS_Y = 30;				//メッセージのY
+	static constexpr int MOVE_MESSAGE = 1100;				//移動の教えるアイコン
+	static constexpr int CAMERA_MESSAGE = 1000;				//カメラの教えるアイコン
+	static constexpr int ATTACK_MESSAGE = 1100;				//攻撃の教えるアイコン
 
-		float alpha2 = (sinf(GetNowCount() * BLINK_SPEED) + 1.0f) * 0.5f;
+	static constexpr int ICON_POS_X = 1810;					//アイコンのX
+	static constexpr int ICON_POS_Y = 155;					//アイコンのY
+			
+	static constexpr float KEYBOARD_ICON_SCALE = 0.6f;		//キーボードの大きさ	
+	static constexpr float GAMEPAD_ICON_SCALE = 0.4f;		//パッドの大きさ	
 
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(alpha2 * 255));
+	//チュートリアルメッセージ
+	if (showMessage_)
+	{
+		DrawGraph(
+			MESSAGE_POS_X,
+			MESSAGE_POS_Y,
+			imgCurrentMessage_,
+			true
+		);
 
+		//点滅用アルファ
+		const float blinkAlpha =
+			(sinf(GetNowCount() * BLINK_SPEED) + 1.0f) * 0.5f;
+
+		SetDrawBlendMode(
+			DX_BLENDMODE_ALPHA,
+			static_cast<int>(blinkAlpha * MAX_ALPHA)
+		);
+
+		//入力デバイスに応じたアイコン表示
 		if (GetJoypadNum() == 0)
 		{
-			//カーソル描画
 			DrawRotaGraph(
-				1810,
-				155,
-				0.6,
-				0,
+				ICON_POS_X,
+				ICON_POS_Y,
+				KEYBOARD_ICON_SCALE,
+				0.0,
 				imgEnter_,
 				true
 			);
 		}
 		else
 		{
-			//カーソル描画
 			DrawRotaGraph(
-				1810,
-				155,
-				0.4,
-				0,
+				ICON_POS_X,
+				ICON_POS_Y,
+				GAMEPAD_ICON_SCALE,
+				0.0,
 				imgAbutton_,
 				true
 			);
 		}
 
-		//ブレンドモード解除
+		//ブレンド解除
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
+	//個別チュートリアル表示
 	if (isTutorialPlayerMove_)
 	{
-		DrawGraph(1100, 30, imgPlayerMove_, true);
+		DrawGraph(MOVE_MESSAGE, MESSAGE_POS_Y, imgPlayerMove_, true);
 	}
 
 	if (isTutorialCameraMove_)
 	{
-		DrawGraph(1000, 30, imgCameraMove_, true);
+		DrawGraph(CAMERA_MESSAGE, MESSAGE_POS_Y, imgCameraMove_, true);
 	}
 
 	if (isTutorialAttack_)
 	{
-		DrawGraph(1100, 30, imgAttack_, true);
+		DrawGraph(ATTACK_MESSAGE, MESSAGE_POS_Y, imgAttack_, true);
 	}
 
 	//入力チェック or 時間経過でフェード開始
@@ -372,13 +400,20 @@ void TutorialScene::Draw(void)
 		}
 	}
 
+	//ポーズUIレイアウト
+	static constexpr int DARK_ALPHA = 200;			//グレー目にする
+	static constexpr int CONTROL_ALPHA = 110;		//コントローラー部の明るさ
+	static constexpr int ALLY_ALPHA = 150;			//味方教える部の明るさ
+		
+	static constexpr int PAUSE_Y = 100;				//pauseImg_のY
+
 	if (isPaused_)
 	{
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-		DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), black, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, DARK_ALPHA);
+		DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), black, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-		DrawRotaGraph((Application::SCREEN_SIZE_X) / 2, 100, 1.0, 0.0, pauseImg_, true);
+		DrawRotaGraph((Application::SCREEN_SIZE_X) / 2, PAUSE_Y, 1.0, 0.0, pauseImg_, true);
 
 		if (pauseState_ == PauseState::PauseMenu)
 		{
@@ -397,13 +432,12 @@ void TutorialScene::Draw(void)
 				int drawX = Application::SCREEN_SIZE_X / 2 - w / 2;
 				int drawY = pauseMenuPosY[i];
 
-				//DrawRotaGraph(drawX, drawY, 1.0, 0.0, img, true);
 				DrawGraph(drawX, drawY, img, true);
 			}
 		}
 		else if (pauseState_ == PauseState::ShowControls)
 		{
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, CONTROL_ALPHA);
 			DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), white, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 			if (GetJoypadNum() == 0)
@@ -417,7 +451,7 @@ void TutorialScene::Draw(void)
 		}
 		else if (pauseState_ == PauseState::ShowAllies)
 		{
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, ALLY_ALPHA);
 			DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), white, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 			DrawGraph(0, 0, pauseExplainImgs_[2], true);
@@ -480,24 +514,24 @@ void TutorialScene::ReturnToPlayerCamera(void)
 
 void TutorialScene::AllyCreate(void)
 {
-	Allys_.clear(); // 念のためクリア
+	Allys_.clear();
 
 	// プレイヤー位置と回転を取得
 	VECTOR basePos = player_->GetTransform().pos;
-	float playerAngleY = player_->GetTransform().rot.y; //Y軸回転（ラジアン）
+	float playerAngleY = player_->GetTransform().rot.y;
 
 	//前方・右方向ベクトル
 	VECTOR forward = VGet(sinf(playerAngleY), 0.0f, cosf(playerAngleY));
 	VECTOR right = VGet(cosf(playerAngleY), 0.0f, -sinf(playerAngleY));
 
 	//プレイヤーの前方に出す距離と横間隔
-	const float forwardDist = 300.0f; //前方方向へ距離
+	const float forwardDist = 300.0f; //前方方向距離
 	const float spacing = 200.0f;     //横間隔
 
 	//3種類の味方を左から右へ並べる
 	struct EnemySpawnData {
 		AllyBase::TYPE type;
-		float horizontalOffset; //横方向の位置補正
+		float horizontalOffset;
 	};
 
 	std::vector<EnemySpawnData> spawnList = {
@@ -510,7 +544,7 @@ void TutorialScene::AllyCreate(void)
 	{
 		std::shared_ptr<AllyBase> ally;
 
-		// 種類ごとに生成
+		//種類ごとに生成
 		switch (data.type)
 		{
 		case AllyBase::TYPE::RED:
@@ -529,14 +563,14 @@ void TutorialScene::AllyCreate(void)
 			continue;
 		}
 
-		// 配置座標を計算
+		//配置座標を計算
 		VECTOR offset = VAdd(
-			VScale(forward, forwardDist),                 // 前方向へ
-			VScale(right, data.horizontalOffset)          // 横へ並べる
+			VScale(forward, forwardDist),                
+			VScale(right, data.horizontalOffset)         
 		);
 		VECTOR spawnPos = VAdd(basePos, offset);
 
-		// 基本設定
+		//基本設定
 		ally->SetTutorialScene(this);
 		ally->SetPos(spawnPos);
 		ally->SetPlayer(player_);
@@ -550,9 +584,8 @@ void TutorialScene::AllyCreate(void)
 void TutorialScene::EnemyCreate(void)
 {
 	enemySpawnTable_[1] = {
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 2500), 2},
+		{ VGet(-TUTORIAL_ENEMY_X, TUTORIAL_ENEMY_Y, TUTORIAL_ENEMY_Z), VIRUS},
 	};
-
 }
 
 bool TutorialScene::PauseMenu(void)
@@ -578,7 +611,7 @@ bool TutorialScene::PauseMenu(void)
 		return true;
 	}
 
-	if (!isPaused_) return false; // ポーズ中でなければ通常更新
+	if (!isPaused_) return false;
 
 	if (pauseState_ == PauseState::PauseMenu)
 	{
@@ -636,19 +669,11 @@ bool TutorialScene::PauseMenu(void)
 	return true;
 }
 
-
-
 void TutorialScene::SpawnEnemies(int stageNo)
 {
 	//登録がないステージ
 	if (enemySpawnTable_.count(stageNo) == 0)
 		return;
-
-	//敵種類
-	constexpr int Dog = 0;
-	constexpr int Onion = 1;
-	constexpr int Virus = 2;
-	constexpr int Boss = 3;
 
 	auto& list = enemySpawnTable_[stageNo];
 
@@ -659,19 +684,19 @@ void TutorialScene::SpawnEnemies(int stageNo)
 		//敵の種類を割り当て
 		switch (e.type)
 		{
-		case Dog:
+		case DOG:
 			enemy = std::make_shared<EnemyDog>();
 			break;
 
-		case Onion:
+		case ONION:
 			enemy = std::make_shared<EnemyOnion>();
 			break;
 
-		case Virus:
+		case VIRUS:
 			enemy = std::make_shared<EnemyVirus>();
 			break;
 
-		case Boss:
+		case BOSS:
 			enemy = std::make_shared<EnemyBoss>();
 			break;
 
@@ -699,7 +724,6 @@ bool TutorialScene::IsAnyAllyFlying(void) const
 	return false;
 }
 
-//今飛んでいる味方を返す（必要なら）
 AllyBase* TutorialScene::GetFlyingAlly(void) const
 {
 	for (auto& a : Allys_)
@@ -727,6 +751,9 @@ void TutorialScene::RunTutorial(void)
 
 	Camera& cam = *camera_;
 	Player& play = *player_;
+
+	constexpr float required_distance = 300.0f;
+	constexpr float required_angle = 0.4f;
 
 	switch (step_)
 	{
@@ -855,7 +882,7 @@ void TutorialScene::RunTutorial(void)
 			(pos.z - moveStartPos_.z) * (pos.z - moveStartPos_.z)
 		);
 
-		if (dist > 300.0f) {
+		if (dist > required_distance) {
 			player_->SetControlEnabled(false);
 			step_ = TutorialStep::STEP_11_MESSAGE;
 		}
@@ -909,7 +936,7 @@ void TutorialScene::RunTutorial(void)
 		float dx = fabsf(cam.GetRotX() - cameraStartRotX_);
 		float dy = fabsf(cam.GetRotY() - cameraStartRotY_);
 
-		if (dx + dy > 0.4f) {
+		if (dx + dy > required_angle) {
 			cam.SetControlEnabled(false);
 			step_ = TutorialStep::STEP_14_MESSAGE;
 		}
@@ -1177,7 +1204,7 @@ void TutorialScene::RunTutorial(void)
 		break;
 	}
 
-	// --- 全チュートリアル共通の制御 ---
+	//全チュートリアル共通の制御
 	player_->SetControlEnabled(!showMessage_);
 	cam.SetControlEnabled(!showMessage_);
 }

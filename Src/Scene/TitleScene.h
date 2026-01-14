@@ -11,73 +11,83 @@ class TitleScene : public SceneBase
 {
 public:
 
+	//----------------------------------------------------------------------------------
+	//味方
+	static constexpr float ALLY_POS_X = -350.0f;		//味方のX座標
+
+	static constexpr float ALLY_RED_POS_Y = -350.0f;	//赤味方のY座標
+	static constexpr float ALLY_RED_POS_Z = 100.0f;		//赤味方のZ座標
+	static constexpr float ALLY_BLUE_POS_Y = -250.0f;	//青味方のY座標
+	static constexpr float ALLY_BLUE_POS_Z = 300.0f;	//青味方のZ座標
+	static constexpr float ALLY_BLACK_POS_Y = -25.0f;	//黒味方のY座標
+	static constexpr float ALLY_BLACK_POS_Z = 400.0f;	//黒味方のZ座標
+
+	static constexpr float ALLY_SIZE = 1.0f;			//味方の大きさ
+
+	static constexpr float ALLY_ROT = -80.0f;			//味方の向き
+
+	static constexpr int ALLY_ANIM_NUM = 4;				//味方の行動アニメーション数
+
+	//プレイヤー
+	static constexpr float PLAYER_POS_X = -400.0f;		//プレイヤーのX座標
+	static constexpr float PLAYER_POS_Y = -75.0f;		//プレイヤーのY座標
+	static constexpr float PLAYER_POS_Z = 0.0f;			//プレイヤーのZ座標
+
+	static constexpr float PLAYER_SIZE = 0.015f;		//プレイヤーの大きさ
+
+	static constexpr float PLAYER_ROT = -80.0f;			//プレイヤーの向き
+
+	static constexpr int PLAYER_ANIM_NUM = 1;			//プレイヤーの行動アニメーション数
+
+	//敵
+	static constexpr float ENEMY_POS_X = 400.0f;		//敵のX座標
+	static constexpr float ENEMY_POS_Y = -230.0f;		//敵のY座標
+	static constexpr float ENEMY_POS_Z = 0.0f;			//敵のZ座標
+
+	static constexpr float ENEMY_SIZE = 0.35;			//敵の大きさ
+
+	static constexpr float ENEMY_ROT = 80.0f;			//敵の向き
+
+	static constexpr int ENEMY_ANIM_NUM = 2;			//敵の行動アニメーション数
+
+	//アニメーション速度
+	static constexpr float ANIMATION_TIME = 25.0f;
+	//----------------------------------------------------------------------------------
+
 	static constexpr int ONE_SECOND_FRAME = 60;			//1秒
 
-	static constexpr int MENU_SELECT = 3;		
+	static constexpr int MENU_SELECT = 3;				//メニュー数
 
-	static constexpr float PLAYER_POS_X = -900.0f;
-	static constexpr float ENEMY_POS_X = -1100.0f;
+	static constexpr float IMG_TITLE_SIZE = 1.0f;		//タイトル画像の大きさ
+	static constexpr int IMG_TITLE_WIDTH = 1100;		//タイトル画像のX
+	static constexpr int IMG_TITLE_HEIGHT = 250;		//タイトル画像のY
 
-	static constexpr float CHARACTER_POS_Y = -400.0f;
-	static constexpr float CHARACTER_POS_Z = 100.0f;
+	static constexpr int IMG_MENU_X = 740;				//メニューのX
 
-	static constexpr float PLAYER_SIZE = 0.01f;
-	static constexpr float ENEMY_SIZE = 1.3f;
+	static constexpr int GAME_STATE_Y = 730;			//ゲームプレイ画像のY
+	static constexpr int GAME_RULE_Y = 830;				//ゲームルール画像のY	
+	static constexpr int GAME_END_Y = 930;				//ゲーム終了画像のY
 
-	static constexpr float ANIMATION_TIME = 25.0f;
+	static constexpr int WHITE_ALPHA = 255;				//ホワイト
+	static constexpr int GRAY_ALPHA = 220;				//グレー
 
-	static constexpr int PLAYER_ANIM_NUM = 2;
-	static constexpr int AllY_ANIM_NUM = 1;			//味方達のアニメーションナンバー
-	static constexpr int ENEMY_ANIM_NUM = 1;
+	static constexpr int BASE_Y = 450;					//ボタンのベース場所
+	static constexpr int BUTTON_OFFSET = 120;			//ボタンのオフセット位置
 
-	static constexpr float PLAYER_SPEED = 5.0f;
-	static constexpr float ENEMY_SPEED = 5.0f;
-	static constexpr float LEFT_BOUND = -1150.0f;
-	static constexpr float RIGHT_BOUND = 1150.0f;
-	static constexpr float SAFE_DISTANCE = 250.0f;
+	static constexpr int CURSOR_WIDTH = 710;			//カーソルのX
+	static constexpr int CURSOR_HEIGHT = 800;			//カーソルのY
 
-	static constexpr float INVERSION = 90.0f;
+	static constexpr int INDEX = 100;					//下にずらす部分
+	static constexpr float IMG_CURSOR_SIZE = 0.55;		//カーソルの大きさ
 
-	static constexpr int MAX_CONUT_3D = 750;
-	static constexpr int IMAGE_3D_SPEAD = 20;
+	static constexpr int END_STRING_WIDTH = 400;		//ゲームを終了するかの画像のX
+	static constexpr int END_STRING_HEIGHT = 120;		//ゲームを終了するかの画像のY
 
-	static constexpr float IMG_3D_SIZE = 0.5;
-	static constexpr int IMG_3D_WIDTH = 1700;
-	static constexpr int IMG_3D_HEIGHT = 625;
+	static constexpr int YES_STRING_WIDTH = 220;		//はい画像X
+	static constexpr int YES_STRING_HEIGHT = 640;		//はい画像Y
 
-	static constexpr float IMG_TITLE_SIZE = 1.0; 
-	static constexpr int IMG_TITLE_WIDTH = 1100;
-	static constexpr int IMG_TITLE_HEIGHT = 250;
-
-	static constexpr int WHITE_ALPHA = 255;
-	static constexpr int GRAY_ALPHA = 220;
-
-	static constexpr int BUTTON_W = 400;
-	static constexpr int BUTTON_H = 100;
-	static constexpr int BASE_Y = 450;
-	static constexpr int BUTTON_OFFSET = 120;
-
-	static constexpr int CURSOR_WIDTH = 710;
-	static constexpr int CURSOR_HEIGHT = 800;
-
-	static constexpr int INDEX = 100;
-	static constexpr float IMG_CURSOR_SIZE = 0.55;
-	static constexpr float CURSOR_MOVE_SPEED = 0.03;
-
-	static constexpr int TEXT_WIDTH = 780;
-
-	static constexpr int TEXT_HEIGHT_1 = 420;
-	static constexpr int TEXT_HEIGHT_2 = 530;
-	static constexpr int TEXT_HEIGHT_3 = 640;
-
-	static constexpr int END_STRING_WIDTH = 400;
-	static constexpr int END_STRING_HEIGHT = 120;
-
-	static constexpr int YES_STRING_WIDTH = 220;
-	static constexpr int YES_STRING_HEIGHT = 640;
-
-	static constexpr int NO_STRING_WIDTH = 990;
-	static constexpr int NO_STRING_HEIGHT = 640;
+	static constexpr int NO_STRING_WIDTH = 990;			//いいえ画像X
+	static constexpr int NO_STRING_HEIGHT = 640;		//いいえ画像Y
 
 	static constexpr float BLINK_SPEED = 0.003f;
 
@@ -90,10 +100,10 @@ public:
 	int yellow = 0xffff00;//黄
 	int purpl = 0x800080; //紫
 
-	// コンストラクタ
+	//コンストラクタ
 	TitleScene(void);
 
-	// デストラクタ
+	//デストラクタ
 	~TitleScene(void);
 
 	void Init(void) override;
@@ -106,7 +116,7 @@ private:
 	int cnt;
 	int cnt_3D;
 
-	// 画像
+	//画像
 	int imgTitle_;
 	int imgBackTitle_;
 	int imgGameStart_;
@@ -126,27 +136,18 @@ private:
 
 	int blinkFrameCount_ = 0;
 
-	int enemyDirection_ = 1;		// 敵の向き（1:右, -1:左）
-	int playerDirection_ = 1;		// プレイヤーの向き（1:右, -1:左）
-	float enemySpeed_ = 5.0f;		// 敵の移動速度
-	float playerSpeed_ = 4.0f;		// プレイヤーの移動速度
-
-	// 画面の移動制限範囲(敵とplayerの追いかけっこ）
-	const float leftLimit_ = -1000.0f;
-	const float rightLimit_ = 1000.0f;
-
-	// 修了確認用
+	//終了確認用
 	bool isConfirmingExit_ = false;		
 	int confirmIndex_ = 1;				
 	int confirmAnimFrame_ = 0;				
 	const int CONFIRM_ANIM_DURATION = 20;
 
 	//アニメーション
-	Transform player_;	//プレイヤー
-	Transform redAlly_; //赤味方
-	Transform blueAlly_; //青味方
-	Transform blackAlly_; //黒味方
-	Transform enemy_;	//敵
+	Transform player_;		//プレイヤー
+	Transform redAlly_;		//赤味方
+	Transform blueAlly_;	//青味方
+	Transform blackAlly_;	//黒味方
+	Transform enemy_;		//敵
 	
 	//アニメーションコントローラー
 	std::unique_ptr<AnimationController> animationControllerPlayer_;

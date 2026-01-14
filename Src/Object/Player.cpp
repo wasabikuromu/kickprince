@@ -38,35 +38,15 @@ Player::Player(void)
 	//丸影
 	imgShadow_ = -1;
 
-	//スピードアップ用のフラグ
-	speedUpFlag_ = false;
-	speedUpCnt_ = SPEED_UP_TIME;
-
 	//攻撃の初期化
 	normalAttack_ = NORMAL_ATTACK;
-	powerUpFlag_ = false;
 	isAttack_ = false;
-	exTimer_ = EX_TIME;
-	lastExTime_ = -exTimer_;
-	powerUpCnt_ = POWER_UP_TIME;
 
 	//ステ関連
 	hp_ = HP;
-	water_ = 0;
-
-	//無敵状態
-	invincible_ = false;
-
-	//アイコン
-	imgPowerIcon_ = -1;
-	imgSpeedIcon_ = -1;
-	imgRotateAttackIcon_ = -1;
 
 	//移動が可能かどうか
 	canMove_ = true;
-
-	//所持上限かどうか
-	isMax_ = false;
 
 	//状態管理
 	stateChanges_.emplace(
@@ -91,13 +71,8 @@ void Player::Init(void)
 	//丸影画像
 	imgShadow_ = resMng_.Load(ResourceManager::SRC::SHADOW).handleId_;
 
-	//アイコン画像
-	imgPowerIcon_ = resMng_.Load(ResourceManager::SRC::POWER_UP_ICON).handleId_;
-	imgSpeedIcon_ = resMng_.Load(ResourceManager::SRC::SPEED_UP_ICON).handleId_;
-	imgRotateAttackIcon_ = resMng_.Load(ResourceManager::SRC::ROTA_ATTACK_ICON).handleId_;
-
 	//ゲージ枠
-	imgGaugeFrame_ = resMng_.Load(ResourceManager::SRC::GAUGE_FRAME).handleId_;	//ゲージ枠
+	imgGaugeFrame_ = resMng_.Load(ResourceManager::SRC::GAUGE_FRAME).handleId_;
 
 	//足煙エフェクト
 	effectSmokeResId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::FOOT_SMOKE).handleId_;
@@ -155,15 +130,6 @@ void Player::Update(void)
 void Player::UpdateDown(float deltaTime)
 {
 	auto& ins = InputManager::GetInstance();
-
-	if (pstate_ == PlayerState::DOWN) {
-		isAttack_ = false;
-		revivalTimer_ += deltaTime;
-		if (revivalTimer_ >= D_COUNT) {
-			Revival();
-		}
-		return;
-	}
 }
 
 void Player::SetTutorialPause(bool pause)
@@ -270,17 +236,11 @@ void Player::UpdatePlay(void)
 {
 	if (!canMove_)return;
 
-	//スピードアップの制限時間
-	SpeedUpTimer();
-
 	//移動処理
 	ProcessMove();
 
 	//移動方向に応じた回転
 	Rotate();
-
-	//パワーアップの制限時間
-	PowerUpTimer();
 
 	//攻撃処理
 	ProcessAttack();
@@ -340,7 +300,7 @@ void Player::DrawShadow(void)
 			VAdd(transform_.pos, VGet(0.0f, -PLAYER_SHADOW_HEIGHT, 0.0f)), PLAYER_SHADOW_SIZE);
 
 		//頂点データで変化が無い部分をセット
-		Vertex[0].dif = GetColorU8(MAX_COLOR, MAX_COLOR, MAX_COLOR, MAX_COLOR);
+		Vertex[0].dif = GetColorU8(MAX_ALPHA, MAX_ALPHA, MAX_ALPHA, MAX_ALPHA);
 		Vertex[0].spc = GetColorU8(0, 0, 0, 0);
 		Vertex[0].su = 0.0f;
 		Vertex[0].sv = 0.0f;
@@ -424,75 +384,87 @@ void Player::DrawGuideLine(void)
 
 void Player::DrawChargeGauge()
 {
-	const int drawX = 1200;
-	const int drawY = 550;
+	//------------------------------------------------------------------
+	//位置
+	const int DRAW_X = 1200;
+	const int DRAW_Y = 550;
 
+	//チャージ率
 	float rate = chargeTime_ / maxChargeTime_;
 	if (rate < 0.0f) rate = 0.0f;
 	if (rate > 1.0f) rate = 1.0f;
 
-	const int innerHeight = 450;
-	const float bottomWidth = 40.0f;
-	const float topWidth = 99.0f;
-	const float slope = (topWidth - bottomWidth) / innerHeight;
+	//ゲージ形状
+	const int   INNER_HEIGHT = 450;
+	const float BOTTOM_WIDTH = 40.0f;
+	const float TOP_WIDTH = 99.0f;
+	const float WIDTH_SLOPE = (TOP_WIDTH - BOTTOM_WIDTH) / INNER_HEIGHT;
 
-	const int frameWidth = 110;
-	const int frameHeight = 460;
+	const int FRAME_WIDTH = 110;
+	const int FRAME_HEIGHT = 460;
 
-	const int offsetY = (frameHeight - innerHeight) / 2;
-	const int offsetX = (frameWidth - (int)bottomWidth) / 2;
+	const int OFFSET_Y = (FRAME_HEIGHT - INNER_HEIGHT) / 2;
+	const int OFFSET_X = (FRAME_WIDTH - static_cast<int>(BOTTOM_WIDTH)) / 2;
 
-	int filledH = (int)(innerHeight * rate);
+	const int FILLED_HEIGHT = static_cast<int>(INNER_HEIGHT * rate);
 
-	//①filled 部分（カラーグラデーション）
-	for (int i = 0; i < filledH; i++)
+	const int FRAME_OFFSET_X = 29;  //枠画像と中身のXズレ補正
+	const int EMPTY_ALPHA = 128;        //半透明
+	const int NO_BLEND_ALPHA = 255;     //不透明
+
+	//------------------------------------------------------------------
+
+	//塗られている部分（グラデーション）
+	for (int i = 0; i < FILLED_HEIGHT; i++)
 	{
-		float w = bottomWidth + slope * i;
+		const float width = BOTTOM_WIDTH + WIDTH_SLOPE * i;
 
-		int drawYLine = drawY + (innerHeight - i) + offsetY;
-		int left = drawX + offsetX;
-		int right = left + (int)w;
+		const int y = DRAW_Y + (INNER_HEIGHT - i) + OFFSET_Y;
+		const int left = DRAW_X + OFFSET_X;
+		const int right = left + static_cast<int>(width);
 
-		float t = (float)i / innerHeight;
-		int r, g, b;
+		const float t = static_cast<float>(i) / INNER_HEIGHT;
+
+		int r = 255;
+		int g = 255;
+		int b = 0;
+
 		if (t < 0.5f)
 		{
 			float k = t / 0.5f;
-			r = (int)(255 * k);
+			r = static_cast<int>(255 * k);
 			g = 255;
-			b = 0;
 		}
 		else
 		{
 			float k = (t - 0.5f) / 0.5f;
 			r = 255;
-			g = (int)(255 * (1.0f - k));
-			b = 0;
+			g = static_cast<int>(255 * (1.0f - k));
 		}
 
-		DrawBox(left, drawYLine, right, drawYLine + 1, GetColor(r, g, b), TRUE);
+		DrawBox(left, y, right, y + 1, GetColor(r, g, b), true);
 	}
 
-	//②空の部分（グレー）
-	int emptyH = innerHeight - filledH;
+	//空の部分（グレー）
+	const unsigned int EMPTY_COLOR = GetColor(100, 100, 100);
 
-	for (int i = filledH; i < innerHeight; i++)
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, EMPTY_ALPHA);
+
+	for (int i = FILLED_HEIGHT; i < INNER_HEIGHT; i++)
 	{
-		float w = bottomWidth + slope * i;
+		const float width = BOTTOM_WIDTH + WIDTH_SLOPE * i;
 
-		int drawYLine = drawY + (innerHeight - i) + offsetY;
-		int left = drawX + offsetX;
-		int right = left + (int)w;
+		const int y = DRAW_Y + (INNER_HEIGHT - i) + OFFSET_Y;
+		const int left = DRAW_X + OFFSET_X;
+		const int right = left + static_cast<int>(width);
 
-		unsigned int color = GetColor(100, 100, 100);
-
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
-		DrawBox(left, drawYLine, right, drawYLine + 1, color, TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		DrawBox(left, y, right, y + 1, EMPTY_COLOR, true);
 	}
 
-	//③枠を重ねる
-	DrawGraph(drawX + 29, drawY, imgGaugeFrame_, TRUE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, NO_BLEND_ALPHA);
+
+	//枠
+	DrawGraph(DRAW_X + FRAME_OFFSET_X, DRAW_Y, imgGaugeFrame_, true);
 }
 
 void Player::ProcessMove(void)
@@ -537,11 +509,11 @@ void Player::ProcessMove(void)
 		}
 		else
 		{
-			// 接続されているゲームパッド１の情報を取得
+			//接続されているゲームパッド１の情報を取得
 			InputManager::JOYPAD_IN_STATE padState =
 				ins_.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
 
-			// アナログキーの入力値から方向を取得
+			//アナログキーの入力値から方向を取得
 			dir = ins_.GetDirectionXZAKey(padState.AKeyLX, padState.AKeyLY);
 
 			//カメラがクォータニオンを採用している場合
@@ -583,12 +555,6 @@ void Player::ProcessMove(void)
 		}
 	}
 
-	//フィールド範囲
-	const float fieldXmin = -1100.0f;
-	const float fieldXmax = 900.0f;
-	const float fieldZmin = -2100.0f;
-	const float fieldZmax = -1350.0f;
-
 	//次フレームの想定位置
 	VECTOR nextPos;
 	nextPos.x = transform_.pos.x + movePow_.x;
@@ -596,13 +562,13 @@ void Player::ProcessMove(void)
 	nextPos.z = transform_.pos.z + movePow_.z;
 
 	//X方向の制限
-	if (nextPos.x < fieldXmin || nextPos.x > fieldXmax)
+	if (nextPos.x < FIELDXMIN || nextPos.x > FIELDXMAX)
 	{
 		movePow_.x = 0;
 	}
 
-	// Z方向の制限
-	if (nextPos.z < fieldZmin || nextPos.z > fieldZmax)
+	//Z方向の制限
+	if (nextPos.z < FIELDZMIN || nextPos.z > FIELDZMAX)
 	{
 		movePow_.z = 0;
 	}
@@ -610,6 +576,7 @@ void Player::ProcessMove(void)
 
 void Player::SetGoalRotate(double rotRad)
 {
+	constexpr double ROTATE_RESET_THRESHOLD = 0.1;
 	VECTOR cameraRot = mainCamera->GetAngles();
 
 	Quaternion axis =
@@ -620,7 +587,7 @@ void Player::SetGoalRotate(double rotRad)
 	double angleDiff = Quaternion::Angle(axis, goalQuaRot_);
 
 	//しきい値
-	if (angleDiff > 0.1)
+	if (angleDiff > ROTATE_RESET_THRESHOLD)
 	{
 		stepRotTime_ = TIME_ROT;
 	}
@@ -669,13 +636,11 @@ void Player::CollisionGravity(void)
 	//重力の強さ
 	float gravityPow = grvMng_.GetPower();
 
-	float checkPow = 10.0f;
-
 	gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
 
-	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
+	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, GROUND_CHECK_DISTANCE * VALUE_TWO));
 
-	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
+	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, GROUND_CHECK_DISTANCE));
 
 	for (const auto c : colliders_)
 	{
@@ -683,17 +648,9 @@ void Player::CollisionGravity(void)
 		auto hit = MV1CollCheck_Line(
 			c.lock()->modelId_, -1, gravHitPosUp_, gravHitPosDown_);
 
-		//if (hit.HitFlag > 0)
-		if (hit.HitFlag > 0 && VDot(dirGravity, jumpPow_) > 0.9f)
+		if (hit.HitFlag > 0 && VDot(dirGravity, jumpPow_) > GRAVITY_ALIGN_DOT_THRESHOLD)
 		{
-			//衝突地点から、少し上に移動
-
-			//地面と衝突している
-
-			//movedPos_に押し戻し座標を設定
-			//押し戻し座標については、dxlib のhit構造体の中にヒントアリ
-			//衝突地点情報が格納されている
-			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
+			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, VALUE_TWO));
 		}
 	}
 }
@@ -719,7 +676,7 @@ void Player::CollisionCapsule(void)
 			//地面と異なり、衝突回避位置が不明なため、何度か移動させる
 			//この時、移動させる方向は、移動前座標に向いた方向であったり、
 			//衝突したポリゴンの法線方向だったりする
-			for (int tryCnt = 0; tryCnt < 10; tryCnt++)
+			for (int tryCnt = 0; tryCnt < MAX_PENETRATION_RESOLVE_ITERATIONS; tryCnt++)
 			{
 				//再度、モデル全体と衝突検出するには、効率が悪過ぎるので、
 				//最初の衝突判定で検出した衝突ポリゴン1枚と衝突判定を取る
@@ -777,7 +734,7 @@ void Player::CollisionAttack(float chargeRate)
 		}
 	}
 
-	// 攻撃が終わったら次回用にリセット
+	//攻撃が終わったら次回用にリセット
 	if (anim.step > ATTACK_END)
 	{
 		isAttack_ = true;
@@ -793,8 +750,6 @@ void Player::CalcGravityPow(void)
 	float gravityPow = grvMng_.GetPower();
 
 	//重力
-	//重力を作る
-	// メンバ変数 jumpPow_ に重力計算を行う(加速度)
 	VECTOR gravity = VScale(dirGravity, gravityPow);
 	jumpPow_ = VAdd(jumpPow_, gravity);
 
@@ -802,7 +757,6 @@ void Player::CalcGravityPow(void)
 	float dot = VDot(dirGravity, jumpPow_);
 	if (dot >= 0.0f)
 	{
-		//重力方向と反対方向(マイナス)でなければ、ジャンプ力を無くす
 		jumpPow_ = gravity;
 	}
 }
@@ -821,22 +775,20 @@ void Player::ProcessAttack(void)
 
 	//チュートリアルで攻撃禁止のときは何もさせない
 	if (!attackEnable_) {
-		isCharging_ = false;    //チャージ中断
-		isAttack_ = false;      //攻撃も中断
+		isCharging_ = false;
+		isAttack_ = false;
 		attackReleased_ = false;
 		return;
 	}
 
-	//============================================================
-	// ① 攻撃アニメ中（キャンセル不可）
-	//============================================================
+	//①攻撃アニメ中
 	if (isAttack_)
 	{
 		attackTimer_ += scnMng_.GetDeltaTime();
 	
 		if (attackTimer_ >= attackDuration_)
 		{
-			// 攻撃アニメ終了
+			//攻撃アニメ終了
 			isAttack_ = false;
 			attackTimer_ = 0.0f;
 			animationController_->Play((int)ANIM_TYPE::IDLE, true);
@@ -845,16 +797,10 @@ void Player::ProcessAttack(void)
 		return;
 	}
 
-
-	//============================================================
-	// ※ チャージは移動中は開始できない
-	//============================================================
+	//チャージ中は移動できない
 	bool isMoving = (fabs(movePow_.x) > 0.01f || fabs(movePow_.z) > 0.01f);
 
-
-	//============================================================
-	// ② チャージ開始（押した瞬間のみ）
-	//============================================================
+	//②チャージ開始（押した瞬間のみ）
 	if (!isCharging_ && isPress && !isMoving)
 	{
 		isCharging_ = true;
@@ -864,13 +810,10 @@ void Player::ProcessAttack(void)
 
 	}
 
-
-	//============================================================
-	// ③ チャージ中
-	//============================================================
+	//③チャージ中
 	if (isCharging_)
 	{
-		//チャージ！
+		//チャージ
 		EffectCharge();
 		float dt = scnMng_.GetDeltaTime();
 
@@ -897,10 +840,7 @@ void Player::ProcessAttack(void)
 		DrawChargeGauge();
 	}
 
-
-	//============================================================
-	// ④ チャージ解除 → 攻撃開始（離した瞬間のみ）
-	//============================================================
+	//④チャージ解除
 	if (isCharging_ && isRelease)
 	{
 		isCharging_ = false;
@@ -908,7 +848,7 @@ void Player::ProcessAttack(void)
 		//1フレーム限定ではなく保持する
 		attackReleased_ = true;
 
-		// --- 攻撃開始 ---
+		//キック
 		isAttack_ = true;
 		attackTimer_ = 0.0f;
 
@@ -926,31 +866,25 @@ bool Player::IsEndLandingA(void)
 	bool ret = true;
 	int animType = animationController_->GetPlayType();
 
-	// 攻撃アニメじゃない = 攻撃してない → true（終了扱い）
+	// 攻撃アニメじゃない = 攻撃してない→ true
 	if (animType != (int)ANIM_TYPE::KICK && !animationController_->IsEnd())
 	{
 		return ret;
 	}
 
-	// KICK中で、アニメーションが終わった → true
+	// KICK中でアニメーションが終わった→true
 	if (animationController_->IsEnd())
 	{
 		return ret;
 	}
 
-	// KICK中で、アニメーション再生中 → false
+	//KICK中でアニメーション再生中→false
 	return false;
-}
-
-bool Player::IsExAttackReady() const
-{
-	int now = GetNowCount(); //DxLib の現在時刻（ミリ秒）
-	return (now - lastExTime_) >= exTimer_;
 }
 
 void Player::Damage(int damage)
 {
-	if (pstate_ == PlayerState::DOWN || invincible_) return;  //ダウン中は無敵
+	if (pstate_ == PlayerState::DOWN) return;
 	hp_ -= damage;
 
 	//SE
@@ -964,86 +898,12 @@ void Player::Damage(int damage)
 
 		//SE
 		SoundManager::GetInstance().Play(SoundManager::SRC::P_DOWN_SE, Sound::TIMES::ONCE);
-		StartRevival();  //死亡ではなく復活待機
 	}
-}
-
-void Player::PowerUpTimer(void)
-{
-	//攻撃アップ
-	if (powerUpFlag_)
-	{
-		powerUpCnt_--;
-
-		if (powerUpCnt_ <= 0)
-		{
-			powerUpFlag_ = false;
-
-			normalAttack_ = NORMAL_ATTACK;
-			powerUpCnt_ = POWER_UP_TIME;
-		}
-	}
-}
-
-void Player::PowerUp(void)
-{
-	powerUpFlag_ = true;
-
-	EffectPower();
-
-	//パワーアップ
-	SoundManager::GetInstance().Play(SoundManager::SRC::POWERUP_SE, Sound::TIMES::ONCE);
-
-	if (powerUpCnt_ >= 0 && powerUpFlag_)
-	{
-		normalAttack_ = normalAttack_ * STATUS_UP;
-		slashAttack_ = slashAttack_ * STATUS_UP;
-		exrAttack_ = exrAttack_ * STATUS_UP;
-	}
-}
-
-void Player::SpeedUpTimer(void)
-{
-	//攻撃アップ
-	if (speedUpFlag_)
-	{
-		speedUpCnt_--;
-
-		if (speedUpCnt_ <= 0)
-		{
-			speedUpFlag_ = false;
-			speedUpCnt_ = SPEED_UP_TIME;
-		}
-	}
-}
-
-void Player::SpeedUp(void)
-{
-	speedUpFlag_ = true;
-
-	EffectSpeed();
-
-	//スピードアップ
-	SoundManager::GetInstance().Play(SoundManager::SRC::SPEEDUP_SE, Sound::TIMES::ONCE);
-}
-
-void Player::Heal(void)
-{
-	hp_ = HP;
-
-	//回復
-	SoundManager::GetInstance().Play(SoundManager::SRC::HEAL_SE, Sound::TIMES::ONCE);
-	EffectHeal();
-}
-
-void Player::Muteki(void)
-{
-	invincible_ = true;
 }
 
 bool Player::IsPreparingAttack(void) const
 {
-	return isCharging_;  //攻撃ボタン押下中なら true
+	return isCharging_;
 }
 
 bool Player::IsKickReleased(void) const
@@ -1056,7 +916,7 @@ bool Player::ConsumeKickReleased(void)
 	if (attackReleased_)
 	{
 		attackReleased_ = false;
-		return true;    // ← 呼ばれたフレームで1回だけ true
+		return true;
 	}
 	return false;
 }
@@ -1064,30 +924,6 @@ bool Player::ConsumeKickReleased(void)
 void Player::SetAttackEnabled(bool e)
 {
 	attackEnable_ = e;
-}
-
-void Player::StartRevival()
-{
-	invincible_ = true;   //無敵状態にする
-	canMove_ = false;     //移動停止
-
-	pstate_ = PlayerState::DOWN;
-	revivalTimer_ = 0.0f;
-
-	animationController_->Play((int)ANIM_TYPE::ROSE, false);
-}
-
-void Player::Revival()
-{
-	hp_ = HP;
-	pstate_ = PlayerState::NORMAL;
-
-	//復活後の無敵状態を解除
-	invincible_ = false;   //無敵解除
-	//プレイヤーが移動可能になる
-	canMove_ = true;   //移動再開
-
-	animationController_->Play((int)ANIM_TYPE::IDLE, true);
 }
 
 void Player::EffectFootSmoke(void)
@@ -1111,54 +947,21 @@ void Player::EffectFootSmoke(void)
 	}
 }
 
-void Player::EffectPower(void)
-{
-	float scale = STATUS_EFFECT_SCALE;
-
-	//エフェクト再生
-	effectPowerPleyId_ = PlayEffekseer3DEffect(effectPowerResId_);
-
-	//エフェクトの大きさ
-	SetScalePlayingEffekseer3DEffect(effectPowerPleyId_, scale, scale, scale);
-
-	//エフェクトの位置
-	SetPosPlayingEffekseer3DEffect(effectPowerPleyId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
-}
-
-void Player::EffectSpeed(void)
-{
-	float scale = STATUS_EFFECT_SCALE;
-
-	//エフェクト再生
-	effectSpeedPleyId_ = PlayEffekseer3DEffect(effectSpeedResId_);
-
-	//エフェクトの大きさ
-	SetScalePlayingEffekseer3DEffect(effectSpeedPleyId_, scale, scale, scale);
-
-	//エフェクトの位置
-	SetPosPlayingEffekseer3DEffect(effectSpeedPleyId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
-}
-
-void Player::EffectHeal(void)
-{
-	float scale = STATUS_EFFECT_SCALE;
-
-	//エフェクト再生
-	effectHealPleyId_ = PlayEffekseer3DEffect(effectHealResId_);
-
-	//エフェクトの大きさ
-	SetScalePlayingEffekseer3DEffect(effectHealPleyId_, scale, scale, scale);
-}
-
 void Player::EffectCharge(void)
 {
 	//エフェクト再生
 	effectChargePlayId_ = PlayEffekseer3DEffect(effectChargeResId_);
 
+	const float scale = (chargeTime_ + CHARGE_EFFECT_BASE) * CHARGE_EFFECT_SCALE;
+
 	//エフェクトの大きさ
-	SetScalePlayingEffekseer3DEffect(effectChargePlayId_, 
-		(chargeTime_ + 2.0f) * 10.0f, 10.0f, (chargeTime_ + 2.0f) * 10.0f);
+	SetScalePlayingEffekseer3DEffect(
+		effectChargePlayId_, scale, CHARGE_EFFECT_Y_SCALE, scale);
 
 	//エフェクトの位置
-	SetPosPlayingEffekseer3DEffect(effectChargePlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
+	SetPosPlayingEffekseer3DEffect(
+		effectChargePlayId_,
+		transform_.pos.x,
+		transform_.pos.y,
+		transform_.pos.z);
 }

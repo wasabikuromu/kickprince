@@ -265,12 +265,17 @@ void AllyBase::Damage(int damage,float chargeRate)
 	{
 		isBlow_ = true;
 
+		static constexpr float MIN_BLOW_RATE = 0.25f;
+
+		const float rate =
+			(chargeRate < MIN_BLOW_RATE) ? MIN_BLOW_RATE : chargeRate;
+
 		VECTOR dir = VGet(0.0f, 0.0f, 1.0f);
 
-		float speed = FLY_SPEED * chargeRate;
+		float speed = FLY_SPEED * rate;
 
 		VECTOR forwardVel = VScale(dir, speed);
-		VECTOR upVel = VGet(0.0f, POWER * chargeRate, 0.0f);
+		VECTOR upVel = VGet(0.0f, POWER * rate, 0.0f);
 
 		velocity_ = VAdd(forwardVel, upVel);
 		ChangeState(STATE::BLOW);
@@ -454,7 +459,7 @@ void AllyBase::DrawShadow(void)
 			VAdd(transform_.pos, VGet(0.0f, -ALLY_SHADOW_HEIGHT, 0.0f)), ALLY_SHADOW_SIZE);
 
 		//頂点データで変化が無い部分をセット
-		Vertex[0].dif = GetColorU8(MAX_COLOR, MAX_COLOR, MAX_COLOR, MAX_COLOR);
+		Vertex[0].dif = GetColorU8(MAX_ALPHA, MAX_ALPHA, MAX_ALPHA, MAX_ALPHA);
 		Vertex[0].spc = GetColorU8(0, 0, 0, 0);
 		Vertex[0].su = 0.0f;
 		Vertex[0].sv = 0.0f;

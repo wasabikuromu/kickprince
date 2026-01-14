@@ -52,22 +52,31 @@ public:
 		SelectStage		//ステージを選択
 	};
 
+	//ボス
 	static constexpr int BOSS_WAIT = 0;		//ボス出現待機
 	static constexpr int BOSS_ON = 1;		//ボス出現可能
 	static constexpr int BOSS_OFF = 2;		//ボス出現不可
 
-	//ケリ回数
-	static constexpr int MAX_KICK = 3;
+	//敵種類
+	static constexpr int DOG = 0;
+	static constexpr int ONION = 1;
+	static constexpr int VIRUS = 2;
+	static constexpr int BOSS = 3;
 
 	//敵配置
-	static constexpr float X_ENEMY_POS = -90.0f;
-	static constexpr float Y_ENEMY_POS = 170.0f;
+	static constexpr float MAIN_ENEMY_X = 90.0f;
+	static constexpr float MAIN_ENEMY_Y = 170.0f;
+	static constexpr float ONION_WIDTH_1 = 170.0f;
+	static constexpr float ONION_WIDTH_2 = 220.0f;
+	static constexpr float MAIN_DEPTH_1 = 1500.0f;
+	static constexpr float MAIN_DEPTH_2 = 2500.0f;
+	static constexpr float MAIN_DEPTH_3 = 3500.0f;
+	static constexpr float ONION_DEPTH = 250.0f;
 
 	static const int MAX_STAGE = 5;			//最終ステージ番号
 
 	//UI関係-----------------------------------------------------
 	//-------------------------------------------------------------------
-
 	static constexpr int GAME_HEIGHT_1 = 80;			//ゲーム開始時の注意書き
 
 	//画像サイズ
@@ -78,7 +87,7 @@ public:
 	//ポーズメニュー関連
 	static constexpr int PAUSE_MENU_ITEM_COUNT = 5;						//ポーズメニューの数
 	static constexpr int PAUSE_MENU_DOWN = 1;							//下に移動
-	static constexpr int PAUSE_MENU_UP = PAUSE_MENU_ITEM_COUNT - 1;		//上に移動（+3 の代わり）
+	static constexpr int PAUSE_MENU_UP = PAUSE_MENU_ITEM_COUNT - 1;		//上に移動
 
 	//フェード系
 	static constexpr int AUTO_FADE = 240;				//自動フェード
@@ -91,8 +100,11 @@ public:
 	static constexpr int CURSOR_HEIGHT = 765;
 	static constexpr int INDEX = 100;
 
+	//簡易デルタタイム
+	static constexpr float DELTA_TIME = 60.0f;
+
 	//設定系
-	static constexpr int UI_GEAR = 100;					//imgOpeGear_のX,Yの場所
+	static constexpr int UI_GEAR = 100;							//imgOpeGear_のX,Yの場所
 
 	static constexpr int UI_PAUSE_IMG_HEIGHT = 150;				//pauseImg_の高さ
 
@@ -106,15 +118,12 @@ public:
 	static constexpr int UI_HEIGHT_PAUSE_4 = 710;				//４個目のUIの高さ
 	static constexpr int UI_HEIGHT_PAUSE_5 = 830;				//５個目のUIの高さ
 
-	static constexpr int UI_ATTACK_X = 10;						//攻撃の文字のX座標
 	static constexpr int UI_NORMAL_ATTACK_Y = 450;				//通常攻撃のY座標
-	static constexpr int UI_SLASH_ATTACK_Y = 500;				//スラッシュのY座標
-	static constexpr int UI_EX_ATTACK_Y = 550;					//回転斬りのY座標
-
-	static constexpr int BACK_PAUSE_WIDTH = 1600;				//ポーズに戻るときのENTERのX
-	static constexpr int BACK_PAUSE_HEIGHT = 1020;				//ポーズに戻るときのENTERのY
 
 	//-------------------------------------------------------------------
+
+	//色MAX値
+	static constexpr int MAX_ALPHA = 255;
 
 	//色
 	int white = 0xffffff; //白

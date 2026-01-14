@@ -33,18 +33,18 @@ void TitleScene::Init(void)
 	// 重力制御の初期化
 	GravityManager::GetInstance().Init();
 	// 画像読み込み
-	imgTitle_ = resMng_.Load(ResourceManager::SRC::TITLE).handleId_;			//タイトル名前画像
+	imgTitle_ = resMng_.Load(ResourceManager::SRC::TITLE).handleId_;					//タイトル名前画像
 	imgBackTitle_ = resMng_.Load(ResourceManager::SRC::BACK_GROUND_TITLE).handleId_;	//タイトル背景
-	imgGameStart_ = resMng_.Load(ResourceManager::SRC::GAME_START).handleId_;	//ゲームスタート
-	imgGameEnd_ = resMng_.Load(ResourceManager::SRC::GAME_END).handleId_;		//ゲームを終了
-	imgLookRule_ = resMng_.Load(ResourceManager::SRC::LOOK_RULE).handleId_;		//ルールを見る
-	imgAbutton_ = resMng_.Load(ResourceManager::SRC::A_BUTTON).handleId_;		//Aボタン
-	imgConfirmEnd_ = resMng_.Load(ResourceManager::SRC::CONFIRM_END).handleId_;	//本当に終了しますか？画像
+	imgGameStart_ = resMng_.Load(ResourceManager::SRC::GAME_START).handleId_;			//ゲームスタート
+	imgGameEnd_ = resMng_.Load(ResourceManager::SRC::GAME_END).handleId_;				//ゲームを終了
+	imgLookRule_ = resMng_.Load(ResourceManager::SRC::LOOK_RULE).handleId_;				//ルールを見る
+	imgAbutton_ = resMng_.Load(ResourceManager::SRC::A_BUTTON).handleId_;				//Aボタン
+	imgConfirmEnd_ = resMng_.Load(ResourceManager::SRC::CONFIRM_END).handleId_;			//本当に終了しますか？画像
 
-	imgYes_ = resMng_.Load(ResourceManager::SRC::YES).handleId_;				//はい画像
-	imgNo_ = resMng_.Load(ResourceManager::SRC::NO).handleId_;					//いいえ画像
-	imgYesSel_ = resMng_.Load(ResourceManager::SRC::SELECT_YES).handleId_;		//選択中はい画像
-	imgNoSel_ = resMng_.Load(ResourceManager::SRC::SELECT_NO).handleId_;		//選択中いいえ画像
+	imgYes_ = resMng_.Load(ResourceManager::SRC::YES).handleId_;						//はい画像
+	imgNo_ = resMng_.Load(ResourceManager::SRC::NO).handleId_;							//いいえ画像
+	imgYesSel_ = resMng_.Load(ResourceManager::SRC::SELECT_YES).handleId_;				//選択中はい画像
+	imgNoSel_ = resMng_.Load(ResourceManager::SRC::SELECT_NO).handleId_;				//選択中いいえ画像
 
 	selectedIndex_ = 0;
 
@@ -73,17 +73,17 @@ void TitleScene::NewFunction()
 	blueAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_BLUE).handleId_);
 	blackAlly_.SetModel(resMng_.Load(ResourceManager::SRC::ALLY_BLACK).handleId_);
 
-	redAlly_.pos = { -350.0f,-350.0f,100.0f };
-	blueAlly_.pos = { -350.0f,-250.0f,300.0f };
-	blackAlly_.pos = { -350.0f,-25.0f,400.0f };
+	redAlly_.pos = { ALLY_POS_X,ALLY_RED_POS_Y,ALLY_RED_POS_Z };
+	blueAlly_.pos = { ALLY_POS_X,ALLY_BLUE_POS_Y,ALLY_BLUE_POS_Z };
+	blackAlly_.pos = { ALLY_POS_X,ALLY_BLACK_POS_Y,ALLY_BLACK_POS_Z };
 
-	redAlly_.scl = { 1.0f,1.0f,1.0f };
-	blueAlly_.scl = { 1.0f,1.0f,1.0f };
-	blackAlly_.scl = { 1.0f,1.0f,1.0f };
+	redAlly_.scl = { ALLY_SIZE,ALLY_SIZE,ALLY_SIZE };
+	blueAlly_.scl = { ALLY_SIZE,ALLY_SIZE,ALLY_SIZE };
+	blackAlly_.scl = { ALLY_SIZE,ALLY_SIZE,ALLY_SIZE };
 
-	redAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-80.0f), 0.0f);
-	blueAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-80.0f), 0.0f);
-	blackAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-80.0f), 0.0f);
+	redAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(ALLY_ROT), 0.0f);
+	blueAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(ALLY_ROT), 0.0f);
+	blackAlly_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(ALLY_ROT), 0.0f);
 
 	redAlly_.Update();
 	blueAlly_.Update();
@@ -96,9 +96,9 @@ void TitleScene::NewFunction()
 	animationControllerBlueAlly_ = std::make_unique<AnimationController>(blueAlly_.modelId);
 	animationControllerBlackAlly_ = std::make_unique<AnimationController>(blackAlly_.modelId);
 
-	animationControllerRedAlly_->Add(0, Application::PATH_MODEL + "Ally/RedAlly.mv1", ANIMATION_TIME, 4);
-	animationControllerBlueAlly_->Add(0, Application::PATH_MODEL + "Ally/BuleAlly.mv1", ANIMATION_TIME, 4);
-	animationControllerBlackAlly_->Add(0, Application::PATH_MODEL + "Ally/BlackAlly.mv1", ANIMATION_TIME, 4);
+	animationControllerRedAlly_->Add(0, Application::PATH_MODEL + "Ally/RedAlly.mv1", ANIMATION_TIME, ALLY_ANIM_NUM);
+	animationControllerBlueAlly_->Add(0, Application::PATH_MODEL + "Ally/BuleAlly.mv1", ANIMATION_TIME, ALLY_ANIM_NUM);
+	animationControllerBlackAlly_->Add(0, Application::PATH_MODEL + "Ally/BlackAlly.mv1", ANIMATION_TIME, ALLY_ANIM_NUM);
 
 	animationControllerRedAlly_->Play(0, true);
 	animationControllerBlueAlly_->Play(0, true);
@@ -108,32 +108,32 @@ void TitleScene::NewFunction()
 	//プレイヤー
 	//-------------------------------------------------------------------------
 	player_.SetModel(resMng_.Load(ResourceManager::SRC::PLAYER).handleId_);
-	player_.pos = { -400.0f, -75.0f,0.0f };
-	player_.scl = { 0.015f, 0.015f, 0.015f };
-	player_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(-80.0f), 0.0f);
+	player_.pos = { PLAYER_POS_X, PLAYER_POS_Y,PLAYER_POS_Z };
+	player_.scl = { PLAYER_SIZE, PLAYER_SIZE, PLAYER_SIZE };
+	player_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(PLAYER_ROT), 0.0f);
 	player_.Update();
 	//-------------------------------------------------------------------------
 
 	//アニメーション
 	//-------------------------------------------------------------------------
 	animationControllerPlayer_ = std::make_unique<AnimationController>(player_.modelId);
-	animationControllerPlayer_->Add(0, Application::PATH_MODEL + "NPlayer/PPlayer.mv1", 30.0f, 1);
+	animationControllerPlayer_->Add(0, Application::PATH_MODEL + "NPlayer/PPlayer.mv1", ANIMATION_TIME, PLAYER_ANIM_NUM);
 	animationControllerPlayer_->Play(0, true);
 	//-------------------------------------------------------------------------
 
 	//敵
 	//-------------------------------------------------------------------------
 	enemy_.SetModel(resMng_.Load(ResourceManager::SRC::BOSS).handleId_);
-	enemy_.pos = { 400.0f, -230.0f, 0.0f };
-	enemy_.scl = { 0.35f, 0.35f, 0.35f };
-	enemy_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(80.0f), 0.0f);
+	enemy_.pos = { ENEMY_POS_X, ENEMY_POS_Y, ENEMY_POS_Z };
+	enemy_.scl = { ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE };
+	enemy_.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(ENEMY_ROT), 0.0f);
 	enemy_.Update();
 	//-------------------------------------------------------------------------
 
 	//アニメーション
 	//-------------------------------------------------------------------------
 	animationControllerRed_ = std::make_unique<AnimationController>(enemy_.modelId);
-	animationControllerRed_->Add(0, Application::PATH_MODEL + "Enemy/Boss/Boss.mv1", ANIMATION_TIME, 2);
+	animationControllerRed_->Add(0, Application::PATH_MODEL + "Enemy/Boss/Boss.mv1", ANIMATION_TIME, ENEMY_ANIM_NUM);
 	animationControllerRed_->Play(0, true);
 	//-------------------------------------------------------------------------
 }
@@ -141,14 +141,12 @@ void TitleScene::NewFunction()
 void TitleScene::Update(void)
 {
 	cnt++;
-	cnt_3D = cnt * IMAGE_3D_SPEAD;
-	if (cnt_3D >= MAX_CONUT_3D)cnt_3D = MAX_CONUT_3D;
 	InputManager& ins = InputManager::GetInstance();
 
-	// === 終了確認中の入力処理 ===
+	//終了確認中の入力処理
 	if (isConfirmingExit_)
 	{
-		// アニメーション進行（最大まで）
+		// アニメーション進行
 		if (confirmAnimFrame_ < CONFIRM_ANIM_DURATION) {
 			confirmAnimFrame_++;
 		}
@@ -174,7 +172,6 @@ void TitleScene::Update(void)
 				}
 			}
 		}
-
 		return;
 	}
 
@@ -184,7 +181,7 @@ void TitleScene::Update(void)
 		blinkFrameCount_ = 0;
 	}
 
-	// === メニュー選択操作 ===
+	//メニュー選択操作
 	if (ins.IsTrgDown(KEY_INPUT_DOWN)||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN)) {
 		SoundManager::GetInstance().Play(SoundManager::SRC::CURSOR_MOVE_SE, Sound::TIMES::ONCE);
@@ -210,7 +207,7 @@ void TitleScene::Update(void)
 		else if (selectedIndex_ == 2) {
 			isConfirmingExit_ = true;
 			confirmIndex_ = 1;
-			confirmAnimFrame_ = 0;  // ← アニメーション開始
+			confirmAnimFrame_ = 0;
 			SoundManager::GetInstance().Play(SoundManager::SRC::WARNING_SE, Sound::TIMES::FORCE_ONCE);
 		}
 	}
@@ -254,13 +251,13 @@ void TitleScene::Draw(void)
 	DrawRotaGraph(IMG_TITLE_WIDTH, IMG_TITLE_HEIGHT, IMG_TITLE_SIZE, 0, imgTitle_, true);
 
 	//ゲームプレイ画像表示
-	DrawGraph(740, 730, imgGameStart_, true);
+	DrawGraph(IMG_MENU_X, GAME_STATE_Y, imgGameStart_, true);
 
 	//ルールを見る画像表示
-	DrawGraph(740, 830, imgLookRule_, true);
+	DrawGraph(IMG_MENU_X, GAME_RULE_Y, imgLookRule_, true);
 
 	//ゲームを終了画像表示
-	DrawGraph(740, 930, imgGameEnd_, true);
+	DrawGraph(IMG_MENU_X, GAME_END_Y, imgGameEnd_, true);
 
 	#pragma region		ボタン設定
 
@@ -290,7 +287,7 @@ void TitleScene::Draw(void)
 	//GetNowCount() = 経過ミリ秒
 	float alpha2 = (sinf(GetNowCount() * BLINK_SPEED) + 1.0f) * 0.5f;
 
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(alpha2 * 255));
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(alpha2 * WHITE_ALPHA));
 
 	//カーソル描画
 	DrawRotaGraph(

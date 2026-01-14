@@ -46,7 +46,7 @@ void Camera::SetBeforeDraw(void)
 			SetBeforeDrawFixedPoint();
 			break;
 		case Camera::MODE::FOLLOW:
-			SetBeforeDrawFollow(); // pos_, targetPos_, cameraUp_ ÇçXêV
+			SetBeforeDrawFollow();
 			break;
 		case Camera::MODE::SIDE_VIEW:
 			SetBeforeDrawSideView();

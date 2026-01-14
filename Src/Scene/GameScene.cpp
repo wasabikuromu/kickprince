@@ -74,10 +74,16 @@ void GameScene::Init(void)
 	imgOpeGearKey_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR_KEYBOARD).handleId_;
 	imgOpeGearCon_ = resMng_.Load(ResourceManager::SRC::OPE_GEAR_CONTROLLER).handleId_;
 
+	//ポーズ画像
+	pauseImg_ = LoadGraph("Data/Image/Pause/Pause.png");
+
+	//ステージクリア後
 	imgNiceKick_ = resMng_.Load(ResourceManager::SRC::NICE_KICK).handleId_;
 	imgNextStage_ = resMng_.Load(ResourceManager::SRC::NEXT_STAGE).handleId_;
 	imgSelectStage_ = resMng_.Load(ResourceManager::SRC::SELECT_STAGE).handleId_;
 	imgBackTitle_ = resMng_.Load(ResourceManager::SRC::BACK_TITLE).handleId_;
+
+	//Aボタン
 	imgAbutton_ = resMng_.Load(ResourceManager::SRC::A_BUTTON).handleId_;
 
 	//ポーズ関連
@@ -93,17 +99,15 @@ void GameScene::Init(void)
 	pauseMenuImgsSelected[3] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_4).handleId_;
 	pauseMenuImgsSelected[4] = resMng_.Load(ResourceManager::SRC::SELECT_PAUSE_5).handleId_;
 
-	pauseMenuPosY[0] = 350;
-	pauseMenuPosY[1] = 470;
-	pauseMenuPosY[2] = 590;
-	pauseMenuPosY[3] = 710;
-	pauseMenuPosY[4] = 830;
-
-	pauseImg_ = LoadGraph("Data/Image/Pause/Pause.png");
-
 	pauseExplainImgs_[0] = resMng_.Load(ResourceManager::SRC::PAUSEOPE1).handleId_;		//操作説明
 	pauseExplainImgs_[1] = resMng_.Load(ResourceManager::SRC::PAUSEOPE2).handleId_;		//操作説明
 	pauseExplainImgs_[2] = resMng_.Load(ResourceManager::SRC::PAUSEALLY).handleId_;		//アイテム概要
+
+	pauseMenuPosY[0] = UI_HEIGHT_PAUSE_1;
+	pauseMenuPosY[1] = UI_HEIGHT_PAUSE_2;
+	pauseMenuPosY[2] = UI_HEIGHT_PAUSE_3;
+	pauseMenuPosY[3] = UI_HEIGHT_PAUSE_4;
+	pauseMenuPosY[4] = UI_HEIGHT_PAUSE_5;
 
 	//カウンタ
 	uiFadeStart_ = false;
@@ -148,7 +152,7 @@ void GameScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 
 	//簡易deltaTime(60FPS想定）
-	const float deltaTime = 1.0f / 60.0f;
+	const float deltaTime = 1.0f / DELTA_TIME;
 
 	//ステージクリアメニューの処理を最優先
 	if (stageMenu_ == StageState::StageMenu)
@@ -161,7 +165,7 @@ void GameScene::Update(void)
 	if (ins.IsTrgDown(KEY_INPUT_R) ||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP))
 	{
-		if (!isKicking_)  //通常時
+		if (!isKicking_)
 		{
 			switch (cameraMode)
 			{
@@ -179,7 +183,7 @@ void GameScene::Update(void)
 				break;
 			}
 		}
-		else  //味方が飛んでいる間
+		else
 		{
 			switch (cameraMode)
 			{
@@ -256,7 +260,6 @@ void GameScene::Update(void)
 
 		return;
 	}
-
 }
 
 void GameScene::Draw(void)
@@ -304,13 +307,20 @@ void GameScene::Draw(void)
 		}
 	}
 
-	if (isPaused_) 
+	//ポーズUIレイアウト
+	static constexpr int DARK_ALPHA = 200;			//グレー目にする
+	static constexpr int CONTROL_ALPHA = 110;		//コントローラー部の明るさ
+	static constexpr int ALLY_ALPHA = 150;			//味方教える部の明るさ
+
+	static constexpr int PAUSE_Y = 100;				//pauseImg_のY
+
+	if (isPaused_)
 	{
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-		DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), black, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, DARK_ALPHA);
+		DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), black, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-		DrawRotaGraph((Application::SCREEN_SIZE_X) / 2, 100, 1.0, 0.0, pauseImg_, true);
+		DrawRotaGraph((Application::SCREEN_SIZE_X) / 2, PAUSE_Y, 1.0, 0.0, pauseImg_, true);
 
 		if (pauseState_ == PauseState::PauseMenu)
 		{
@@ -329,16 +339,15 @@ void GameScene::Draw(void)
 				int drawX = Application::SCREEN_SIZE_X / 2 - w / 2;
 				int drawY = pauseMenuPosY[i];
 
-				//DrawRotaGraph(drawX, drawY, 1.0, 0.0, img, true);
 				DrawGraph(drawX, drawY, img, true);
 			}
 		}
-		else if (pauseState_ == PauseState::ShowControls) 
+		else if (pauseState_ == PauseState::ShowControls)
 		{
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, CONTROL_ALPHA);
 			DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), white, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-			if (GetJoypadNum() == 0) 
+			if (GetJoypadNum() == 0)
 			{
 				DrawGraph(0, 0, pauseExplainImgs_[1], true);
 			}
@@ -347,9 +356,9 @@ void GameScene::Draw(void)
 				DrawGraph(0, 0, pauseExplainImgs_[0], true);
 			}
 		}
-		else if (pauseState_ == PauseState::ShowAllies) 
+		else if (pauseState_ == PauseState::ShowAllies)
 		{
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 110);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, ALLY_ALPHA);
 			DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), white, true);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 			DrawGraph(0, 0, pauseExplainImgs_[2], true);
@@ -357,27 +366,40 @@ void GameScene::Draw(void)
 		return;
 	}
 
+	//ステージUIレイアウト
+	constexpr int BG_ALPHA = 200;			//グレー目にする
+		
+	constexpr int NICE_KICK_X = 500;		//imgNiceKick_のX
+	constexpr int NICE_KICK_Y = 0;			//imgNiceKick_のY
+
+	constexpr int MENU_X = 1300;			//メニューのX
+
+	constexpr int NEXT_STAGE_Y = 700;		//imgNextStage_のY
+	constexpr int SELECT_STAGE_Y = 800;		//imgSelectStage_のY
+	constexpr int BACK_TITLE_Y = 900;		//imgBackTitle_のY
+	constexpr float CURSOR_SCALE = 0.7f;	//imgAbutton_の大きさ
+
 	if (isStageMenu_)
 	{
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
-		DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), black, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, BG_ALPHA);
+		DrawBox(0, 0, (Application::SCREEN_SIZE_X), (Application::SCREEN_SIZE_Y), black, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-		DrawGraph(500, 0, imgNiceKick_, true);
-		DrawGraph(1300, 700, imgNextStage_, true);
-		DrawGraph(1300, 800, imgSelectStage_, true);
-		DrawGraph(1300, 900, imgBackTitle_, true);
+		DrawGraph(NICE_KICK_X, NICE_KICK_Y, imgNiceKick_, true);
+		DrawGraph(MENU_X, NEXT_STAGE_Y, imgNextStage_, true);
+		DrawGraph(MENU_X, SELECT_STAGE_Y, imgSelectStage_, true);
+		DrawGraph(MENU_X, BACK_TITLE_Y, imgBackTitle_, true);
 
 		//GetNowCount() = 経過ミリ秒
 		float alpha2 = (sinf(GetNowCount() * BLINK_SPEED) + 1.0f) * 0.5f;
 
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(alpha2 * 255));
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(alpha2 * MAX_ALPHA));
 
 		//カーソル描画
 		DrawRotaGraph(
 			CURSOR_WIDTH,
 			CURSOR_HEIGHT + (stageSelectIndex_ * INDEX),
-			0.7,
+			CURSOR_SCALE,
 			0,
 			imgAbutton_,
 			true
@@ -388,9 +410,6 @@ void GameScene::Draw(void)
 
 		return;
 	}
-
-#pragma region UI
-#pragma endregion
 }
 
 void GameScene::Release(void)
@@ -423,7 +442,6 @@ void GameScene::OnAllyKicked(AllyBase* kickedAlly)
 	cameraMode = Camera::MODE::ALLY_FOLLOW;
 	mainCamera->SetFollow(&kickedAlly->GetTransform());
 	mainCamera->ChangeMode(Camera::MODE::ALLY_FOLLOW);
-
 }
 
 void GameScene::CheckEndCondition(void)
@@ -443,39 +461,42 @@ void GameScene::CheckEndCondition(void)
 void GameScene::UpdateRetryMenu(void)
 {
 	InputManager& ins = InputManager::GetInstance();
+
+	constexpr int RETRY_MENU_COUNT = 2;
+
 	//矢印キーで選択
 	if (ins.IsTrgDown(KEY_INPUT_DOWN) ||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_DOWN))
 	{
-		menuIndex_ = (menuIndex_ + 1) % 2;
+		menuIndex_ = (menuIndex_ + 1) % RETRY_MENU_COUNT;
 	}
 	if (ins.IsTrgDown(KEY_INPUT_UP) ||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::D_TOP))
 	{
-		menuIndex_ = (menuIndex_ + 2 - 1) % 2;
+		menuIndex_ = (menuIndex_ + RETRY_MENU_COUNT - 1) % RETRY_MENU_COUNT;
 	}
 
-	// 決定キー
+	//決定キー
 	if (ins.IsTrgDown(KEY_INPUT_RETURN) ||
 		ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
 		if (menuIndex_ == 0)
 		{
-			// リトライ：同じステージを再読み込みする
+			//リトライ：同じステージを再読み込みする
 			mainCamera->SetPaused(false);
 			SceneManager::GetInstance().ChangeStageScene(SceneManager::SCENE_ID::GAME, stageNo_);
 			return;
 		}
 		else if (menuIndex_ == 1)
 		{
-			// ゲームオーバー
+			//ゲームオーバー 
 			mainCamera->SetPaused(false);
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::OVER);
 			return;
 		}
 	}
 
-	// メニュー表示中はそれ以外の更新を行わない
+	//メニュー表示中はそれ以外の更新を行わない
 	return;
 }
 
@@ -490,7 +511,7 @@ void GameScene::ReturnToPlayerCamera(void)
 
 void GameScene::AllyCreate(void)
 {
-	Allys_.clear(); // 念のためクリア
+	Allys_.clear(); //念のためクリア
 
 	// プレイヤー位置と回転を取得
 	VECTOR basePos = player_->GetTransform().pos;
@@ -541,8 +562,8 @@ void GameScene::AllyCreate(void)
 
 		// 配置座標を計算
 		VECTOR offset = VAdd(
-			VScale(forward, forwardDist),                 // 前方向へ
-			VScale(right, data.horizontalOffset)          // 横へ並べる
+			VScale(forward, forwardDist),               
+			VScale(right, data.horizontalOffset)          
 		);
 		VECTOR spawnPos = VAdd(basePos, offset);
 
@@ -560,30 +581,30 @@ void GameScene::AllyCreate(void)
 void GameScene::EnemyCreate(void)
 {
 	enemySpawnTable_[1] = {
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 2500), 2},
+		{ VGet(-MAIN_ENEMY_X, MAIN_ENEMY_Y, MAIN_DEPTH_2), VIRUS},
 	};
 
 	enemySpawnTable_[2] = {
-		{ VGet(X_ENEMY_POS + 170, Y_ENEMY_POS, 1500), 1 },
-		{ VGet(X_ENEMY_POS - 170, Y_ENEMY_POS, 1500), 1 },
-		{ VGet(X_ENEMY_POS + 220, Y_ENEMY_POS, 1750), 1 },
-		{ VGet(X_ENEMY_POS - 220, Y_ENEMY_POS, 1750), 1 },
+		{ VGet(-MAIN_ENEMY_X + ONION_WIDTH_1, MAIN_ENEMY_Y, MAIN_DEPTH_1), ONION },
+		{ VGet(-MAIN_ENEMY_X - ONION_WIDTH_1, MAIN_ENEMY_Y, MAIN_DEPTH_1), ONION },
+		{ VGet(-MAIN_ENEMY_X + ONION_WIDTH_2, MAIN_ENEMY_Y, MAIN_DEPTH_1 + ONION_DEPTH), ONION },
+		{ VGet(-MAIN_ENEMY_X - ONION_WIDTH_2, MAIN_ENEMY_Y, MAIN_DEPTH_1 + ONION_DEPTH), ONION },
 	};
 
 	enemySpawnTable_[3] = {
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 3500), 3 },
+		{ VGet(-MAIN_ENEMY_X, MAIN_ENEMY_Y, MAIN_DEPTH_3), BOSS },
 	};
 
 	enemySpawnTable_[4] = {
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 1500), 0 },
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 2500), 1 },
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 3500), 2 },
+		{ VGet(-MAIN_ENEMY_X, MAIN_ENEMY_Y, MAIN_DEPTH_1), DOG },
+		{ VGet(-MAIN_ENEMY_X, MAIN_ENEMY_Y, MAIN_DEPTH_2), ONION },
+		{ VGet(-MAIN_ENEMY_X, MAIN_ENEMY_Y, MAIN_DEPTH_3), VIRUS },
 	};
 
 	enemySpawnTable_[5] = {
-		{ VGet(X_ENEMY_POS + 170, Y_ENEMY_POS, 1500), 1 },
-		{ VGet(X_ENEMY_POS - 170, Y_ENEMY_POS, 1500), 1 },
-		{ VGet(X_ENEMY_POS, Y_ENEMY_POS, 3500), 3 },
+		{ VGet(-MAIN_ENEMY_X + ONION_WIDTH_1, MAIN_ENEMY_Y, MAIN_DEPTH_1), ONION },
+		{ VGet(-MAIN_ENEMY_X - ONION_WIDTH_1, MAIN_ENEMY_Y, MAIN_DEPTH_1), ONION },
+		{ VGet(-MAIN_ENEMY_X, MAIN_ENEMY_Y, MAIN_DEPTH_3), BOSS },
 	};
 }
 
@@ -735,12 +756,6 @@ void GameScene::SpawnEnemies(int stageNo)
 	if (enemySpawnTable_.count(stageNo) == 0)
 		return;
 
-	//敵種類
-	constexpr int Dog = 0;
-	constexpr int Onion = 1;
-	constexpr int Virus = 2;
-	constexpr int Boss = 3;
-
 	auto& list = enemySpawnTable_[stageNo];
 
 	for (const auto& e : list)
@@ -750,19 +765,19 @@ void GameScene::SpawnEnemies(int stageNo)
 		//敵の種類を割り当て
 		switch (e.type)
 		{
-		case Dog:
+		case DOG:
 			enemy = std::make_shared<EnemyDog>();
 			break;
 
-		case Onion:
+		case ONION:
 			enemy = std::make_shared<EnemyOnion>();
 			break;
 
-		case Virus:
+		case VIRUS:
 			enemy = std::make_shared<EnemyVirus>();
 			break;
 
-		case Boss:
+		case BOSS:
 			enemy = std::make_shared<EnemyBoss>();
 			break;
 
@@ -790,7 +805,6 @@ bool GameScene::IsAnyAllyFlying(void) const
 	return false;
 }
 
-//今飛んでいる味方を返す（必要なら）
 AllyBase* GameScene::GetFlyingAlly(void) const
 {
 	for (auto& a : Allys_)

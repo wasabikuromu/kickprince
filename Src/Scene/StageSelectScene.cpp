@@ -7,6 +7,7 @@
 void StageSelectScene::Init(void)
 {
     selectIndex_ = 0;
+
     //画像
     imgPlzSelectStage_ = resMng_.Load(ResourceManager::SRC::PLZ_SELECT_STAGE).handleId_;
     imgBackGround_ = LoadGraph("Data/Image/SeleStageGame.png");
@@ -53,30 +54,41 @@ void StageSelectScene::Update(void)
 
 void StageSelectScene::Draw(void)
 {
+
+    //背景・固定UI描画
     DrawGraph(0, 0, imgBackGround_, true);
+    DrawGraph(SELEXT_X, 0, imgPlzSelectStage_, true);
 
-    DrawGraph(230, 0, imgPlzSelectStage_, true);
+    //ステージ配置座標
+    const int stagePosX[STAGE_COUNT] = { STAGE_1_X, STAGE_2_X, STAGE_3_X, STAGE_4_X, STAGE_5_X };
+    const int stagePosY[STAGE_COUNT] = { STAGE_UP_Y, STAGE_DOWN_Y, STAGE_UP_Y, STAGE_DOWN_Y, STAGE_UP_Y };
 
-    // ステージ座標配列
-    const int stagePosX[5] = { 200, 580, 960, 1340, 1720 };
-    const int stagePosY[5] = { 350, 850, 350, 850, 350 };
+    //ステージ画像配列
+    const int stageImgs[STAGE_COUNT] =
+    {
+        imgStage1_,
+        imgStage2_,
+        imgStage3_,
+        imgStage4_,
+        imgStage5_
+    };
 
-    float alpha2 = (sinf(GetNowCount() * BLINK_SPEED) + 1.0f) * 0.5f;
+    //選択UIの点滅演出
+    const float blinkAlpha =(sinf(GetNowCount() * BLINK_SPEED) + 1.0f) * 0.5f;
 
-    SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)(alpha2 * 255));
+    SetDrawBlendMode(DX_BLENDMODE_ALPHA,static_cast<int>(blinkAlpha * 255.0f));
 
-    // 選択UIをステージ画像の位置に合わせて描画
+    //選択中ステージ位置にUIを描画
     DrawRotaGraph(stagePosX[selectIndex_], stagePosY[selectIndex_], 1.0, 0.0, imgSelectUI_, true);
 
     //ブレンドモード解除
-    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
-    // ステージ画像描画
-    DrawRotaGraph(stagePosX[0], stagePosY[0], 1.0, 0.0, imgStage1_, true);
-    DrawRotaGraph(stagePosX[1], stagePosY[1], 1.0, 0.0, imgStage2_, true);
-    DrawRotaGraph(stagePosX[2], stagePosY[2], 1.0, 0.0, imgStage3_, true);
-    DrawRotaGraph(stagePosX[3], stagePosY[3], 1.0, 0.0, imgStage4_, true);
-    DrawRotaGraph(stagePosX[4], stagePosY[4], 1.0, 0.0, imgStage5_, true);
+    //ステージ画像描画
+    for (int i = 0; i < STAGE_COUNT; ++i)
+    {
+        DrawRotaGraph(stagePosX[i], stagePosY[i], 1.0, 0.0, stageImgs[i], true);
+    }
 }
 
 void StageSelectScene::Release(void)

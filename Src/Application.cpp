@@ -39,7 +39,7 @@ Application::Application(void)
 void Application::Init(void)
 {
 	// ウィンドウタイトル
-	SetWindowText("AGS2025");
+	SetWindowText("ケリ王子");
 
 	// 画面サイズ設定
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 0);

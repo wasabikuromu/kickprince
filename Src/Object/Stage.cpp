@@ -52,7 +52,6 @@ void Stage::Update(void)
 		// 演習の実装箇所
 		//①一定期間経過
 		//②プレイヤーの座標が惑星の重力圏内に入った
-		// InRangeGravity
 		//③現在の惑星と異なる場合
 		//④InRangeGravity関数内の実装(球体と点の衝突判定)
 		if (isPossibleChange

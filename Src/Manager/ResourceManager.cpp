@@ -199,18 +199,7 @@ void ResourceManager::Init(void)
 	// 設定表示
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "UI/OpeGearCon.png");
 	resourcesMap_.emplace(SRC::OPE_GEAR_CONTROLLER, std::move(res));
-	
-	// パワーアップ状態アイコン
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Icon/PowerIcon.png");
-	resourcesMap_.emplace(SRC::POWER_UP_ICON, std::move(res));
 
-	// スピードアップ状態アイコン
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Icon/SpeedIcon.png");
-	resourcesMap_.emplace(SRC::SPEED_UP_ICON, std::move(res));
-
-	// 回転切り使用可能状態アイコン
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Icon/RotaAttackIcon.png");
-	resourcesMap_.emplace(SRC::ROTA_ATTACK_ICON, std::move(res));
 
 	// ゲームクリア
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Clear.png");
@@ -280,32 +269,6 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::EFFEKSEER, PATH_EFF + "Smoke/Smoke.efkefc");
 	resourcesMap_.emplace(SRC::FOOT_SMOKE, std::move(res));
 
-	//アイテム
-	// --------------------------------------------
-	//水
-	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Item/bottle.mv1");
-	resourcesMap_.emplace(SRC::WATER, std::move(res));
-	
-	//パワーアップ
-	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Item/power.mv1");
-	resourcesMap_.emplace(SRC::POWER, std::move(res));
-	
-	//スピードアップ
-	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Item/speed.mv1");
-	resourcesMap_.emplace(SRC::SPEED, std::move(res));
-	
-	//回復
-	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Item/heal.mv1");
-	resourcesMap_.emplace(SRC::HEAL, std::move(res));
-	
-	//無敵
-	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Item/muteki.mv1");
-	resourcesMap_.emplace(SRC::MUTEKI, std::move(res));
-	
-	//全部
-	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Item/all.mv1");
-	resourcesMap_.emplace(SRC::ALL, std::move(res));
-
 	// 味方のモデル
 	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Ally/RedAlly.mv1");
 	resourcesMap_.emplace(SRC::ALLY_RED, std::move(res));
@@ -322,25 +285,9 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Enemy/Yellow/Yellow.mv1");
 	resourcesMap_.emplace(SRC::DOG, std::move(res));
 
-	//サボテン
-	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Enemy/Cactus/Cactus.mv1");
-	resourcesMap_.emplace(SRC::SABO, std::move(res));
-
-	//ミミック
-	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Enemy/mimic/mimic.mv1");
-	resourcesMap_.emplace(SRC::MIMIC, std::move(res));
-
-	//キノコ
-	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Enemy/mushroom/mushroom.mv1");
-	resourcesMap_.emplace(SRC::MUSH, std::move(res));
-
 	//玉ねぎ
 	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Enemy/onion/onion.mv1");
-	resourcesMap_.emplace(SRC::ONION, std::move(res));//敵
-	
-	//トゲゾー
-	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Enemy/thorn/thorn.mv1");
-	resourcesMap_.emplace(SRC::TOGE, std::move(res));
+	resourcesMap_.emplace(SRC::ONION, std::move(res));
 
 	//ウィルス
 	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Enemy/virus/virus.mv1");
@@ -352,22 +299,6 @@ void ResourceManager::Init(void)
 
 	//エフェクト
 	//-------------------------
-
-	//木の視野
-	res = std::make_unique<RES>(RES_T::EFFEKSEER, PATH_EFF + "TreeRange.efkefc");
-	resourcesMap_.emplace(SRC::TREE_RANGE, std::move(res));
-	
-	//パワーアップ
-	res = std::make_unique<RES>(RES_T::EFFEKSEER, PATH_EFF + "PowerUp.efkefc");
-	resourcesMap_.emplace(SRC::EFF_POWER, std::move(res));	
-
-	//スピードアップ
-	res = std::make_unique<RES>(RES_T::EFFEKSEER, PATH_EFF + "SpeedUp.efkefc");
-	resourcesMap_.emplace(SRC::EFF_SPEED, std::move(res));
-	
-	//回復
-	res = std::make_unique<RES>(RES_T::EFFEKSEER, PATH_EFF + "HealEffect.efkefc");
-	resourcesMap_.emplace(SRC::EFF_HEAL, std::move(res));
 
 	//チャージ
 	res = std::make_unique<RES>(RES_T::EFFEKSEER, PATH_EFF + "Charge.efkefc");

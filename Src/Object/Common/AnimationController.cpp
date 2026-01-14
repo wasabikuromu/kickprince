@@ -107,7 +107,6 @@ void AnimationController::Play(int type, bool isLoop,
 
 void AnimationController::Update(void)
 {
-
 	// Œo‰ßŽžŠÔ‚ÌŽæ“¾
 	float deltaTime = SceneManager::GetInstance().GetDeltaTime();
 

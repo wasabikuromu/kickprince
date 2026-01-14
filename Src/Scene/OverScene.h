@@ -16,29 +16,22 @@ public:
 	//ゲームオーバー文字列
 	static constexpr int GAMEOVER_IMG_X_OFFSET = 555;
 	static constexpr int GAMEOVER_IMG_Y = 50;
-	static constexpr int MASSAGE_X_OFFSET = 400;
 
-	//プレイヤーモデル光の描画
+	//プレイヤーモデル
 	static constexpr VECTOR PLAYER_POS = { 0.0f, -200.0f, 0.0f };
 	static constexpr VECTOR PLAYER_SIZE = { 0.018f, 0.018f, 0.018f };
-	static constexpr float LIGHT_SCALE_X = 1.8f;
-	static constexpr float LIGHT_SCALE_Y = 2.55f;
-	static constexpr int LIGHT_OFFSET_Y = 200;
-	static constexpr int LIGHT_ALPHA = 55;
 
+	//アニメーションスピード
 	static constexpr float ANIM_SPEED = 20.0f;
+
+	//アニメーションナンバー
+	static constexpr int ANIM_NUM = 6;
 
 	//メニュー文字
 	static constexpr int MENU_FONT_SIZE = 55;
 	static constexpr int MENU_PLAY_Y = 800;
 	static constexpr int MENU_TITLE_Y = 890;
 	static constexpr int MENU_POS_X = 1470;
-
-	//ストーリー文字
-	static constexpr int STORY_FONT_SIZE = 90;
-	static constexpr int STORY_X_OFFSET = 675;
-	static constexpr int STORY_Y = 330;
-	static constexpr int BLACK_BOX_SLIDE_SPEED = 4;
 
 	//時間制御
 	static constexpr int MENU_SELECT_TIME = 420;
@@ -48,13 +41,6 @@ public:
 	int white = 0xffffff; //白
 	int black = 0x000000; //黒
 	int yellow = 0xffff00;//黄
-
-	struct VECTOR4
-	{
-		float x, y, z, w;
-		VECTOR4() : x(0), y(0), z(0), w(0) {}
-		VECTOR4(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
-	};
 
 	OverScene(void);	// コンストラクタ
 	~OverScene(void);	// デストラクタ
@@ -66,32 +52,27 @@ public:
 private:
 	int cnt;
 
-	// 画像
+	//画像
 	int imgGameOver_;
 	int imgCursor_[2];
-	int imgLightCircle_;
 	int imgReplay_;
 	int imgSelectReplay_;
 	int imgBackTitle_;
 	int imgSelectBackTitle_;
 
-	// メニュー
+	//メニュー
 	int selectedIndex_;       //選択中のメニューインデックス
 	bool isMenuActive_;
 
-	// カウンター
+	//カウンター
 	int cheackCounter_;
 
-	static constexpr int maskWidthMax_ = 1600;  // 画像横幅
+	static constexpr int maskWidthMax_ = 1600;  //画像横幅
 	static constexpr int revealSpeed_ = 4;
 
-	// キャラクター
+	//キャラクター
 	Transform player_;
 
-	// アニメーション
+	//アニメーション
 	std::unique_ptr<AnimationController> animationController_;
-
-	bool WorldToScreen(const VECTOR& worldPos, VECTOR& screenPos);
-
-	
 };
