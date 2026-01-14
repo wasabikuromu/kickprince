@@ -14,20 +14,20 @@ void Shot::Update()
 {
     pos_ = VAdd(pos_, VScale(dir_, speed_));
 
-    // 範囲外になったら削除
+    //範囲外になったら削除
     if (pos_.z > MAX_DISTANCE || pos_.y < -100.0f)
         isDead_ = true;
 }
 
 void Shot::Draw()
 {
-    SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+    SetDrawBlendMode(DX_BLENDMODE_ALPHA, SHOT_ALPHA);
 
-    unsigned int color = GetColor(0, 255, 255);
+    unsigned int color = SHOT_COLOR;
 
-    DrawSphere3D(pos_, radius_, 16, color, true, true);
+    DrawSphere3D(pos_, radius_, SHOT_SPHERE_DIVISION, color, true, true);
 
-    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, ALPHA);
 }
 
 bool Shot::CheckCollision(EnemyBase* enemy)
@@ -40,7 +40,7 @@ bool Shot::CheckCollision(EnemyBase* enemy)
     if (AsoUtility::IsHitSpheres(pos_, radius_, enemyPos, enemyRadius))
     {
         enemy->Damage(damage_);
-        isDead_ = true; // 1体ヒットで消える
+        isDead_ = true;
         return true;
     }
     return false;
@@ -50,7 +50,7 @@ bool Shot::CheckCollision(EnemyBase* enemy)
 void Shot::SetTarget(const std::vector<std::shared_ptr<EnemyBase>>& enemies)
 {
     float minDist = 999999.0f;
-    VECTOR nearestDir = dir_; //デフォルトは元の方向
+    VECTOR nearestDir = dir_;
 
     for (const auto& enemy : enemies)
     {
@@ -65,5 +65,5 @@ void Shot::SetTarget(const std::vector<std::shared_ptr<EnemyBase>>& enemies)
         }
     }
 
-    dir_ = nearestDir; //一番近い敵の方向に差し替え
+    dir_ = nearestDir;
 }

@@ -16,15 +16,16 @@ class Player : public ActorBase
 public:
 	//プレイヤー
 	static constexpr VECTOR PLAYER_POS = { -82.0f,170.0f, -1950.0f };	//初期位置
-	static constexpr VECTOR CAPSULE_TOP = { 0.0f, 110.0f, 0.0f };	//カプセルの頂点
-	static constexpr VECTOR CAPSULE_BOTTOM = { 0.0f, 30.0f, 0.0f };//カプセルの足元
-	static constexpr float PLAYER_ROT_Y = 180.0f;					// Y軸回転(度数)
-	static constexpr float COLLISION_RADIUS = 100.0f;				//衝突判定の半径
-	static constexpr float CAPSULE_RADIUS = 20.0f;					//カプセルの半径
-	static constexpr float ROT_FORWARD_DEG = 0.0f;					//プレイヤー角度(前)
-	static constexpr float ROT_BACK_DEG = 180.0f;					//プレイヤー角度(後ろ)
-	static constexpr float ROT_RIGHT_DEG = 90.0f;					//プレイヤー角度(右)
-	static constexpr float ROT_LEFT_DEG = -90.0f;					//プレイヤー角度(左)
+	static constexpr VECTOR CAPSULE_TOP = { 0.0f, 110.0f, 0.0f };		//カプセルの頂点
+	static constexpr VECTOR CAPSULE_BOTTOM = { 0.0f, 30.0f, 0.0f };		//カプセルの足元
+	static constexpr float PLAYER_SIZE = 0.01f;							//プレイヤーサイズ
+	static constexpr float PLAYER_ROT_Y = 180.0f;						// Y軸回転(度数)
+	static constexpr float COLLISION_RADIUS = 100.0f;					//衝突判定の半径
+	static constexpr float CAPSULE_RADIUS = 20.0f;						//カプセルの半径
+	static constexpr float ROT_FORWARD_DEG = 0.0f;						//プレイヤー角度(前)
+	static constexpr float ROT_BACK_DEG = 180.0f;						//プレイヤー角度(後ろ)
+	static constexpr float ROT_RIGHT_DEG = 90.0f;						//プレイヤー角度(右)
+	static constexpr float ROT_LEFT_DEG = -90.0f;						//プレイヤー角度(左)
 
 	//アニメーション関係
 	static constexpr float ANIM_SPEED = 25.0f;
@@ -44,11 +45,6 @@ public:
 	
 	//回転完了までの時間
 	static constexpr float TIME_ROT = 1.0f;
-
-	//木のレベル
-	static constexpr int LV_OLD = 75;		//木の成長段階
-	static constexpr int LV_ADULT = 50;		//木の成長段階
-	static constexpr int LV_KID = 25;		//木の成長段階
 
 	//影の大きさ
 	static constexpr float PLAYER_SHADOW_SIZE = 100.0f;
@@ -114,6 +110,9 @@ public:
 	int yellow = 0xffff00;//黄
 	int purpl = 0x800080; //紫
 	int gray = 0xaaaaaa;  //灰
+
+	//色MAX値
+	static constexpr int MAX_COLOR = 255;
 
 	//ステータス関連
 	static constexpr float ICON_SIZE = 1.3;

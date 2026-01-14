@@ -82,45 +82,28 @@ void Player::Init(void)
 	//モデルの基本設定
 	transform_.SetModel(resMng_.Load(
 		ResourceManager::SRC::PLAYER).handleId_);
-	//transform_.scl = AsoUtility::VECTOR_ONE;
-	transform_.scl = { 0.01f,0.01f,0.01f };
+	transform_.scl = { PLAYER_SIZE,PLAYER_SIZE,PLAYER_SIZE };
 	transform_.pos = PLAYER_POS;
 	transform_.quaRot = Quaternion();
-	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(PLAYER_ROT_Y), 0.0f });
+	transform_.quaRotLocal = Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(PLAYER_ROT_Y), 0.0f });
 	transform_.Update();
 
 	//丸影画像
-	imgShadow_ = resMng_.Load(
-		ResourceManager::SRC::SHADOW).handleId_;
+	imgShadow_ = resMng_.Load(ResourceManager::SRC::SHADOW).handleId_;
 
 	//アイコン画像
 	imgPowerIcon_ = resMng_.Load(ResourceManager::SRC::POWER_UP_ICON).handleId_;
 	imgSpeedIcon_ = resMng_.Load(ResourceManager::SRC::SPEED_UP_ICON).handleId_;
 	imgRotateAttackIcon_ = resMng_.Load(ResourceManager::SRC::ROTA_ATTACK_ICON).handleId_;
 
-	//UI画像
+	//ゲージ枠
 	imgGaugeFrame_ = resMng_.Load(ResourceManager::SRC::GAUGE_FRAME).handleId_;	//ゲージ枠
 
 	//足煙エフェクト
-	effectSmokeResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::FOOT_SMOKE).handleId_;
-	
-	//パワーアップエフェクト
-	effectPowerResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::EFF_POWER).handleId_;
-	
-	//スピードアップエフェクト
-	effectSpeedResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::EFF_SPEED).handleId_;
-	
-	//回復エフェクト
-	effectHealResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::EFF_HEAL).handleId_;
+	effectSmokeResId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::FOOT_SMOKE).handleId_;
 
 	//チャージエフェクト
-	effectChargeResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::EFF_CHARGE).handleId_;
+	effectChargeResId_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::EFF_CHARGE).handleId_;
 
 	//アニメーションの設定
 	InitAnimation();
@@ -144,10 +127,10 @@ void Player::Init(void)
 void Player::Update(void)
 {
 	if (isTutorialPaused_) {
-		// 動きを完全停止
+		//動きを完全停止
 		movePow_ = VGet(0, 0, 0);
 
-		// 歩きアニメを止める（idleに固定）
+		//歩きアニメを止める
 		animationController_->Play((int)ANIM_TYPE::IDLE);
 
 		return;
@@ -156,7 +139,6 @@ void Player::Update(void)
 	//操作禁止中なら、入力に関わる処理をスキップ
 	if (!controlEnabled_)
 	{
-		//入力を受け付けず、位置・アニメーション・ダウン処理だけ行う
 		transform_.Update();
 		animationController_->Update();
 		UpdateDown(1.0f);
@@ -196,10 +178,6 @@ void Player::Draw(void)
 	//DrawDebug();						//デバッグ用描画
 	DrawGuideLine();					//ガイド線描画
 	DrawChargeGauge();					//ゲージ描画
-
-#pragma region ステータス
-
-#pragma endregion
 }
 
 void Player::AddCollider(std::weak_ptr<Collider> collider)
@@ -263,13 +241,13 @@ void Player::InitAnimation(void)
 
 	animationController_ = std::make_unique<AnimationController>(transform_.modelId);
 	
-	animationController_->Add((int)ANIM_TYPE::NONE, path, ANIM_SPEED, ANIM_T_POSE_INDEX);
-	animationController_->Add((int)ANIM_TYPE::IDLE, path , ANIM_SPEED, ANIM_IDLE_INDEX);
-	animationController_->Add((int)ANIM_TYPE::WALK, path, ANIM_SPEED, ANIM_WALK_INDEX);
-	animationController_->Add((int)ANIM_TYPE::RUN, path, ANIM_SPEED, ANIM_RUN_INDEX);
-	animationController_->Add((int)ANIM_TYPE::KICK, path, ANIM_SPEED, ANIM_KICK_INDEX);
-	animationController_->Add((int)ANIM_TYPE::VICTORY, path, ANIM_SPEED, ANIM_VICTORY_INDEX);
-	animationController_->Add((int)ANIM_TYPE::ROSE, path , ANIM_SPEED, ANIM_ROSE_INDEX);
+	animationController_->Add((int)ANIM_TYPE::NONE,		path, ANIM_SPEED, ANIM_T_POSE_INDEX);
+	animationController_->Add((int)ANIM_TYPE::IDLE,		path, ANIM_SPEED, ANIM_IDLE_INDEX);
+	animationController_->Add((int)ANIM_TYPE::WALK,		path, ANIM_SPEED, ANIM_WALK_INDEX);
+	animationController_->Add((int)ANIM_TYPE::RUN,		path, ANIM_SPEED, ANIM_RUN_INDEX);
+	animationController_->Add((int)ANIM_TYPE::KICK,		path, ANIM_SPEED, ANIM_KICK_INDEX);
+	animationController_->Add((int)ANIM_TYPE::VICTORY,	path, ANIM_SPEED, ANIM_VICTORY_INDEX);
+	animationController_->Add((int)ANIM_TYPE::ROSE,		path, ANIM_SPEED, ANIM_ROSE_INDEX);
 
 	animationController_->Play((int)ANIM_TYPE::IDLE);
 }
@@ -322,10 +300,8 @@ void Player::UpdatePlay(void)
 	//移動方向への回転
 	auto moveRot = Quaternion::LookRotation(moveDir_);
 
-	//
-	transform_.quaRot = Quaternion::Slerp(
-		transform_.quaRot, moveRot, 0.2f
-	);
+	//向きを滑らかに
+	transform_.quaRot = Quaternion::Slerp(transform_.quaRot, moveRot, 0.2f);
 
 	//歩きエフェクト
 	EffectFootSmoke();
@@ -341,10 +317,10 @@ void Player::DrawShadow(void)
 	int ModelHandle;
 
 	//ライティングを無効にする
-	SetUseLighting(FALSE);
+	SetUseLighting(false);
 
 	//Ｚバッファを有効にする
-	SetUseZBuffer3D(TRUE);
+	SetUseZBuffer3D(true);
 
 	//テクスチャアドレスモードを CLAMP にする( テクスチャの端より先は端のドットが延々続く )
 	SetTextureAddressMode(DX_TEXADDRESS_CLAMP);
@@ -364,7 +340,7 @@ void Player::DrawShadow(void)
 			VAdd(transform_.pos, VGet(0.0f, -PLAYER_SHADOW_HEIGHT, 0.0f)), PLAYER_SHADOW_SIZE);
 
 		//頂点データで変化が無い部分をセット
-		Vertex[0].dif = GetColorU8(255, 255, 255, 255);
+		Vertex[0].dif = GetColorU8(MAX_COLOR, MAX_COLOR, MAX_COLOR, MAX_COLOR);
 		Vertex[0].spc = GetColorU8(0, 0, 0, 0);
 		Vertex[0].su = 0.0f;
 		Vertex[0].sv = 0.0f;
@@ -408,7 +384,7 @@ void Player::DrawShadow(void)
 			Vertex[2].v = (HitRes->Position[2].z - transform_.pos.z) / (PLAYER_SHADOW_SIZE * SHADOW_UV_SCALE) + SHADOW_UV_CENTER;
 
 			//影ポリゴンを描画
-			DrawPolygon3D(Vertex, 1, imgShadow_, TRUE);
+			DrawPolygon3D(Vertex, 1, imgShadow_, true);
 		}
 
 		//検出した地面ポリゴン情報の後始末
@@ -416,10 +392,10 @@ void Player::DrawShadow(void)
 	}
 
 	//ライティングを有効にする
-	SetUseLighting(TRUE);
+	SetUseLighting(true);
 
 	//Ｚバッファを無効にする
-	SetUseZBuffer3D(FALSE);
+	SetUseZBuffer3D(false);
 }
 
 void Player::DrawDebug(void)
@@ -468,7 +444,7 @@ void Player::DrawChargeGauge()
 
 	int filledH = (int)(innerHeight * rate);
 
-	//① filled 部分（カラーグラデーション）
+	//①filled 部分（カラーグラデーション）
 	for (int i = 0; i < filledH; i++)
 	{
 		float w = bottomWidth + slope * i;
@@ -508,8 +484,8 @@ void Player::DrawChargeGauge()
 		int left = drawX + offsetX;
 		int right = left + (int)w;
 
-		// 半透明のグレー（例：RGBA = 100,100,100,128）
 		unsigned int color = GetColor(100, 100, 100);
+
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 		DrawBox(left, drawYLine, right, drawYLine + 1, color, TRUE);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -532,7 +508,7 @@ void Player::ProcessMove(void)
 
 	double rotRad = 0;
 
-	// ゲームパッドの接続数で処理を分ける
+	//ゲームパッドの接続数で処理を分ける
 
 	if (!isAttack_ && !isCharging_ && IsEndLandingA())
 	{
@@ -622,7 +598,7 @@ void Player::ProcessMove(void)
 	//X方向の制限
 	if (nextPos.x < fieldXmin || nextPos.x > fieldXmax)
 	{
-		movePow_.x = 0;   // この方向の移動をキャンセル
+		movePow_.x = 0;
 	}
 
 	// Z方向の制限

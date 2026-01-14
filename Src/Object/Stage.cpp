@@ -72,7 +72,7 @@ void Stage::Update(void)
 void Stage::Draw(void)const
 {
 
-	// 惑星
+	//惑星
 	for (const auto& s : planets_)
 	{
 		s.second->Draw();
@@ -85,15 +85,15 @@ void Stage::ChangeStage(NAME type)
 
 	activeName_ = type;
 
-	// 対象のステージを取得する
+	//対象のステージを取得する
 	activePlanet_ = GetPlanet(activeName_);
 
-	// ステージの当たり判定をプレイヤーに設定
+	//ステージの当たり判定をプレイヤーに設定
 	player_.ClearCollider();
 	player_.AddCollider(activePlanet_.lock()->GetTransform().collider);
 
 
-	// 重力制御に惑星を渡す
+	//重力制御に惑星を渡す
 	GravityManager::GetInstance().ChangeActivePlanet(activePlanet_);
 
 }
@@ -121,7 +121,7 @@ std::vector<VECTOR> Stage::GetPlanetsPositions() const
 void Stage::MakeMainStage(void)
 {
 
-	// 最初の惑星
+	//最初の惑星
 	//------------------------------------------------------------------------------
 	Transform planetTrans;
 	planetTrans.SetModel(
@@ -143,7 +143,6 @@ void Stage::MakeMainStage(void)
 	planet->Init();
 	planets_.emplace(name, std::move(planet));
 	//------------------------------------------------------------------------------
-
 }
 
 

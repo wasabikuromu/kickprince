@@ -431,10 +431,10 @@ void AllyBase::DrawShadow(void)
 	int ModelHandle;
 
 	//ライティングを無効にする
-	SetUseLighting(FALSE);
+	SetUseLighting(false);
 
 	//Ｚバッファを有効にする
-	SetUseZBuffer3D(TRUE);
+	SetUseZBuffer3D(true);
 
 	//テクスチャアドレスモードを CLAMP にする( テクスチャの端より先は端のドットが延々続く )
 	SetTextureAddressMode(DX_TEXADDRESS_CLAMP);
@@ -498,7 +498,7 @@ void AllyBase::DrawShadow(void)
 			Vertex[2].v = (HitRes->Position[2].z - transform_.pos.z) / (ALLY_SHADOW_SIZE * SHADOW_UV_SCALE) + SHADOW_UV_CENTER;
 
 			//影ポリゴンを描画
-			DrawPolygon3D(Vertex, 1, imgShadow_, TRUE);
+			DrawPolygon3D(Vertex, 1, imgShadow_, true);
 		}
 
 		//検出した地面ポリゴン情報の後始末
@@ -506,10 +506,10 @@ void AllyBase::DrawShadow(void)
 	}
 
 	//ライティングを有効にする
-	SetUseLighting(TRUE);
+	SetUseLighting(true);
 
 	//Ｚバッファを無効にする
-	SetUseZBuffer3D(FALSE);
+	SetUseZBuffer3D(false);
 }
 
 void AllyBase::DrawShots(void)
