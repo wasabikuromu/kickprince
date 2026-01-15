@@ -218,7 +218,7 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::BACK_GAMECLEAR, std::move(res));
 
 	// ゲームオーバー
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Over/Over.png");
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "GameOver/Over.png");
 	resourcesMap_.emplace(SRC::GAMEOVER, std::move(res));
 
 	// 本当に終了しますか？

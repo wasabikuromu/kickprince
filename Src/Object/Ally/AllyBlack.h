@@ -45,4 +45,8 @@ protected:
 
 	void UpdateAttack(void) override;
 	void CollisionAttack(void) override;
+
+	void StartAttack(void);
+
+	bool isAttackEffectPlayed_ = false;
 };

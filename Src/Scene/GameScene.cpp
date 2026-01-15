@@ -631,7 +631,7 @@ bool GameScene::PauseMenu(void)
 		return true;
 	}
 
-	if (!isPaused_) return false; // ポーズ中でなければ通常更新
+	if (!isPaused_) return false; //ポーズ中でなければ通常更新
 
 	if (pauseState_ == PauseState::PauseMenu)
 	{

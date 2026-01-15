@@ -113,10 +113,12 @@ void AllyRed::CollisionAttack(void)
 	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;
 
 	//エネミーとの衝突判定
-	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_)
+	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_ && !isAttackEffectPlayed_)
 	{
 		EffectAttack();
 		SoundManager::GetInstance().Play(SoundManager::SRC::RED_ATK, Sound::TIMES::FORCE_ONCE);
+
+		isAttackEffectPlayed_ = true;
 
 		for (const auto& enemy : *enemy_)
 		{
@@ -139,4 +141,10 @@ void AllyRed::CollisionAttack(void)
 	{
 		isAttack_ = true;
 	}
+}
+
+void AllyRed::StartAttack(void)
+{
+	isAttack_ = true;
+	isAttackEffectPlayed_ = false;
 }

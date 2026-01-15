@@ -66,7 +66,7 @@ public:
 	//チャージエフェクト
 	static constexpr float CHARGE_EFFECT_BASE = 2.0f;
 	static constexpr float CHARGE_EFFECT_SCALE = 10.0f;
-	static constexpr float CHARGE_EFFECT_Y_SCALE = 10.0f;
+	static constexpr float CHARGE_EFFECT_Y_SCALE = 30.0f;
 
 	//ステ関連
 	static constexpr int HP = 10;
@@ -240,6 +240,7 @@ private:
 	//エフェクト
 	void EffectFootSmoke(void);		//足煙エフェクト
 	void EffectCharge(void);		//キックチャージ
+	void EndCharge(void);			//チャージエフェクト終了
 
 	//移動関連
 	VECTOR moveDir_;				//移動方向

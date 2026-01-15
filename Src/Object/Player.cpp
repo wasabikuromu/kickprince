@@ -101,6 +101,19 @@ void Player::Init(void)
 
 void Player::Update(void)
 {
+	if (isCharging_)
+	{
+		EffectCharge();
+	}
+	else
+	{
+		if (effectChargePlayId_ != -1)
+		{
+			StopEffekseer3DEffect(effectChargePlayId_);
+			effectChargePlayId_ = -1;
+		}
+	}
+
 	if (isTutorialPaused_) {
 		//動きを完全停止
 		movePow_ = VGet(0, 0, 0);
@@ -949,19 +962,37 @@ void Player::EffectFootSmoke(void)
 
 void Player::EffectCharge(void)
 {
-	//エフェクト再生
-	effectChargePlayId_ = PlayEffekseer3DEffect(effectChargeResId_);
+	//まだ再生していない場合のみ再生
+	if (effectChargePlayId_ == -1)
+	{
+		effectChargePlayId_ = PlayEffekseer3DEffect(effectChargeResId_);
+	}
 
-	const float scale = (chargeTime_ + CHARGE_EFFECT_BASE) * CHARGE_EFFECT_SCALE;
+	const float scale =
+		(chargeTime_ + CHARGE_EFFECT_BASE) * CHARGE_EFFECT_SCALE;
 
-	//エフェクトの大きさ
+	//スケール更新
 	SetScalePlayingEffekseer3DEffect(
-		effectChargePlayId_, scale, CHARGE_EFFECT_Y_SCALE, scale);
+		effectChargePlayId_,
+		scale,
+		CHARGE_EFFECT_Y_SCALE * chargeTime_,
+		scale);
 
-	//エフェクトの位置
+	//位置更新
 	SetPosPlayingEffekseer3DEffect(
 		effectChargePlayId_,
 		transform_.pos.x,
 		transform_.pos.y,
 		transform_.pos.z);
+}
+
+void Player::EndCharge(void)
+{
+	isCharging_ = false;
+
+	if (effectChargePlayId_ != -1)
+	{
+		StopEffekseer3DEffect(effectChargePlayId_);
+		effectChargePlayId_ = -1;
+	}
 }
