@@ -27,6 +27,7 @@ public:
 		STAGE_3,
 		STAGE_4,
 		STAGE_5,
+		BOSS_IMG,
 		//チュートリアル
 		TUTORIAL_MSG_01,
 		TUTORIAL_MSG_02,

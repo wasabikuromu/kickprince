@@ -85,6 +85,10 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "SelectStage/5.png");
 	resourcesMap_.emplace(SRC::STAGE_5, std::move(res));
 
+	// ボス画像
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Boss.png");
+	resourcesMap_.emplace(SRC::BOSS_IMG, std::move(res));
+
 	//チュートリアル文字
 	for (int i = 1; i <= 35; i++)
 	{

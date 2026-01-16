@@ -173,6 +173,10 @@ EnemyBase::TYPE EnemyBase::GetEnemyType(void) const
 void EnemyBase::Damage(int damage)
 {
 	hp_ -= damage;
+	if (hp_ <= 0)
+	{
+		hp_ = 0;
+	}
 
 	SoundManager::GetInstance().Play(SoundManager::SRC::E_DAMAGE_SE, Sound::TIMES::FORCE_ONCE);
 	isAttack_ = false;

@@ -46,6 +46,8 @@ void EnemyBoss::SetParam(void)
 
 	enemyType_ = TYPE::BOSS;
 
+	imgBoss_ = resMng_.Load(ResourceManager::SRC::BOSS_IMG).handleId_;
+
 	//初期状態
 	ChangeState(STATE::PLAY);
 }
@@ -64,9 +66,11 @@ void EnemyBoss::DrawBossHpBar(void)
 	int hpDrawWidth = static_cast<int>(BOSS_HP_BAR_WIDTH * hpRate);
 
 	//ラベル
-	SetFontSize(55);
-	DrawFormatString(barX + BOSS_LABEL_OFFSET_X, barY + BOSS_LABEL_OFFSET_Y, GetColor(0,0,0), "BOSS");
-	SetFontSize(16);
+	//SetFontSize(55);
+	//DrawFormatString(barX + BOSS_LABEL_OFFSET_X, barY + BOSS_LABEL_OFFSET_Y, GetColor(0,0,0), "BOSS");
+	//SetFontSize(16);
+
+	DrawRotaGraph(barX + BOSS_LABEL_OFFSET_X, barY + BOSS_LABEL_OFFSET_Y, 1.0, 0.0, imgBoss_, true);
 
 	//背景バー（黒）
 	DrawBox(barX, barY, barX + BOSS_HP_BAR_WIDTH, barY + BOSS_HP_BAR_HEIGHT, black, true);

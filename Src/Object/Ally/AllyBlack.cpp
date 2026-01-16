@@ -148,3 +148,4 @@ void AllyBlack::StartAttack(void)
 	isAttack_ = true;
 	isAttackEffectPlayed_ = false;
 }
+

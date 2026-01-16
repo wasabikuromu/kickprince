@@ -11,9 +11,9 @@ public:
 	//HPバー表示
 	static constexpr int BOSS_HP_BAR_WIDTH = 600;
 	static constexpr int BOSS_HP_BAR_HEIGHT = 20;
-	static constexpr int BOSS_HP_BAR_Y = 80;
+	static constexpr int BOSS_HP_BAR_Y = 50;
 	static constexpr int BOSS_LABEL_OFFSET_X = -120;
-	static constexpr int BOSS_LABEL_OFFSET_Y = -20;
+	static constexpr int BOSS_LABEL_OFFSET_Y = 10;
 
 	//サイズ
 	static constexpr float DOG_SIZE = 0.8f;
@@ -45,4 +45,6 @@ public:
 
 	//HPバー
 	void DrawBossHpBar(void) override;
+private:
+	int imgBoss_;
 };
