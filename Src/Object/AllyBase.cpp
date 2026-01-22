@@ -108,9 +108,16 @@ void AllyBase::Update(void)
 		if (returnCameraTimer_ <= 0.0f)
 		{
 			shouldReturnCamera_ = false;
+
 			if (gScene_)
 			{
 				gScene_->ReturnToPlayerCamera();
+			}
+
+			//Player‘€ì‚ð–ß‚·
+			if (player_)
+			{
+				player_->SetControlEnabled(true);
 			}
 		}
 	}
@@ -187,6 +194,7 @@ void AllyBase::UpdateBlow(void)
 
 		shouldReturnCamera_ = true;
 		returnCameraTimer_ = RETURN_CAMERA_TIME;
+		return;
 	}
 }
 

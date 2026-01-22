@@ -48,6 +48,9 @@ Player::Player(void)
 	//移動が可能かどうか
 	canMove_ = true;
 
+	//操作可能
+	controlEnabled_ = true;
+
 	//状態管理
 	stateChanges_.emplace(
 		STATE::PLAY, std::bind(&Player::ChangeStatePlay, this));
@@ -121,15 +124,6 @@ void Player::Update(void)
 		//歩きアニメを止める
 		animationController_->Play((int)ANIM_TYPE::IDLE);
 
-		return;
-	}
-
-	//操作禁止中なら、入力に関わる処理をスキップ
-	if (!controlEnabled_)
-	{
-		transform_.Update();
-		animationController_->Update();
-		UpdateDown(1.0f);
 		return;
 	}
 
@@ -247,7 +241,15 @@ void Player::ChangeStatePlay(void)
 
 void Player::UpdatePlay(void)
 {
-	if (!canMove_)return;
+	//操作不可
+	if (!controlEnabled_ && !isAttack_)
+	{
+		movePow_ = AsoUtility::VECTOR_ZERO;
+
+		//IDLEアニメは流す
+		animationController_->Play((int)ANIM_TYPE::IDLE);
+		return;
+	}
 
 	//移動処理
 	ProcessMove();
@@ -421,7 +423,7 @@ void Player::DrawChargeGauge()
 
 	const int FILLED_HEIGHT = static_cast<int>(INNER_HEIGHT * rate);
 
-	const int FRAME_OFFSET_X = 29;  //枠画像と中身のXズレ補正
+	const int FRAME_OFFSET_X = 29;		//枠画像と中身のXズレ補正
 	const int EMPTY_ALPHA = 128;        //半透明
 	const int NO_BLEND_ALPHA = 255;     //不透明
 
@@ -714,43 +716,39 @@ void Player::CollisionCapsule(void)
 }
 
 void Player::CollisionAttack(float chargeRate)
-{	
-	//アニメーションのステップ数を取得
+{
+	//攻撃してないor味方いないなら何もしない
+	if (!isAttack_ || !ally_) return;
+
 	const auto& anim = animationController_->GetPlayAnim();
 
-	if (isAttack_ || ally_)
+	//攻撃判定フレーム外
+	if (anim.step < ATTACK_START || anim.step > ATTACK_END) return;
+
+	float attackRadius = ATTACK_RADIUS;
+
+	SoundManager::GetInstance().Play(SoundManager::SRC::KICK, Sound::TIMES::FORCE_ONCE);
+
+	VECTOR forward = transform_.quaRot.GetForward();
+	VECTOR attackPos = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD));
+
+	for (const auto& ally : *ally_)
 	{
-		//攻撃の球の半径
-		float attackRadius = ATTACK_RADIUS;
+		if (!ally || !ally->IsAlive()) continue;
 
-		//攻撃の方向(プレイヤーの前方)
-		VECTOR forward = transform_.quaRot.GetForward();
+		VECTOR allyPos = ally->GetCollisionPos();
+		float allyRadius = ally->GetCollisionRadius();
 
-		//攻撃の開始位置と終了位置
-		VECTOR attackPos = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD));
-
-		for (const auto& ally : *ally_)
+		if (AsoUtility::IsHitSpheres(
+			attackPos, attackRadius,
+			allyPos, allyRadius))
 		{
-			if (!ally || !ally->IsAlive()) continue;
+			ally->Damage(normalAttack_, chargeRate);
 
-			//敵の当たり判定とサイズ
-			VECTOR allyPos = ally->GetCollisionPos();
-			float allyRadius = ally->GetCollisionRadius();
-
-
-			if (AsoUtility::IsHitSpheres(attackPos, attackRadius, allyPos, allyRadius))
-			{
-				ally->Damage(normalAttack_, chargeRate);
-				isAttack_ = false; 
-				break;
-			}
+			//結果だけ記録
+			kickedAlly_ = true;
+			return;
 		}
-	}
-
-	//攻撃が終わったら次回用にリセット
-	if (anim.step > ATTACK_END)
-	{
-		isAttack_ = true;
 	}
 }
 
@@ -794,17 +792,23 @@ void Player::ProcessAttack(void)
 		return;
 	}
 
-	//①攻撃アニメ中
 	if (isAttack_)
 	{
-		attackTimer_ += scnMng_.GetDeltaTime();
-	
-		if (attackTimer_ >= attackDuration_)
+		float chargeRate = chargeTime_ / maxChargeTime_;
+
+		//ヒット判定
+		CollisionAttack(chargeRate);
+
+		//アニメ終了で攻撃終了
+		if (animationController_->IsEnd())
 		{
-			//攻撃アニメ終了
 			isAttack_ = false;
-			attackTimer_ = 0.0f;
-			animationController_->Play((int)ANIM_TYPE::IDLE, true);
+
+			if (!kickedAlly_)
+			{
+				controlEnabled_ = true;
+				animationController_->Play((int)ANIM_TYPE::IDLE, true);
+			}
 		}
 
 		return;
@@ -861,16 +865,20 @@ void Player::ProcessAttack(void)
 		//1フレーム限定ではなく保持する
 		attackReleased_ = true;
 
+		//味方
+		kickedAlly_ = false;
+
 		//キック
 		isAttack_ = true;
 		attackTimer_ = 0.0f;
+		hitChecked_ = false;
 
 		animationController_->Play((int)ANIM_TYPE::KICK, false);
 
 		float chargeRate = chargeTime_ / maxChargeTime_;
 		CollisionAttack(chargeRate);
 
-		SoundManager::GetInstance().Play(SoundManager::SRC::KICK, Sound::TIMES::FORCE_ONCE);
+		controlEnabled_ = false;
 	}
 }
 
@@ -879,13 +887,13 @@ bool Player::IsEndLandingA(void)
 	bool ret = true;
 	int animType = animationController_->GetPlayType();
 
-	// 攻撃アニメじゃない = 攻撃してない→ true
+	//攻撃アニメじゃない = 攻撃してない→ true
 	if (animType != (int)ANIM_TYPE::KICK && !animationController_->IsEnd())
 	{
 		return ret;
 	}
 
-	// KICK中でアニメーションが終わった→true
+	//KICK中でアニメーションが終わった→true
 	if (animationController_->IsEnd())
 	{
 		return ret;

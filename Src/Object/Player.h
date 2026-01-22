@@ -164,8 +164,8 @@ public:
 	//const Transform* GetTransform() const { return &transform_; }
 
 	//操作可能？
-	void SetControlEnabled(bool enabled);  // ← 追加
-	bool IsControlEnabled(void) const;         // ← 追加
+	void SetControlEnabled(bool enabled);
+	bool IsControlEnabled(void) const;        
 
 	//エネミーの衝突用座標
 	const std::vector<std::shared_ptr<AllyBase>>& GetEnemyCollision(void) const;
@@ -174,7 +174,7 @@ public:
 
 	bool IsPreparingAttack(void) const;		//攻撃準中か
 	bool IsKickReleased(void) const;		//攻撃後か
-	bool ConsumeKickReleased(void);	//
+	bool ConsumeKickReleased(void);	
 	void SetAttackEnabled(bool e);
 
 private:
@@ -184,8 +184,8 @@ private:
 
 	//状態管理
 	STATE state_;
-	std::map<STATE, std::function<void(void)>> stateChanges_;	// 状態管理(状態遷移時初期処理)
-	std::function<void(void)> stateUpdate_;						// 状態管理(更新)
+	std::map<STATE, std::function<void(void)>> stateChanges_;	//状態管理(状態遷移時初期処理)
+	std::function<void(void)> stateUpdate_;						//状態管理(更新)
 
 	//状態遷移
 	void ChangeState(STATE state);
@@ -198,9 +198,9 @@ private:
 	bool isTutorialPaused_ = false;
 
 	//kickのゲージ管理
-	bool isCharging_ = false;     // チャージ中かどうか
-	float chargeTime_ = 0.0f;     // チャージ時間（秒）
-	const float maxChargeTime_ = 2.0f;  // 最大チャージ時間（例：2秒）
+	bool isCharging_ = false;			//チャージ中かどうか
+	float chargeTime_ = 0.0f;			//チャージ時間（秒）
+	const float maxChargeTime_ = 2.0f;  //最大チャージ時間
 	bool isChargeIncreasing_ = true;
 
 	//衝突
@@ -217,7 +217,7 @@ private:
 	void CollisionCapsule(void);
 
 	//プレイヤーの動き
-	void ProcessMove(void);			// 移動
+	void ProcessMove(void);			//移動
 	void ProcessAttack(void);		//攻撃モーション
 
 	//攻撃判定
@@ -225,10 +225,13 @@ private:
 	bool attackReleased_ = false;
 	bool attackEnable_ = true;
 
+	//味方を蹴ったか
+	bool kickedAlly_ = false;
+
 	//プレイヤーが持つ判定
 	VECTOR collisionPos_;			//プレイヤーの当たり判定移動後座標
-	float collisionRadius_;			// 衝突判定用の球体半径
-	VECTOR collisionLocalPos_;		// 衝突判定用の球体中心の調整座標
+	float collisionRadius_;			//衝突判定用の球体半径
+	VECTOR collisionLocalPos_;		//衝突判定用の球体中心の調整座標
 
 	//回転
 	void SetGoalRotate(double rotRad);
@@ -253,7 +256,7 @@ private:
 	void CalcGravityPow(void);		//移動量の計算
 
 	//操作可能
-	bool controlEnabled_ = true;
+	bool controlEnabled_;			//入力を受け付けるか
 
 	//回転
 	Quaternion playerRotY_;
@@ -268,12 +271,14 @@ private:
 	int normalAttack_;	//2ダメージ
 
 	//攻撃フラグ
-	bool isAttack_;		//縦斬り
+	bool isAttack_;					
 	float attackTimer_ = 0.0f;
-	float attackDuration_ = 1.6f; // 攻撃アニメの長さ（調整可）
+	//float attackDuration_ = 0.1f;		 //攻撃アニメの長さ（調整可）
+	bool hitChecked_ = false;			 //ヒット判定済みか
+	float kickHitTime_ = 0.35f;			 //当たる瞬間
 	
 	//アイコンUI
-	int imgGaugeFrame_;			//ゲージの枠
+	int imgGaugeFrame_;				//ゲージの枠
 
 	//丸影
 	int imgShadow_;
