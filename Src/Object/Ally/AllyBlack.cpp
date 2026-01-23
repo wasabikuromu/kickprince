@@ -93,10 +93,15 @@ void AllyBlack::UpdateAttack(void)
 	if (animationController_->IsEnd()) {
 		SetActionFinished(true);
 		isAttack_ = false;
+
+		isAttackEffectPlayed_ = false;
+		hasHit_ = false;
+
 		ChangeState(STATE::IDLE);
 
 		shouldReturnCamera_ = true;
 		returnCameraTimer_ = RETURN_CAMERA_TIME;
+		return;
 	}
 }
 
@@ -104,42 +109,39 @@ void AllyBlack::CollisionAttack(void)
 {
 	if (state_ != STATE::ATTACK) return;
 
-	//アニメーションのステップ数を取得
 	const auto& anim = animationController_->GetPlayAnim();
 
-	//攻撃範囲設定
+	// 攻撃範囲
 	VECTOR forward = transform_.quaRot.GetForward();
 	attackCollisionPos_ = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD_OFFSET));
 	attackCollisionPos_.y += ATTACK_HEIGHT_OFFSET;
 
-	//エネミーとの衝突判定
-	if (anim.step >= ATTACK_START && anim.step <= ATTACK_END && isAttack_ && !isAttackEffectPlayed_)
+	// 判定フレーム外 or 既にヒット済み
+	if (anim.step < ATTACK_START || anim.step > ATTACK_END || hasHit_) return;
+
+	// エフェクト・SE（1回だけ）
+	if (!isAttackEffectPlayed_)
 	{
 		EffectAttack();
-		SoundManager::GetInstance().Play(SoundManager::SRC::BLACK_ATK, Sound::TIMES::FORCE_ONCE);
+		SoundManager::GetInstance().Play(
+			SoundManager::SRC::BLACK_ATK,
+			Sound::TIMES::FORCE_ONCE);
 
 		isAttackEffectPlayed_ = true;
-
-		for (const auto& enemy : *enemy_)
-		{
-			if (!enemy || !enemy->IsAlive()) continue;
-
-			VECTOR enemyPos = enemy->GetCollisionPos();
-			float enemyRadius = enemy->GetCollisionRadius();
-
-			if (AsoUtility::IsHitSpheres(attackCollisionPos_, attackCollisionRadius_, enemyPos, enemyRadius))
-			{
-				enemy->Damage(attackPow_);
-				isAttack_ = false;
-				break;
-			}
-		}
 	}
 
-	//攻撃が終わったら次回用にリセット
-	if (anim.step > ATTACK_END)
+	for (const auto& enemy : *enemy_)
 	{
-		isAttack_ = true;
+		if (!enemy || !enemy->IsAlive()) continue;
+
+		if (AsoUtility::IsHitSpheres(
+			attackCollisionPos_, attackCollisionRadius_,
+			enemy->GetCollisionPos(), enemy->GetCollisionRadius()))
+		{
+			enemy->Damage(attackPow_);
+			hasHit_ = true;
+			return;
+		}
 	}
 }
 
@@ -147,5 +149,6 @@ void AllyBlack::StartAttack(void)
 {
 	isAttack_ = true;
 	isAttackEffectPlayed_ = false;
+	hasHit_ = false;
 }
 

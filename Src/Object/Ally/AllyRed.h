@@ -49,4 +49,5 @@ protected:
 	void StartAttack(void);
 
 	bool isAttackEffectPlayed_ = false;
+	bool hasHit_ = false;
 };

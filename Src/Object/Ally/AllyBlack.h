@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 #include "../AllyBase.h"
 
 class AllyBlack : public AllyBase
@@ -49,4 +49,5 @@ protected:
 	void StartAttack(void);
 
 	bool isAttackEffectPlayed_ = false;
+	bool hasHit_ = false;
 };

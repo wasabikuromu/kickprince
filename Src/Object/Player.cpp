@@ -717,6 +717,9 @@ void Player::CollisionCapsule(void)
 
 void Player::CollisionAttack(float chargeRate)
 {
+	//‚·‚Å‚Éƒqƒbƒg‚µ‚Ä‚¢‚½‚ç‰½‚à‚µ‚È‚¢
+	if (hitChecked_) return;
+
 	//UŒ‚‚µ‚Ä‚È‚¢or–¡•û‚¢‚È‚¢‚È‚ç‰½‚à‚µ‚È‚¢
 	if (!isAttack_ || !ally_) return;
 
@@ -726,8 +729,6 @@ void Player::CollisionAttack(float chargeRate)
 	if (anim.step < ATTACK_START || anim.step > ATTACK_END) return;
 
 	float attackRadius = ATTACK_RADIUS;
-
-	SoundManager::GetInstance().Play(SoundManager::SRC::KICK, Sound::TIMES::FORCE_ONCE);
 
 	VECTOR forward = transform_.quaRot.GetForward();
 	VECTOR attackPos = VAdd(transform_.pos, VScale(forward, ATTACK_FORWARD));
@@ -746,7 +747,11 @@ void Player::CollisionAttack(float chargeRate)
 			ally->Damage(normalAttack_, chargeRate);
 
 			//Œ‹‰Ê‚¾‚¯‹L˜^
+			hitChecked_ = true;
 			kickedAlly_ = true;
+
+			SoundManager::GetInstance().Play(SoundManager::SRC::KICK, Sound::TIMES::FORCE_ONCE);
+
 			return;
 		}
 	}
